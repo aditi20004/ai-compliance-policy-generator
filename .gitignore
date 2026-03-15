@@ -9,7 +9,7 @@ generated_policies/
 *.db
 .venv/
 venv/
-.streamlit/
+streamlit_app/.streamlit/
 *.docx
 *.pdf
 .pytest_cache/
