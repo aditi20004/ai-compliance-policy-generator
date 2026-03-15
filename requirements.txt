@@ -1,0 +1,29 @@
+# Core
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+
+# Database
+sqlalchemy==2.0.36
+
+# Template & Document Generation
+jinja2==3.1.5
+docxtpl==0.18.0
+fpdf2==2.8.7
+
+# LLM & RAG
+anthropic==0.42.0
+chromadb==0.5.23
+
+# Streamlit
+streamlit==1.41.1
+plotly==5.24.1
+pandas==2.2.3
+
+# Testing
+pytest==8.3.4
+httpx==0.28.1
+
+# Utilities
+python-multipart==0.0.20

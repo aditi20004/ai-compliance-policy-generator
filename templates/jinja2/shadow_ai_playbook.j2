@@ -1,0 +1,202 @@
+# Shadow AI Detection & Response Playbook
+
+**{{ business_name }}**
+*Effective Date: {{ effective_date }}*
+*Version: {{ version }}*
+
+---
+
+## 1. Purpose
+
+This playbook establishes the detection, classification, and response procedures for Shadow AI within {{ business_name }}. Shadow AI poses significant risks to data protection, regulatory compliance, and organisational security. This playbook ensures that unauthorised AI usage is identified rapidly, assessed proportionately, and resolved in alignment with the **Privacy Act 1988**, the **POLA Act 2024**, and the **AI6 Guidance for AI Adoption** (October 2024).
+
+---
+
+## 2. Scope
+
+This playbook applies to:
+
+- All employees, contractors, and third parties operating within {{ business_name }}'s IT environment
+- All AI-powered tools, platforms, APIs, browser extensions, and mobile applications
+- AI features embedded within approved software that have not been separately assessed
+- Personal devices used to process {{ business_name }}'s data through AI services (BYOD)
+
+---
+
+## 3. Definitions
+
+| Term | Definition |
+|------|-----------|
+| Shadow AI | Any AI tool, service, or feature used to process {{ business_name }}'s data without formal approval through the AI procurement process |
+| Sanctioned AI | AI tools that have been evaluated, approved, and onboarded per the {{ business_name }} AI Procurement Policy |
+| Tolerated AI | Shadow AI that has been discovered, risk-assessed, and temporarily permitted pending formal evaluation |
+| Prohibited AI | AI tools that have been assessed and explicitly banned due to unacceptable risk |
+
+---
+
+## 4. Detection Methods
+
+{{ business_name }} employs the following methods to identify Shadow AI usage:
+
+### 4.1 Technical Detection
+
+| Method | Description | Frequency |
+|--------|------------|-----------|
+| DNS monitoring | Monitor DNS queries to known AI service domains (e.g., api.openai.com, bard.google.com, claude.ai) | Continuous |
+| Proxy / firewall logs | Analyse outbound web traffic for connections to AI platforms | Daily review |
+| Endpoint agents | Deploy endpoint detection to identify AI desktop applications and browser extensions | Continuous |
+| DLP integration | Data Loss Prevention alerts triggered by data uploads to AI services | Continuous |
+| SaaS discovery tools | Cloud access security broker (CASB) scanning for unauthorised SaaS AI subscriptions | Weekly |
+| API gateway monitoring | Detect outbound API calls to AI model endpoints from internal systems | Continuous |
+
+### 4.2 Administrative Detection
+
+| Method | Description | Frequency |
+|--------|------------|-----------|
+| Expense report review | Flag payments to AI vendors (OpenAI, Anthropic, Google AI, Midjourney, etc.) | Monthly |
+| Credit card reconciliation | Identify AI service charges on corporate cards | Monthly |
+| Employee surveys | Anonymous surveys asking about AI tool usage | Quarterly |
+| IT helpdesk analysis | Review tickets mentioning AI tools not in the sanctioned register | Ongoing |
+| Vendor contract review | Identify AI features embedded in existing vendor platforms | During renewal |
+
+{% if not shadow_ai_controls %}
+**Gap identified:** {{ business_name }} has not yet implemented Shadow AI detection controls. Prioritise deploying DNS monitoring and expense report review as immediate first steps.
+{% endif %}
+
+---
+
+## 5. Risk Classification
+
+When Shadow AI is discovered, classify it according to the following matrix:
+
+### 5.1 Classification Matrix
+
+| Risk Level | Criteria | Examples |
+|------------|----------|----------|
+| **Critical** | Processes Restricted or sensitive personal information; makes automated decisions affecting individuals; data sent overseas without APP 8 safeguards | Medical AI processing health records; AI screening job applicants with personal data |
+| **High** | Processes Confidential data; no DPA in place; vendor trains models on customer data; no model training opt-out | Uploading financial reports to ChatGPT; using AI transcription for confidential meetings |
+| **Medium** | Processes Internal data; vendor has reasonable security but has not been formally assessed | Using AI writing assistants for internal communications; AI-powered scheduling tools |
+| **Low** | Processes only Public data; no personal information involved; tool operates locally | AI-powered spell checkers (offline); code autocompletion on public repositories |
+
+### 5.2 Escalation Factors
+
+The following factors increase the risk classification by one level:
+
+- The tool has been in use for more than 30 days without detection
+- Multiple employees are using the same unapproved tool
+- The tool is processing data types including: {% for dtype in data_types_processed %}{{ dtype }}{% if not loop.last %}, {% endif %}{% endfor %}
+{% if ai_profiling_or_eligibility %}- The tool is used for profiling or eligibility decisions{% endif %}
+{% if customer_facing_ai %}- The tool interacts directly with customers{% endif %}
+
+---
+
+## 6. Response Procedures
+
+### 6.1 Critical Risk — Immediate Block
+
+1. **Block access** to the AI service within 4 hours of discovery via DNS/proxy/firewall
+2. **Notify** {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }} immediately
+3. **Assess data exposure** — determine what data was processed, volume, and duration
+4. **Evaluate NDB obligation** — assess whether a Notifiable Data Breach has occurred under Part IIIC of the Privacy Act
+{% if ndb_ai_process %}5. **Follow the AI-specific NDB process** already established at {{ business_name }}{% else %}5. **Consult legal counsel** to determine NDB reporting obligations to the OAIC{% endif %}
+6. **Preserve evidence** — retain logs, screenshots, and access records
+7. **Conduct affected individual assessment** — determine if individuals must be notified
+8. **Document** the incident in the AI Incident Register
+{% if ai_incident_register %}9. **Update** {{ business_name }}'s AI Incident Register with full details{% else %}9. **Establish** an AI Incident Register if one does not yet exist{% endif %}
+
+### 6.2 High Risk — Block and Assess
+
+1. **Block access** within 24 hours of discovery
+2. **Notify** {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }} within 24 hours
+3. **Interview the user(s)** to understand the use case, data processed, and duration
+4. **Determine** if the tool can be rapidly evaluated through the AI Procurement Policy
+5. **If approvable**, place in Tolerated status (maximum 30 days) while evaluation is completed
+6. **If not approvable**, confirm block and communicate to affected users
+7. **Document** in the AI Incident Register
+
+### 6.3 Medium Risk — Assess and Decide
+
+1. **Notify** {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }} within 5 business days
+2. **Place in Tolerated status** (maximum 60 days) while evaluation proceeds
+3. **Require the user** to submit an AI Procurement Request within 10 business days
+4. **Monitor usage** during the assessment period
+5. **Approve or block** based on the evaluation outcome
+
+### 6.4 Low Risk — Monitor and Formalise
+
+1. **Log the discovery** in the Shadow AI Discovery Register
+2. **Request the user** to submit an AI Procurement Request within 30 days
+3. **If the tool passes evaluation**, add to the Sanctioned AI register
+4. **If the user does not submit a request**, escalate to their line manager
+
+---
+
+## 7. Employee Communication
+
+### 7.1 How to Request a New AI Tool
+
+Employees who wish to use an AI tool not currently in {{ business_name }}'s Sanctioned AI register must:
+
+1. **Check the Sanctioned AI Register** to confirm the tool is not already approved
+2. **Submit an AI Procurement Request** to {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }}
+3. **Do not process** any {{ business_name }} data through the tool until approval is granted
+4. **Await confirmation** — standard evaluations are completed within 15 business days
+
+### 7.2 Currently Approved AI Tools
+
+{% if ai_tools_in_use %}
+The following AI tools are currently sanctioned for use at {{ business_name }}:
+
+| Tool | Status |
+|------|--------|
+{% for tool in ai_tools_in_use %}| {{ tool }} | Sanctioned |
+{% endfor %}
+{% else %}
+{{ business_name }} has not yet established a formal Sanctioned AI register. All AI tool usage must be approved by {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }} on a case-by-case basis.
+{% endif %}
+
+### 7.3 Consequences of Non-Compliance
+
+Using Shadow AI in breach of this playbook may result in:
+
+- Removal of access to the tool
+- Formal performance management action
+- Mandatory retraining on AI acceptable use
+- In cases involving data breaches, referral to legal counsel
+
+---
+
+## 8. Metrics and KPIs
+
+{{ business_name }} will track the following metrics to measure Shadow AI program effectiveness:
+
+| Metric | Target | Measurement Frequency |
+|--------|--------|-----------------------|
+| Shadow AI discovery rate | Decreasing quarter-over-quarter | Quarterly |
+| Time-to-detection | < 14 days from first use to discovery | Quarterly |
+| Time-to-remediate (Critical/High) | < 48 hours from discovery to block | Per incident |
+| Time-to-remediate (Medium/Low) | < 30 days from discovery to resolution | Per incident |
+| Employee AI request rate | Increasing (indicates culture of compliance) | Quarterly |
+| Tolerated-to-sanctioned conversion rate | > 50% of tolerated tools proceed to approval | Quarterly |
+| Repeat offender rate | < 5% of employees discovered more than once | Annually |
+| Sanctioned AI register completeness | 100% of known AI tools catalogued | Quarterly |
+
+---
+
+## 9. Regulatory Alignment
+
+| Regulation / Guidance | Requirement | This Playbook |
+|-----------------------|------------|---------------|
+| APP 1 | Open and transparent management of personal information | Shadow AI discovery and public register of sanctioned tools |
+| APP 8 | Cross-border disclosure safeguards | Detection of AI tools sending data overseas{% if ai_tools_overseas %} (known overseas tools: {% for tool in ai_tools_overseas %}{{ tool }}{% if not loop.last %}, {% endif %}{% endfor %}){% endif %} |
+| APP 11 | Reasonable steps to protect personal information | Technical detection controls, rapid response |
+| POLA Act 2024 | Transparency in automated decision-making | Detection of AI tools making decisions affecting individuals |
+| AI6 Practice 1 | Understand impacts and plan accordingly | Risk classification matrix |
+| AI6 Practice 3 | Measure and manage risks | Metrics and KPIs, ongoing monitoring |
+| AI6 Practice 5 | Be transparent about AI use | Employee communication, Sanctioned AI register |
+| OAIC Oct 2024 | Organisations must know what AI they are using | Comprehensive detection methodology |
+{% if tranche2_aware %}| POLA Act Tranche 2 (anticipated) | Mandatory AI registers and conformity assessment | Shadow AI discovery feeds directly into Tranche 2 AI register obligations |{% endif %}
+
+---
+
+*Review frequency: Quarterly, or when new detection capabilities are deployed or regulatory requirements change.*

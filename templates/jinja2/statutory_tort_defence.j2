@@ -1,0 +1,243 @@
+# Statutory Tort Defence Checklist
+
+**{{ business_name }}**
+*Effective Date: {{ effective_date }}*
+*Version: {{ version }}*
+
+---
+
+## 1. Purpose
+
+This checklist prepares {{ business_name }} to defend against claims under the **statutory tort of serious invasion of privacy** introduced by the **Privacy and Other Legislation Amendment (POLA) Act 2024**. It outlines the elements of the tort, the available defences, and the evidence that {{ business_name }} must collect and preserve to mount an effective defence. This document should be used in conjunction with legal counsel.
+
+---
+
+## 2. Scope
+
+This checklist applies to:
+
+- All AI systems deployed by {{ business_name }} that process personal information
+- Automated decision-making systems that affect individuals' rights or interests
+- AI tools that monitor, profile, or track individuals
+- Data processing activities involving AI that could constitute intrusion upon seclusion or misuse of private information
+
+### 2.1 AI Systems Requiring Tort Defence Preparation
+
+{% if ai_tools_in_use %}
+The following AI tools process personal information and require defence preparation:
+
+{% for tool in ai_tools_in_use %}- {{ tool }}
+{% endfor %}
+{% else %}
+{{ business_name }} must catalogue all AI tools that process personal information as a prerequisite for tort defence preparation.
+{% endif %}
+
+---
+
+## 3. Elements of the Statutory Tort
+
+Under the POLA Act 2024, a claimant must establish the following elements for a statutory tort claim:
+
+| Element | Description | {{ business_name }} Relevance |
+|---------|------------|------------------------------|
+| **Invasion of privacy** | The respondent invaded the claimant's privacy by intrusion upon seclusion or misuse of private information | AI systems that collect, infer, or profile personal data |
+| **Serious invasion** | The invasion was serious, considering the nature of the private information, the claimant's circumstances, and the respondent's conduct | Volume of data processed, sensitivity of inferences, degree of automation |
+| **Reasonable expectation of privacy** | The claimant had a reasonable expectation of privacy in the circumstances | Whether individuals were informed about AI processing |
+| **Fault element** | The respondent was intentional or reckless as to the invasion | Whether AI processing was deliberate or {{ business_name }} was reckless as to privacy risks |
+
+### 3.1 AI-Specific Risk Factors
+
+The following AI activities increase exposure to statutory tort claims:
+
+- Automated profiling without explicit consent
+- AI-generated inferences about sensitive attributes (health, political views, sexuality)
+- Facial recognition or biometric processing
+- Location tracking or behavioural monitoring via AI
+- AI systems that make consequential decisions (employment, credit, insurance, services)
+{% if ai_profiling_or_eligibility %}- **{{ business_name }} uses AI for profiling or eligibility decisions — this is a high-risk factor**{% endif %}
+{% if customer_facing_ai %}- **{{ business_name }} deploys customer-facing AI — individuals may have heightened privacy expectations**{% endif %}
+
+---
+
+## 4. Defence Elements Checklist
+
+{{ business_name }} may defend a statutory tort claim by establishing one or more of the following. Each defence requires supporting evidence.
+
+### 4.1 Reasonable Steps Defence
+
+Demonstrate that {{ business_name }} took reasonable steps to protect privacy:
+
+- [ ] AI Privacy Policy in place and accessible to affected individuals
+{% if has_privacy_policy %} *Status: {{ business_name }} has a privacy policy in place*
+{% else %} **Gap: {{ business_name }} does not yet have a privacy policy — critical deficiency**
+{% endif %}
+- [ ] Privacy Impact Assessment conducted for AI systems processing personal information
+{% if pia_conducted %} *Status: PIA has been conducted*
+{% else %} **Gap: PIA has not been conducted — high priority remediation required**
+{% endif %}
+- [ ] AI Acceptable Use Policy distributed to all staff
+- [ ] Staff trained on responsible AI use and privacy obligations
+- [ ] Data minimisation applied — AI systems process only necessary personal information
+- [ ] Retention limits enforced — AI interaction data deleted per retention schedule
+- [ ] Access controls in place — only authorised personnel access AI systems and outputs
+{% if essential_eight_applied %}- [ ] Essential Eight cyber security controls applied to AI infrastructure
+{% else %}- [ ] **Gap: Essential Eight not yet applied — implement as a priority to strengthen defence**
+{% endif %}
+
+### 4.2 Legitimate Purpose Defence
+
+Demonstrate that the AI processing served a legitimate purpose:
+
+- [ ] Business justification documented for each AI system
+- [ ] AI processing is necessary for the stated purpose (not merely convenient)
+- [ ] Purpose limitation enforced — AI outputs are not repurposed beyond original intent
+- [ ] Processing is proportionate to the purpose
+{% for adt in automated_decision_types %}- [ ] Legitimate purpose documented for automated decision type: {{ adt }}
+{% endfor %}
+
+### 4.3 Consent Defence
+
+Demonstrate that the individual consented to the AI processing:
+
+- [ ] Consent mechanism records preserved (consent forms, click-through agreements, opt-in records)
+- [ ] Consent was informed — individuals were told about AI processing specifically
+{% if ai_disclosure_to_customers %}- [ ] AI disclosure to customers is in place — individuals know they are interacting with AI
+{% else %}- [ ] **Gap: No AI disclosure to customers — consent may be undermined**
+{% endif %}
+- [ ] Consent was voluntary — not bundled with unrelated terms
+- [ ] Consent withdrawal mechanism exists and is accessible
+- [ ] Consent records are timestamped and tamper-evident
+
+### 4.4 Public Interest Defence
+
+Demonstrate that the AI processing was in the public interest:
+
+- [ ] Public interest justification documented (e.g., fraud detection, safety, public health)
+- [ ] Processing is proportionate to the public interest served
+- [ ] Less privacy-invasive alternatives were considered and documented
+- [ ] Public interest determination reviewed by {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }} or legal counsel
+
+---
+
+## 5. Evidence Collection and Preservation
+
+### 5.1 Evidence Register
+
+{{ business_name }} must maintain the following evidence for tort defence purposes:
+
+| Evidence Category | Specific Items | Retention Period |
+|-------------------|---------------|-----------------|
+| Policies and procedures | AI Acceptable Use Policy, Privacy Policy, AI Procurement Policy, Data Classification Policy | Current version + 7 years of prior versions |
+| PIAs and risk assessments | All PIAs, AI risk assessments, vendor risk assessments | 7 years from completion |
+| Training records | Staff AI training completion records, training materials | 7 years from delivery |
+| Consent records | Individual consent forms, opt-in records, cookie consent logs | 7 years from collection or duration of relationship + 7 years |
+| Technical controls | Configuration records, access control lists, encryption certificates | 7 years from implementation |
+| Incident records | AI incident reports, breach notifications, complaint records | 7 years from resolution |
+{% if vendor_dpa_in_place %} | Vendor agreements | DPAs, sub-processor lists, model training opt-out confirmations | Duration of contract + 7 years |{% else %} | **Vendor agreements** | **DPAs not yet in place — critical gap for defence** | Duration of contract + 7 years |{% endif %}
+| Decision logs | AI decision outputs, human review records, override logs | 7 years from decision |
+
+### 5.2 Preservation Requirements
+
+- All evidence must be stored in a manner that is **tamper-evident** and **retrievable**
+- Electronic records must include metadata (creation date, author, modification history)
+- {{ business_name }} must implement a **litigation hold process** that can be activated within 24 hours of receiving a claim
+- Backup copies must be stored separately from operational systems
+
+---
+
+## 6. Pre-Incident Measures
+
+The following measures should be in place **before** any claim arises:
+
+### 6.1 Policy Framework
+
+- [ ] AI Acceptable Use Policy — current and distributed
+- [ ] Privacy Policy — references AI processing specifically
+- [ ] AI Procurement Policy — ensures new tools are assessed before deployment
+- [ ] Data Classification Policy — AI data is classified and handled accordingly
+- [ ] AI Ethics Framework — demonstrates commitment to responsible AI use
+
+### 6.2 Assessments
+
+- [ ] PIA conducted for each AI system processing personal information
+{% if pia_conducted %} *Status: Completed*{% else %} **Status: Not yet conducted — remediate immediately**{% endif %}
+- [ ] Vendor risk assessments completed for all AI vendors
+{% if vendor_audit_rights %} *Status: Vendor audit rights are in place*{% else %} **Status: Vendor audit rights not yet secured**{% endif %}
+{% if ai_supply_chain_assessed %}- [ ] AI supply chain risk assessment completed{% else %}- [ ] **AI supply chain risk assessment not yet conducted**{% endif %}
+
+### 6.3 Training
+
+- [ ] All staff completed AI privacy awareness training
+- [ ] Staff with AI system access completed role-specific training
+- [ ] Training records retained for evidentiary purposes
+- [ ] Training content reviewed and updated annually
+
+### 6.4 Technical Safeguards
+
+- [ ] Logging enabled for all AI system interactions
+- [ ] Human review available for automated decisions
+{% if human_review_available %} *Status: Human review is available*{% else %} **Status: Human review not yet implemented — high priority**{% endif %}
+- [ ] Data minimisation controls configured
+- [ ] Encryption applied to AI data in transit and at rest
+
+---
+
+## 7. Post-Incident Response Checklist
+
+When {{ business_name }} receives a statutory tort claim or becomes aware of a potential claim:
+
+### 7.1 Within 24 Hours
+
+- [ ] Notify {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }}
+- [ ] Notify legal counsel (internal or external)
+- [ ] Activate litigation hold on all relevant evidence
+- [ ] Preserve logs, decision records, and system configurations for the relevant AI system
+- [ ] Do **not** modify, retrain, or update the AI system until advised by legal counsel
+
+### 7.2 Within 72 Hours
+
+- [ ] Identify the AI system(s) involved in the claim
+- [ ] Retrieve all evidence from the Evidence Register (Section 5)
+- [ ] Prepare a timeline of the AI processing at issue
+- [ ] Identify all individuals potentially affected (not just the claimant)
+{% if ndb_ai_process %}- [ ] Assess NDB obligations using {{ business_name }}'s established AI-specific NDB process{% else %}- [ ] Assess whether a Notifiable Data Breach has also occurred{% endif %}
+- [ ] Assess which defence(s) from Section 4 are available
+
+### 7.3 Within 14 Days
+
+- [ ] Complete a full evidence package for legal counsel
+- [ ] Document the reasonable steps taken before the incident (Section 6)
+- [ ] Identify and address any gaps in defence preparation
+- [ ] Prepare a witness list (staff who managed the AI system, conducted PIAs, delivered training)
+- [ ] Assess whether voluntary remediation (apology, compensation, system changes) is appropriate
+
+---
+
+## 8. Legal Escalation Process
+
+| Trigger | Escalation Path | Timeline |
+|---------|----------------|----------|
+| Letter of demand or complaint referencing privacy invasion | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} -> Legal counsel | Within 24 hours |
+| OAIC investigation or Commissioner-initiated inquiry | Legal counsel -> Senior leadership | Within 24 hours |
+| Court filing (statement of claim) | Legal counsel -> Senior leadership -> Board | Immediately |
+| Media inquiry about AI privacy practices | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} -> Legal counsel -> Communications | Within 4 hours |
+| Employee whistleblower report about AI privacy breach | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} -> Legal counsel -> HR | Within 24 hours |
+
+---
+
+## 9. Regulatory Alignment
+
+| Regulation | Requirement | This Checklist |
+|-----------|------------|----------------|
+| POLA Act 2024 — Statutory Tort | Defence against serious invasion of privacy claims | Defence elements checklist (Section 4), evidence preservation (Section 5) |
+| POLA Act 2024 — Reasonable Steps | Demonstrate reasonable steps to protect privacy | Pre-incident measures (Section 6) |
+| Privacy Act 1988 — APP 1 | Open and transparent management of personal information | Policy framework, privacy policy with AI disclosure |
+| Privacy Act 1988 — APP 6 | Use and disclosure limitations | Purpose limitation defence (Section 4.2) |
+| Privacy Act 1988 — APP 11 | Reasonable steps to protect personal information | Technical safeguards, access controls |
+| Privacy Act 1988 — Part IIIC | Notifiable Data Breaches scheme | NDB assessment in post-incident checklist |
+| OAIC Guidance Oct 2024 | PIA before deploying AI, transparency obligations | PIA requirement, AI disclosure |
+{% if tranche2_aware %}| POLA Act Tranche 2 (anticipated) | Enhanced accountability obligations for high-risk AI | Pre-incident measures designed to exceed current requirements |{% endif %}
+
+---
+
+*Review frequency: Annually, after any statutory tort claim is received, or when the POLA Act or Privacy Act is amended.*

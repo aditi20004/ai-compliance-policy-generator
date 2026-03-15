@@ -1,0 +1,249 @@
+# Essential Eight Controls for AI Systems
+
+**{{ business_name }}**
+*Effective Date: {{ effective_date }}*
+*Version: {{ version }}*
+
+---
+
+## 1. Purpose
+
+This policy maps the **Australian Cyber Security Centre (ACSC) Essential Eight** mitigation strategies to AI-specific risks at {{ business_name }}. As AI tools introduce new attack surfaces — including prompt injection, model poisoning, data exfiltration via AI outputs, and shadow AI usage — the Essential Eight framework must be extended to address these risks. This policy aligns with **AI6 Guidance for AI Adoption** (Practice 5: Secure AI systems) and the **ACSC Essential Eight Maturity Model** (July 2024).
+
+---
+
+## 2. Scope
+
+This policy applies to:
+
+- All AI tools, platforms, and APIs used or hosted by {{ business_name }}
+- AI libraries, SDKs, and dependencies used in software development
+- AI plugins and extensions within productivity software
+- AI model configurations, training data, and prompt libraries
+- Infrastructure supporting AI workloads (servers, endpoints, cloud environments)
+
+{% if essential_eight_applied %}
+{{ business_name }} currently applies the Essential Eight framework. This policy extends existing controls to cover AI-specific risks and should be read in conjunction with the current Essential Eight implementation.
+{% else %}
+**Action required:** {{ business_name }} has not yet implemented the ACSC Essential Eight framework. This policy provides AI-specific guidance but should be adopted alongside a broader Essential Eight implementation program. Refer to the ACSC website at [cyber.gov.au](https://www.cyber.gov.au) for the full framework.
+{% endif %}
+
+---
+
+## 3. Essential Eight — AI-Specific Implementation
+
+### 3.1 Control 1: Application Control (Whitelisting Approved AI Tools)
+
+**Standard objective:** Prevent execution of unapproved or malicious programs.
+
+**AI-specific risks:** Staff installing unapproved AI applications; unauthorised AI browser extensions capturing data; shadow AI tools bypassing security review.
+
+**AI-specific controls:**
+
+| Control | Implementation |
+|---------|---------------|
+| AI tool whitelist | Maintain a register of approved AI tools; block installation of unapproved tools via endpoint management |
+| Browser extension control | Block unapproved AI browser extensions (e.g., ChatGPT wrappers, AI writing assistants) via group policy |
+| API gateway controls | Route all AI API calls through a managed gateway; block direct calls to unapproved AI endpoints |
+| Mobile device management | Prevent installation of unapproved AI apps on corporate mobile devices |
+| Shadow AI detection | Monitor network traffic for connections to known AI service domains not on the whitelist |
+
+{% if shadow_ai_controls %}
+{{ business_name }} has shadow AI controls in place. Integrate the AI tool whitelist with existing shadow AI detection mechanisms.
+{% else %}
+**Recommendation:** Implement shadow AI detection as a priority. Monitor DNS queries and outbound connections to known AI service endpoints (e.g., api.openai.com, generativelanguage.googleapis.com, anthropic.com).
+{% endif %}
+
+{% if ai_tools_in_use %}
+**Currently approved AI tools for whitelisting:**
+{% for tool in ai_tools_in_use %}
+- {{ tool }}
+{% endfor %}
+{% endif %}
+
+---
+
+### 3.2 Control 2: Patch Applications (ML Libraries, AI SDKs, Model Versions)
+
+**Standard objective:** Patch applications with known vulnerabilities within 48 hours for critical, two weeks for non-critical.
+
+**AI-specific risks:** Vulnerable ML libraries (TensorFlow, PyTorch, scikit-learn) with known CVEs; outdated AI SDKs; unpatched AI platform clients; outdated model versions.
+
+**AI-specific controls:**
+
+| Control | Implementation |
+|---------|---------------|
+| AI dependency inventory | Maintain a software bill of materials (SBOM) for all AI libraries and SDKs |
+| Vulnerability scanning | Include AI/ML libraries in automated vulnerability scanning (e.g., Dependabot, Snyk) |
+| Patching cadence | Critical AI library vulnerabilities patched within 48 hours; non-critical within 2 weeks |
+| Model version tracking | Track AI model versions in use; update when vendor releases security or accuracy patches |
+| Deprecation monitoring | Monitor vendor announcements for deprecated AI APIs and plan migrations |
+
+---
+
+### 3.3 Control 3: Configure Microsoft Office Macros (AI Plugins and Add-ins)
+
+**Standard objective:** Block macros from the internet and only allow vetted macros in trusted locations.
+
+**AI-specific risks:** AI plugins in Microsoft 365 accessing sensitive documents; AI add-ins with excessive permissions; malicious plugins exfiltrating data through prompt-response flows.
+
+**AI-specific controls:**
+
+| Control | Implementation |
+|---------|---------------|
+| AI plugin whitelist | Only allow approved AI plugins in Microsoft 365, Google Workspace, and other productivity suites |
+| Permission review | Review and restrict permissions granted to AI plugins (e.g., access to emails, files, calendar) |
+| Third-party add-in blocking | Block installation of third-party AI add-ins unless approved through the AI Tool Approval process |
+| Copilot governance | If Microsoft Copilot is deployed, configure sensitivity label enforcement and DLP policies |
+| Plugin audit | Quarterly audit of all installed AI plugins across the organisation |
+
+---
+
+### 3.4 Control 4: User Application Hardening (Browser Extensions, Prompt Injection Protection)
+
+**Standard objective:** Harden web browsers and other applications to reduce the attack surface.
+
+**AI-specific risks:** Prompt injection attacks manipulating AI outputs; AI browser extensions capturing keystrokes or clipboard data; data leakage through AI autocomplete, grammar, or translation services.
+
+**AI-specific controls:**
+
+| Control | Implementation |
+|---------|---------------|
+| Browser hardening | Block AI-related browser extensions not on the approved list |
+| Input sanitisation | Implement prompt sanitisation for internally deployed AI models to mitigate injection attacks |
+| Output filtering | Validate AI outputs before they are returned to users or integrated into business processes |
+| Clipboard protection | Prevent AI tools from accessing clipboard content containing sensitive data |
+| Content security policy | Configure CSP headers to prevent AI widget injection on {{ business_name }}'s web properties |
+
+{% if customer_facing_ai %}
+**Customer-facing AI note:** {{ business_name }} deploys customer-facing AI. Prompt injection protection is critical to prevent attackers from manipulating AI outputs visible to customers.
+{% endif %}
+
+---
+
+### 3.5 Control 5: Restrict Administrative Privileges (AI Platform Admin Access)
+
+**Standard objective:** Restrict administrative privileges to only those who need them.
+
+**AI-specific risks:** AI platform admin accounts with excessive access; shared service accounts for AI APIs; developers with production model access.
+
+**AI-specific controls:**
+
+| Control | Implementation |
+|---------|---------------|
+| AI admin role separation | Separate AI platform admin roles from regular user roles |
+| Least-privilege API keys | Issue AI API keys with minimum required scopes; rotate every 90 days |
+| Service account governance | Audit AI service accounts quarterly; remove unused accounts immediately |
+| JIT access | Implement just-in-time access for AI model deployment and configuration changes |
+
+---
+
+### 3.6 Control 6: Patch Operating Systems (AI Server and Endpoint Patching)
+
+**Standard objective:** Patch operating systems with known vulnerabilities within 48 hours for critical, two weeks for non-critical.
+
+**AI-specific risks:** Outdated OS on AI inference servers; GPU driver vulnerabilities (CUDA, ROCm); container runtime vulnerabilities in AI deployment environments.
+
+**AI-specific controls:**
+
+| Control | Implementation |
+|---------|---------------|
+| AI server patching | AI inference and training servers patched on the same cadence as other critical servers |
+| GPU driver updates | GPU drivers updated within 2 weeks of security patches |
+| Container patching | Base container images for AI workloads rebuilt and redeployed when OS patches are released |
+| Cloud AI patching | Verify cloud AI service providers patch underlying infrastructure |
+
+---
+
+### 3.7 Control 7: Multi-Factor Authentication (MFA on All AI Platform Accounts)
+
+**Standard objective:** MFA for all users accessing important data repositories and internet-facing services.
+
+**AI-specific risks:** Compromised AI platform accounts enabling data exfiltration; stolen API keys; shared AI tool accounts without individual accountability.
+
+**AI-specific controls:**
+
+| Control | Implementation |
+|---------|---------------|
+| MFA enforcement | MFA required for all AI platform user and admin accounts without exception |
+| API key protection | AI API keys stored in secrets management systems; never in source code or configuration files |
+| SSO integration | Integrate AI platforms with {{ business_name }}'s identity provider (IdP) via SSO where supported |
+| Session management | AI platform sessions time out after 30 minutes of inactivity |
+| Shared account prohibition | No shared accounts for AI platforms; each user must have an individual account |
+
+---
+
+### 3.8 Control 8: Regular Backups (AI Model Configs, Training Data, Prompt Libraries)
+
+**Standard objective:** Regular backups performed and tested for important data.
+
+**AI-specific risks:** Loss of AI model configurations or custom model weights; loss of prompt libraries and system prompts; inability to recover AI systems to a known-good state.
+
+**AI-specific controls:**
+
+| Control | Implementation |
+|---------|---------------|
+| AI configuration backups | Back up AI model configurations, parameters, and system prompts weekly |
+| Prompt library backups | Version-control and back up prompt libraries and templates |
+| Training data backups | Back up proprietary training and fine-tuning datasets with integrity verification |
+| Recovery testing | Test AI system recovery from backups quarterly |
+| Immutable backups | Store AI backups in immutable storage to prevent ransomware encryption |
+
+{% if ai_incident_register %}
+{{ business_name }} maintains an AI incident register. Backup failures for AI systems must be logged as incidents in this register.
+{% else %}
+**Recommendation:** {{ business_name }} should establish an AI incident register. Backup failures for AI systems should be logged and tracked as incidents.
+{% endif %}
+
+---
+
+## 4. Maturity Assessment Checklist
+
+Assess {{ business_name }}'s maturity for each Essential Eight control as applied to AI systems. Use the ACSC maturity levels:
+
+- **Level 0** — Not implemented
+- **Level 1** — Partly aligned with the intent of the mitigation strategy
+- **Level 2** — Mostly aligned with the intent of the mitigation strategy
+- **Level 3** — Fully aligned with the intent of the mitigation strategy
+
+| # | Control | Current Level | Target Level | Gap | Owner |
+|---|---------|--------------|-------------|-----|-------|
+| 1 | Application control (AI tool whitelisting) | | | | |
+| 2 | Patch applications (ML libraries, AI SDKs) | | | | |
+| 3 | Configure macros (AI plugins/add-ins) | | | | |
+| 4 | User application hardening (prompt injection) | | | | |
+| 5 | Restrict admin privileges (AI platform access) | | | | |
+| 6 | Patch operating systems (AI servers/endpoints) | | | | |
+| 7 | Multi-factor authentication (AI platforms) | | | | |
+| 8 | Regular backups (AI configs, data, prompts) | | | | |
+
+### Maturity Target Recommendations
+
+| Data Classification | Minimum Target Maturity |
+|--------------------|------------------------|
+| Public / Internal data only | Level 1 |
+| Confidential data | Level 2 |
+| Restricted data or automated decisions | Level 3 |
+
+{% if ai_tools_in_use %}
+**Assessment scope — current AI tools:**
+{% for tool in ai_tools_in_use %}
+- [ ] {{ tool }} — maturity assessment completed
+{% endfor %}
+{% endif %}
+
+---
+
+## 5. Regulatory Alignment
+
+| Regulation / Guidance | Requirement | This Policy |
+|----------------------|-------------|-------------|
+| ACSC Essential Eight | Eight mitigation strategies to reduce cyber risk | AI-specific implementation for each control |
+| AI6 Practice 5 | Secure AI systems and apply relevant security controls | Essential Eight mapping with AI-specific controls |
+| AI6 Practice 3 | Measure and manage risks throughout the AI lifecycle | Maturity assessment checklist with gap analysis |
+| APP 11 | Reasonable steps to protect personal information | Security controls for AI systems processing PI |
+| OAIC Oct 2024 | Security measures for AI systems processing PI | MFA, access controls, patching, and backup requirements |
+
+---
+
+*Review frequency: Annually, when the ACSC updates the Essential Eight framework, or when new AI tools are deployed.*

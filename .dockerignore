@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.git/
+.gitignore
+.env
+.env.example
+.claude/
+data/
+generated_policies/
+streamlit_app/data/
+streamlit_app/generated_policies/
+*.db
+tests/
+README.md
+.dockerignore

@@ -1,0 +1,229 @@
+# AI Copyright and Intellectual Property Policy
+
+**{{ business_name }}**
+*Effective Date: {{ effective_date }}*
+*Version: {{ version }}*
+
+---
+
+## 1. Purpose
+
+This policy establishes {{ business_name }}'s position on copyright, intellectual property (IP), and related legal considerations arising from the use of AI tools. It addresses the ownership of AI-generated outputs, the risks of third-party IP infringement, trade secret protection, and disclosure obligations. This policy aligns with the **Copyright Act 1968 (Cth)**, the **Australian Consumer Law (ACL)**, and the **AI6 Guidance for AI Adoption** (October 2024).
+
+---
+
+## 2. Scope
+
+This policy applies to:
+
+- All AI-generated or AI-assisted content produced by or on behalf of {{ business_name }}
+- Text, images, code, designs, music, video, and other creative outputs generated using AI tools
+- Staff, contractors, and third parties using AI tools in the course of their work for {{ business_name }}
+- Commercial products, marketing materials, and client deliverables that incorporate AI-generated content
+- Internal documents, reports, and analyses produced with AI assistance
+
+{% if ai_tools_in_use %}
+**AI tools currently in use at {{ business_name }}:**
+{% for tool in ai_tools_in_use %}
+- {{ tool }}
+{% endfor %}
+{% endif %}
+
+---
+
+## 3. Copyright Status of AI-Generated Works
+
+### 3.1 Australian Legal Position
+
+Under the **Copyright Act 1968 (Cth)**, copyright subsists in original literary, dramatic, musical, and artistic works. Australian copyright law requires a **human author** — a natural person who exercises sufficient skill and judgment in creating the work.
+
+**Key principles for {{ business_name }}:**
+
+| Scenario | Copyright Status | Ownership |
+|----------|-----------------|-----------|
+| Fully AI-generated content (no meaningful human input) | Likely **not** protected by copyright | No copyright owner — potentially in the public domain |
+| AI-assisted content (human provides substantial creative direction) | Likely protected by copyright | The human author (and {{ business_name }} as employer where applicable) |
+| Human-authored content refined by AI (editing, formatting) | Protected by copyright | The human author (and {{ business_name }} as employer where applicable) |
+| AI-generated code | Uncertain — depends on level of human input | Apply the AI-assisted vs AI-generated test below |
+
+### 3.2 AI-Assisted vs AI-Generated Works
+
+{{ business_name }} distinguishes between:
+
+- **AI-assisted works:** A human author uses AI as a tool (like a calculator or spellchecker) but exercises independent creative judgment in selecting, arranging, and refining the output. These works are likely to attract copyright protection.
+
+- **AI-generated works:** The AI produces the output with minimal human creative input (e.g., a single prompt with the output used as-is). These works may not attract copyright protection under Australian law.
+
+**Test:** If a reasonable person would consider the human's creative contribution to be the primary driver of the final output, the work is AI-assisted. If the AI's contribution is the primary driver, the work is AI-generated.
+
+---
+
+## 4. IP Ownership Rules
+
+### 4.1 Ownership of AI Outputs
+
+| Context | Owner | Conditions |
+|---------|-------|------------|
+| Employee using AI tools in the course of employment | {{ business_name }} | Subject to employment contract terms |
+| Contractor using AI tools for {{ business_name }} | {{ business_name }} | Must be specified in contractor agreement with IP assignment clause |
+| AI output generated using {{ business_name }}'s proprietary data | {{ business_name }} | Ensure vendor terms assign output IP to the customer |
+| AI output generated using public data only | Uncertain | May not attract copyright; treat as unprotected |
+
+### 4.2 Vendor IP Terms
+
+Before using any AI tool for commercial output, verify:
+
+- [ ] The vendor's terms of service assign IP rights in outputs to the customer ({{ business_name }})
+- [ ] The vendor does not claim ownership or licence rights over outputs generated using {{ business_name }}'s data
+- [ ] The vendor does not reserve the right to use {{ business_name }}'s outputs for model training without consent
+
+{% if vendor_dpa_in_place %}
+{{ business_name }} has vendor DPAs in place. Review existing DPAs to confirm they address IP ownership of AI outputs, not only data protection obligations.
+{% else %}
+**Action required:** {{ business_name }} does not have standard vendor DPAs. IP ownership of AI outputs should be addressed in vendor agreements as a priority.
+{% endif %}
+
+---
+
+## 5. Using AI-Generated Content in Commercial Products
+
+### 5.1 Risk Assessment
+
+Before incorporating AI-generated content into commercial products, services, or client deliverables, the following risks must be assessed:
+
+| Risk | Mitigation |
+|------|------------|
+| No copyright protection | AI-generated content may not be protectable — competitors could freely copy it |
+| Third-party IP infringement | AI may reproduce copyrighted material from its training data |
+| Misleading or deceptive conduct (ACL) | Passing off AI-generated content as human-created may breach the ACL |
+| Client expectations | Clients may expect human-authored deliverables unless AI use is disclosed |
+| Accuracy and liability | AI-generated content may contain errors — {{ business_name }} remains liable |
+
+### 5.2 Approval Requirements
+
+| Content Use | Approval Required | Additional Steps |
+|-------------|-------------------|------------------|
+| Internal use only | Team manager | Review for accuracy |
+| External communications (non-commercial) | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} | Review for accuracy + IP check |
+| Commercial products or client deliverables | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} + legal review | Full IP risk assessment + client disclosure |
+| Marketing materials | Marketing lead + {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} | ACL compliance check + disclosure review |
+
+{% if ai_in_marketing %}
+{{ business_name }} uses AI in marketing. All AI-generated marketing content must be reviewed for ACL compliance, including ensuring claims are not misleading and images are not deceptive.
+{% endif %}
+
+---
+
+## 6. Third-Party IP Risks
+
+### 6.1 AI Training Data Concerns
+
+AI models are trained on large datasets that may include copyrighted material. When {{ business_name }} uses AI-generated outputs, there is a risk that those outputs reproduce or closely resemble third-party copyrighted works.
+
+**Mitigation measures:**
+
+- [ ] Do not use AI outputs verbatim for substantial portions of commercial content without human review and modification
+- [ ] Run AI-generated text through plagiarism detection tools before publication
+- [ ] For AI-generated images, conduct reverse image searches to check for similarity to existing works
+- [ ] For AI-generated code, review for licence-restricted code snippets (GPL, LGPL, AGPL)
+- [ ] Document the AI tool and prompts used to generate commercial content (for legal defensibility)
+- [ ] Where possible, prefer AI tools whose vendors provide IP indemnification
+
+### 6.2 Code-Specific IP Risks
+
+| Risk | Mitigation |
+|------|------------|
+| AI-generated code may contain GPL-licensed snippets | Scan AI-generated code with licence compliance tools (e.g., FOSSA, Snyk) |
+| AI-generated code may reproduce proprietary code from training data | Review AI code suggestions against known codebases before committing |
+| Open-source licence obligations may be triggered | Maintain an SBOM that includes AI-generated code components |
+
+---
+
+## 7. Disclosure Requirements
+
+### 7.1 When Disclosure Is Required
+
+{{ business_name }} will disclose the use of AI in the following circumstances:
+
+| Circumstance | Disclosure Required | Method |
+|--------------|--------------------|---------|
+| Client deliverables containing AI-generated content | Yes | Written disclosure in deliverable or cover note |
+| Marketing materials created with AI assistance | Yes (under ACL) | Disclosure in footer or metadata |
+| Customer-facing AI interactions (chatbots, recommendations) | Yes | Clear notice at point of interaction |
+| Regulatory filings or legal documents | Yes | Explicit statement in the document |
+| Internal reports and analyses | Recommended | Notation in document header |
+
+{% if ai_disclosure_to_customers %}
+{{ business_name }} discloses AI use to customers. Ensure all customer-facing AI disclosures are consistent with this policy and reviewed quarterly.
+{% else %}
+**Recommendation:** {{ business_name }} should implement customer-facing AI disclosure practices, particularly for commercial deliverables and customer-facing AI interactions, to comply with ACL transparency expectations.
+{% endif %}
+
+### 7.2 Disclosure Wording
+
+Recommended disclosure text for {{ business_name }}:
+
+> *"This [content/document/output] was created with the assistance of artificial intelligence tools. All AI-generated content has been reviewed and verified by {{ business_name }} staff. {{ business_name }} takes responsibility for the accuracy and quality of this content."*
+
+---
+
+## 8. AI-Assisted vs AI-Generated Content Guidelines
+
+### 8.1 Staff Guidance
+
+| Practice | Guidance |
+|----------|----------|
+| Use AI as a drafting tool | Write prompts with specific instructions; review and substantially modify outputs |
+| Add original analysis | Layer human expertise, judgment, and original analysis on top of AI drafts |
+| Select and arrange | Exercise creative judgment in selecting which AI outputs to use and how to arrange them |
+| Document your contribution | Keep records of how you directed, modified, and refined AI outputs |
+| Do not submit AI outputs as-is | All AI outputs must be reviewed, edited, and verified before use |
+
+{% if ai_generated_content_reviewed %}
+{{ business_name }} reviews all AI-generated content before use. This practice supports the characterisation of outputs as AI-assisted (rather than AI-generated) and strengthens copyright claims.
+{% else %}
+**Action required:** {{ business_name }} should implement mandatory review of all AI-generated content to both ensure quality and strengthen the legal position that outputs are AI-assisted works.
+{% endif %}
+
+---
+
+## 9. Trade Secrets Protection
+
+### 9.1 Risks When Using AI Tools
+
+| Risk | Description |
+|------|-------------|
+| Data leakage to AI providers | Proprietary information entered into AI prompts may be stored, logged, or used for model training |
+| Loss of trade secret status | Information shared with an AI provider without confidentiality protections may lose its trade secret status |
+| Competitive intelligence exposure | Patterns of AI queries may reveal {{ business_name }}'s strategic priorities or methods |
+
+### 9.2 Protective Measures
+
+- [ ] Never enter trade secrets, proprietary formulas, or confidential business strategies into AI tools without confirmed training opt-out
+- [ ] Use on-premises or private AI deployments for processing trade secret information where available
+- [ ] Ensure all AI vendor agreements include confidentiality obligations covering input data
+- [ ] Classify and label trade secret information so staff can identify it before entering it into AI tools
+- [ ] Conduct periodic audits of AI tool usage to detect potential trade secret disclosures
+
+{% if ai_copyright_assessed %}
+{{ business_name }} has assessed AI-related copyright and IP risks. Review this assessment annually and update it when new AI tools are adopted or legal developments occur.
+{% else %}
+**Recommendation:** {{ business_name }} should conduct a formal assessment of AI-related copyright and IP risks, including a review of vendor terms, output ownership, and trade secret exposure. Consider engaging IP legal counsel for this assessment.
+{% endif %}
+
+---
+
+## 10. Regulatory Alignment
+
+| Regulation / Guidance | Requirement | This Policy |
+|----------------------|-------------|-------------|
+| Copyright Act 1968 (Cth) | Copyright requires human authorship | AI-assisted vs AI-generated distinction; ownership rules |
+| Australian Consumer Law (ACL) | Prohibition on misleading or deceptive conduct | Disclosure requirements for AI-generated commercial content |
+| AI6 Practice 6 | Provide appropriate transparency about AI use | Disclosure obligations and recommended wording |
+| AI6 Practice 4 | Treat people fairly throughout the AI lifecycle | IP ownership rules for staff and contractors |
+| Privacy Act 1988 (APP 11) | Protect personal information from misuse | Trade secrets and data leakage protections |
+| OAIC Oct 2024 | Transparency in AI decision-making | Disclosure when AI contributes to decisions or content |
+
+---
+
+*Review frequency: Annually, when significant legal developments occur regarding AI and copyright, or when new AI tools are adopted.*

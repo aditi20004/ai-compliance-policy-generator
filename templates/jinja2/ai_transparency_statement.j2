@@ -1,0 +1,132 @@
+# AI Transparency Statement
+
+**{{ business_name }}**
+*Effective Date: {{ effective_date }}*
+*Version: {{ version }}*
+
+---
+
+## Our Commitment to AI Transparency
+
+{{ business_name }} is committed to the responsible and transparent use of artificial intelligence (AI) in our operations. This statement explains how we use AI, what safeguards we have in place, and how you can contact us with questions or concerns.
+
+This statement is published in accordance with Australia's **8 AI Ethics Principles**, the **AI6 Guidance for AI Adoption** (October 2024), and the **POLA Act 2024** transparency obligations.
+
+---
+
+## 1. How We Use AI
+
+{{ business_name }} uses AI tools in the following areas:
+
+{% if ai_tools_in_use and ai_tools_in_use | length > 0 %}
+### Approved AI Tools
+
+{% for tool in ai_tools_in_use %}
+- {{ tool }}
+{% endfor %}
+
+{% else %}
+{{ business_name }} has not yet formally adopted AI tools. This transparency statement has been published proactively as part of our governance framework.
+{% endif %}
+
+{% if customer_facing_ai %}
+### Customer-Facing AI
+
+{{ business_name }} uses AI to assist with customer-facing content and services. All AI-generated customer-facing content is {% if ai_generated_content_reviewed %}reviewed by a human before publication{% else %}subject to quality assurance processes{% endif %}.
+
+We do not use AI to impersonate human staff. Where AI-generated content is used in customer communications, we endeavour to disclose this clearly.
+{% endif %}
+
+{% if automated_decisions %}
+### Automated Decision-Making
+
+{{ business_name }} uses AI to assist with the following types of decisions:
+
+{% for decision_type in automated_decision_types | default([]) %}
+- {{ decision_type }}
+{% endfor %}
+
+In accordance with the **POLA Act 2024** (APP 1.7-1.9, commencing 10 December 2026):
+- We disclose the types of personal information used in automated decisions
+- We identify whether automated decisions significantly affect individuals
+- Individuals may request human review of automated decisions that significantly affect them
+
+{% endif %}
+
+---
+
+## 2. Data We Process Using AI
+
+{% if data_types_processed and data_types_processed | length > 0 %}
+The following types of data may be processed using AI tools:
+
+{% for data_type in data_types_processed | default([]) %}
+- {{ data_type }}
+{% endfor %}
+{% endif %}
+
+We are committed to **data minimisation** — we only input the minimum data necessary for the AI task and take steps to anonymise or de-identify personal information before AI processing where practicable.
+
+{% if ai_tools_overseas and ai_tools_overseas | length > 0 %}
+### Cross-Border Data Processing
+
+Some of our AI tools process data in overseas data centres. In accordance with **APP 8** of the Privacy Act 1988, we take reasonable steps to ensure overseas recipients handle personal information consistently with the APPs. We accept vicarious liability under **Section 16C** for our overseas AI providers' handling of personal information.
+
+Overseas AI tools in use:
+{% for tool in ai_tools_overseas %}
+- {{ tool }}
+{% endfor %}
+{% endif %}
+
+---
+
+## 3. Our AI Governance Safeguards
+
+{{ business_name }} has implemented the following safeguards:
+
+| Safeguard | Status |
+|-----------|--------|
+| AI Acceptable Use Policy | {{ "In place" if existing_it_policies else "Planned" }} |
+| Role-based AI access controls | {{ "Yes" if ai_access_restricted else "In progress" }} |
+| AI prompt and output logging | {{ "Yes" if ai_outputs_logged else "In progress" }} |
+| Shadow AI detection controls | {{ "Yes" if shadow_ai_controls else "In progress" }} |
+| Human review of AI outputs | {{ "Yes" if ai_generated_content_reviewed else "In progress" }} |
+| Staff AI training | {{ training_frequency | replace("_", " ") | title }} |
+| Privacy Impact Assessment | {{ "Completed" if pia_conducted else "Planned" }} |
+{% if ai_governance_contact %}| AI Governance Contact | {{ ai_governance_contact }} |{% endif %}
+
+---
+
+## 4. Your Rights
+
+Under Australian law, you have the right to:
+
+- **Access** personal information we hold about you (APP 12)
+- **Request correction** of inaccurate personal information (APP 13)
+{% if automated_decisions %}- **Request human review** of automated decisions that significantly affect you{% endif %}
+- **Complain** to us or to the Office of the Australian Information Commissioner (OAIC) at [www.oaic.gov.au](https://www.oaic.gov.au)
+
+---
+
+## 5. Contact Us
+
+If you have questions about our use of AI or wish to exercise your rights:
+
+**{{ business_name }}**
+{% if ai_governance_contact %}AI Governance Contact: {{ ai_governance_contact }}{% endif %}
+
+---
+
+## 6. Regulatory Alignment
+
+This transparency statement is aligned with:
+
+- **Privacy Act 1988 (Cth)** and Australian Privacy Principles
+- **POLA Act 2024** — Automated decision transparency (commences 10 December 2026)
+- **Australia's 8 AI Ethics Principles** — Principle 6 (Transparency and Explainability)
+- **AI6 Guidance for AI Adoption** — Practice 4 (Share Information)
+- **OAIC Guidance on AI and Privacy** (October 2024)
+
+---
+
+*This statement is reviewed {{ training_frequency | replace("_", " ") }} and updated when our AI practices materially change.*

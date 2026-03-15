@@ -1,0 +1,256 @@
+# Employee AI Training & Awareness Guide
+
+**Organisation:** {{ business_name }}
+{% if abn %}**ABN:** {{ abn }}{% endif %}
+**Industry:** {{ industry | replace("_", " ") | title }}
+**Effective Date:** {{ effective_date }}
+**Version:** {{ version }}
+**Training Coordinator:** {{ ai_governance_contact | default("To be appointed", true) }}
+**Classification:** Internal — All Staff
+
+---
+
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | Employee AI Training & Awareness Guide |
+| Organisation | {{ business_name }} |
+| Training Coordinator | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Training Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Approved By | (Signature required) |
+
+---
+
+## 1. Welcome
+
+Welcome to {{ business_name }}'s AI Training & Awareness Guide. Artificial intelligence is transforming how we work, and as an organisation with {{ employee_count }} employees in the {{ industry | replace("_", " ") | title }} sector, we are committed to using AI responsibly, safely, and in compliance with Australian law.
+
+This guide covers:
+- What AI tools you can and cannot use
+- How to handle data safely with AI
+- Your legal obligations
+- What to do if something goes wrong
+
+**Completion of this training is mandatory and must be refreshed {{ training_frequency | replace("_", " ") }}.**
+
+## 2. Your Approved AI Tools
+
+{% if ai_tools_in_use and ai_tools_in_use | length > 0 %}
+The following AI tools have been assessed, approved, and are authorised for use at {{ business_name }}:
+
+{% for tool in ai_tools_in_use %}
+### {{ tool }}
+
+- **Status:** Approved
+- **Permitted uses:** Business tasks aligned with your role
+- **Restrictions:** Do not input Restricted or Confidential data without manager approval
+- **Data location:** Check the AI Register for data residency details
+{% endfor %}
+{% else %}
+{{ business_name }} has not yet formally approved any AI tools. **No AI tools are currently authorised for work use.** If you need to use an AI tool, submit a request to {{ ai_governance_contact | default("your manager", true) }} for assessment.
+{% endif %}
+
+### What About Other AI Tools?
+
+**You must NOT use AI tools that have not been approved** by {{ business_name }}. This includes:
+
+- Personal ChatGPT, Gemini, Claude, or Copilot accounts used for work tasks
+- AI browser extensions that process page content
+- AI-powered mobile apps used with work data
+- Free AI tools found online
+
+Using unapproved tools is called **Shadow AI** and creates serious compliance risks. If you are using or want to use an unapproved tool, speak to your manager or the AI Governance Contact to submit it for assessment.
+
+{% if shadow_ai_aware %}
+**Note:** {{ business_name }} is aware that unapproved AI tools may already be in use. We are offering a 30-day amnesty for staff who disclose their usage — no disciplinary action will be taken during this period.
+{% endif %}
+
+## 3. Data Rules — What You Can and Cannot Input
+
+### The Golden Rule
+
+**Never input data into an AI tool that you would not post on a public noticeboard.**
+
+### Data Classification Quick Reference
+
+| Data Type | Can I Use With AI? | Example |
+|---|---|---|
+| Public | Yes | Published reports, marketing materials, public web content |
+| Internal | Yes (approved tools only) | Meeting notes, internal processes, draft documents |
+| Confidential | Only with manager approval | Customer lists, financial data, employee records |
+| Restricted | NO — never input into AI | Health records, credit card numbers, passwords, children's data |
+
+### Specific Rules for {{ business_name }}
+
+{% if "Health Information" in data_types_processed %}
+**Health Data:** Never input patient or health information into any AI tool. This data is classified as Restricted under the Privacy Act 1988 and requires specific handling under the My Health Records Act 2012.
+{% endif %}
+
+{% if "Financial Data (transactions, account numbers)" in data_types_processed %}
+**Financial Data:** Customer financial records, account numbers, and transaction data must not be input into AI tools without explicit authorisation from the Finance Manager.
+{% endif %}
+
+{% if "Children's Data (under 18)" in data_types_processed %}
+**Children's Data:** Data relating to individuals under 18 must NEVER be processed by AI tools. This is a strict prohibition under the Australian Privacy Principles.
+{% endif %}
+
+{% if "Customer Data (purchase history, preferences)" in data_types_processed or "Employee Data (HR records, performance)" in data_types_processed %}
+**Personal Information:** Names, email addresses, phone numbers, and other personal identifiers should be removed or anonymised before inputting data into AI tools.
+{% endif %}
+
+## 4. Your Legal Obligations
+
+As an employee of {{ business_name }}, you have legal obligations when using AI:
+
+### Privacy Act 1988
+
+{% if revenue_exceeds_threshold or trades_in_personal_info %}
+{{ business_name }} is covered by the Privacy Act. This means:
+- You must handle personal information in accordance with the Australian Privacy Principles
+- Data breaches involving AI tools must be reported immediately
+- You are personally accountable for how you handle data in AI tools
+{% else %}
+The small business exemption currently applies to {{ business_name }}, but:
+- The statutory tort for serious invasion of privacy applies to ALL organisations
+- The exemption may be removed under proposed reforms — prepare now
+- Best practice is to comply with the APPs regardless
+{% endif %}
+
+### Australian Consumer Law (ACL)
+
+{% if customer_facing_ai %}
+{{ business_name }} uses AI for customer-facing content. You must:
+- **Never publish AI-generated content without human review** — AI can produce inaccurate or misleading information
+- Ensure AI-generated marketing claims are accurate and verifiable
+- Disclose AI use where it is material to customer decisions
+- Report any misleading AI output immediately
+
+**Penalty for misleading conduct: Up to $50M or 30% of adjusted turnover.**
+{% else %}
+If you ever use AI to create content that customers or the public will see, it must be reviewed by a human before publication. AI can generate plausible-sounding but incorrect information.
+{% endif %}
+
+### POLA Act 2024
+
+{% if automated_decisions %}
+{{ business_name }} uses AI for automated decisions. From December 2026:
+- We must disclose all automated decisions in our privacy policy
+- Individuals can request an explanation of how a decision was made
+- You must maintain documentation of all automated decision processes
+
+**Automated decision types at {{ business_name }}:**
+{% for dtype in automated_decision_types | default([]) %}
+- {{ dtype }}
+{% endfor %}
+{% else %}
+Currently {{ business_name }} does not use AI for automated decisions. If this changes, additional training will be provided on POLA Act requirements.
+{% endif %}
+
+## 5. Common Scenarios — Do's and Don'ts
+
+### Scenario 1: Writing an Email
+
+- **DO:** Use an approved AI tool to draft the email
+- **DO:** Review and edit the output before sending
+- **DON'T:** Paste confidential customer information into the prompt
+- **DON'T:** Send AI-generated content without reading it first
+
+### Scenario 2: Summarising a Meeting
+
+- **DO:** Use approved AI tools to summarise meeting notes
+- **DO:** Remove names and personal details from notes before inputting
+- **DON'T:** Upload recordings to unapproved transcription tools
+- **DON'T:** Share AI summaries externally without review
+
+### Scenario 3: Analysing Data
+
+- **DO:** Use approved tools with anonymised or aggregated data
+- **DO:** Verify AI analysis results before making decisions
+- **DON'T:** Upload spreadsheets with personal information
+- **DON'T:** Rely solely on AI analysis for critical business decisions
+
+### Scenario 4: Creating Marketing Content
+
+{% if customer_facing_ai %}
+- **DO:** Use approved AI tools for initial drafts
+- **DO:** Have a human review all content before publication
+- **DO:** Fact-check all claims made by the AI
+- **DON'T:** Publish AI-generated content directly without review
+- **DON'T:** Use AI to generate fake reviews or testimonials
+{% else %}
+- Follow the same principles as above if AI-generated content is introduced for customer use
+{% endif %}
+
+### Scenario 5: You Discover a Data Breach
+
+- **DO:** Report immediately to your manager AND the AI Governance Contact
+- **DO:** Document what happened, what data was involved, and what AI tool was used
+- **DO:** Stop using the affected AI tool until cleared
+- **DON'T:** Try to fix it yourself
+- **DON'T:** Delete evidence
+- **DON'T:** Wait to report
+
+## 6. Incident Reporting
+
+If you experience or suspect any of the following, report immediately:
+
+| Incident | Who to Contact | Urgency |
+|---|---|---|
+| Data breach (AI tool exposed data) | AI Governance Contact + IT | Immediate |
+| AI generated harmful or biased output | AI Governance Contact | Within 24 hours |
+| Discovered shadow AI usage (self or others) | Manager or AI Governance Contact | Within 48 hours |
+| AI-generated content misled a customer | Manager + Legal | Immediate |
+| Suspected privacy violation via AI | AI Governance Contact + Privacy Officer | Immediate |
+| Unauthorised access to AI tool | IT Security | Immediate |
+
+**Reporting contact:** {{ ai_governance_contact | default("To be appointed", true) }}
+
+## 7. Quiz — Check Your Understanding
+
+Answer the following questions to confirm your understanding:
+
+- [ ] 1. Can you use your personal ChatGPT account for work tasks?
+- [ ] 2. What data classification level must NEVER be input into AI tools?
+- [ ] 3. Who should you contact if you discover an AI-related data breach?
+- [ ] 4. True or False: AI-generated marketing content can be published without human review.
+- [ ] 5. What is Shadow AI?
+- [ ] 6. Under the POLA Act 2024, what must organisations disclose about automated decisions?
+- [ ] 7. What should you do if you find a colleague using an unapproved AI tool?
+
+**Answers:** 1. No, 2. Restricted, 3. AI Governance Contact + IT, 4. False, 5. Unapproved AI tools used without organisational oversight, 6. Disclose them in the privacy policy (from Dec 2026), 7. Report to your manager or AI Governance Contact
+
+## 8. Training Schedule
+
+| Quarter | Training Topic | Format | Duration |
+|---|---|---|---|
+| Q1 | AI Ethics Principles & Acceptable Use | Workshop | 1 hour |
+| Q2 | Data Classification & Privacy Act Refresher | Online Module | 45 minutes |
+| Q3 | Incident Response & Scenario Practice | Tabletop Exercise | 1.5 hours |
+| Q4 | Annual Review & Regulatory Update | All-Staff Briefing | 1 hour |
+
+## 9. Resources
+
+- **AI Acceptable Use Policy** — Detailed rules for approved AI tools
+- **Data Classification Policy** — How to classify and handle data with AI
+- **AI Incident Response Plan** — What happens when things go wrong
+- **AI Vendor Risk Assessment Policy** — How new tools are assessed
+- **AI Ethics & Fairness Framework** — Our ethical commitments
+
+---
+
+## Training Completion Acknowledgement
+
+I have completed the AI Training & Awareness Guide for {{ business_name }}. I understand my obligations when using AI tools and agree to comply with all policies referenced in this guide.
+
+| Field | Detail |
+|---|---|
+| Name | |
+| Position | |
+| Date Completed | |
+| Signature | |
+| Manager Name | |
+| Manager Signature | |
+

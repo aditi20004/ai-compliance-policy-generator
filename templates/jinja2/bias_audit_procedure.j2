@@ -1,0 +1,216 @@
+# AI Bias and Fairness Audit Procedure
+
+**{{ business_name }}**
+*Effective Date: {{ effective_date }}*
+*Version: {{ version }}*
+
+---
+
+## 1. Purpose
+
+This procedure establishes the methodology for auditing AI systems used by {{ business_name }} for bias and fairness. It ensures that AI-driven decisions do not unlawfully discriminate against individuals based on protected attributes under Australian law, and that {{ business_name }} meets its obligations under the **Privacy Act 1988**, the **POLA Act 2024**, and the **Australian AI Ethics Principles** (AI Ethics Principle 2: Fairness).
+
+---
+
+## 2. Scope
+
+This procedure applies to:
+
+- All AI systems that make or assist decisions affecting individuals
+- AI tools that profile, score, rank, or categorise individuals
+- AI systems used in recruitment, performance evaluation, or workforce management
+- AI systems that determine eligibility for products, services, or benefits
+{% if customer_facing_ai %}- Customer-facing AI systems that personalise content, recommendations, or pricing{% endif %}
+{% if ai_in_marketing %}- AI systems used in marketing, targeting, or audience segmentation{% endif %}
+
+### 2.1 AI Systems Currently in Scope
+
+{% if ai_tools_in_use %}
+| AI Tool | Automated Decision Types |
+|---------|------------------------|
+{% for tool in ai_tools_in_use %}| {{ tool }} | {% if automated_decision_types %}{% for adt in automated_decision_types %}{{ adt }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}To be classified{% endif %} |
+{% endfor %}
+{% else %}
+{{ business_name }} has not yet catalogued its AI tools. Completing an AI tool inventory is a prerequisite for this audit procedure.
+{% endif %}
+
+---
+
+## 3. Protected Attributes Under Australian Law
+
+AI systems must not discriminate, directly or indirectly, on the basis of attributes protected by the following legislation:
+
+| Protected Attribute | Legislation | Key Provisions |
+|---------------------|------------|----------------|
+| Age | Age Discrimination Act 2004 (Cth) | Prohibits discrimination in employment, education, access to premises, goods, services, and facilities |
+| Sex, gender identity, intersex status, sexual orientation, marital status, pregnancy | Sex Discrimination Act 1984 (Cth) | Prohibits discrimination and harassment on the basis of sex and related attributes |
+| Race, colour, descent, national or ethnic origin, immigration status | Racial Discrimination Act 1975 (Cth) | Prohibits discrimination based on race in all areas of public life |
+| Disability (physical, intellectual, psychiatric, sensory, neurological, learning) | Disability Discrimination Act 1992 (Cth) | Prohibits discrimination against persons with disabilities; requires reasonable adjustments |
+| Political opinion, religion, social origin | Australian Human Rights Commission Act 1986 (Cth) | Broader protections under the AHRC framework |
+
+### 3.1 Proxy Discrimination
+
+AI systems may discriminate indirectly through proxy variables. {{ business_name }} must audit for proxy discrimination where seemingly neutral features correlate with protected attributes, including but not limited to:
+
+- Postcode as a proxy for race or socioeconomic status
+- Name or language as a proxy for national origin
+- Social media activity as a proxy for political opinion or religion
+- Employment gaps as a proxy for disability, pregnancy, or caring responsibilities
+
+---
+
+## 4. Audit Methodology
+
+### 4.1 Phase 1 — Data Audit
+
+| Step | Activity | Output |
+|------|----------|--------|
+| 1.1 | Inventory all training data sources used by in-scope AI systems | Data source register |
+| 1.2 | Assess whether training data contains protected attribute information (directly or via proxy) | Protected attribute mapping |
+| 1.3 | Evaluate training data representativeness across demographic groups | Representation analysis report |
+| 1.4 | Identify historical biases embedded in training data (e.g., past discriminatory decisions) | Historical bias assessment |
+| 1.5 | Review data labelling processes for subjective or inconsistent labels | Labelling quality report |
+
+### 4.2 Phase 2 — Output Testing
+
+| Step | Activity | Output |
+|------|----------|--------|
+| 2.1 | Generate synthetic test cases spanning all protected attribute groups | Test dataset |
+| 2.2 | Submit test cases through the AI system and record outcomes | Raw results |
+| 2.3 | Perform statistical analysis of outcome distribution across groups | Statistical analysis report |
+| 2.4 | Identify outcome patterns that correlate with protected attributes | Correlation analysis |
+| 2.5 | Test edge cases and intersectional groups (e.g., older women with disability) | Intersectional analysis |
+
+### 4.3 Phase 3 — Disparate Impact Analysis
+
+Apply the **four-fifths rule** as a threshold indicator: if the selection rate for any protected group is less than 80% of the selection rate for the most favoured group, disparate impact may exist.
+
+| Metric | Calculation | Threshold |
+|--------|------------|-----------|
+| Selection rate ratio | (Selection rate of disadvantaged group) / (Selection rate of most favoured group) | >= 0.8 (four-fifths) |
+| Odds ratio | Odds of positive outcome for disadvantaged group / Odds for favoured group | 0.8 - 1.25 acceptable range |
+| Statistical significance | Chi-squared test or equivalent | p < 0.05 requires investigation |
+
+---
+
+## 5. Testing Frequency and Triggers
+
+### 5.1 Scheduled Testing
+
+| AI System Category | Testing Frequency |
+|-------------------|-------------------|
+| High-risk (automated decisions on eligibility, employment, credit) | Quarterly |
+| Medium-risk (recommendations, personalisation, scoring) | Every 6 months |
+| Low-risk (content generation, summarisation, internal tools) | Annually |
+
+### 5.2 Event-Triggered Testing
+
+An unscheduled bias audit must be conducted when:
+
+- A new AI model version is deployed or fine-tuned
+- Training data is updated or expanded significantly
+- A complaint or report of discriminatory outcomes is received
+- The AI system is applied to a new use case or population
+- Regulatory guidance changes (e.g., OAIC or AHRC guidance on AI fairness)
+{% if tranche2_aware %}- POLA Act Tranche 2 introduces mandatory bias testing requirements{% endif %}
+
+---
+
+## 6. Bias Metrics
+
+{{ business_name }} will measure and report on the following fairness metrics:
+
+| Metric | Definition | Use Case |
+|--------|-----------|----------|
+| **Demographic parity** | Equal positive outcome rates across all groups | General fairness screening |
+| **Equal opportunity** | Equal true positive rates across groups (given actual positives) | Employment and eligibility decisions |
+| **Equalised odds** | Equal true positive and false positive rates across groups | High-risk automated decisions |
+| **Calibration** | Predicted probabilities match actual outcomes across groups | Scoring and risk assessment systems |
+| **Predictive parity** | Equal positive predictive values across groups | Screening and triage systems |
+| **Individual fairness** | Similar individuals receive similar outcomes | Case-by-case assessment systems |
+
+{% if not bias_testing_conducted %}
+**Gap identified:** {{ business_name }} has not yet conducted bias testing on its AI systems. This procedure provides the framework for the first audit cycle. Prioritise high-risk systems identified in Section 5.1.
+{% else %}
+{{ business_name }} has conducted prior bias testing. This procedure formalises and standardises the methodology going forward.
+{% endif %}
+
+---
+
+## 7. Remediation Process
+
+When bias is detected, {{ business_name }} will follow this remediation process:
+
+### 7.1 Immediate Actions (within 48 hours)
+
+1. **Assess severity** — determine whether the bias causes material harm to individuals
+{% if ai_profiling_or_eligibility %}2. **Pause affected decisions** — suspend automated eligibility or profiling decisions pending investigation{% else %}2. **Assess decision impact** — determine if any affected decisions should be paused{% endif %}
+3. **Notify** {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }}
+4. **Preserve evidence** — retain all test data, results, and model versions
+
+### 7.2 Investigation (within 14 days)
+
+1. **Root cause analysis** — determine whether bias originates from data, model, or deployment
+2. **Impact assessment** — identify all individuals potentially affected by biased decisions
+3. **Review past decisions** — audit historical outputs for the same bias pattern
+{% if human_review_available %}4. **Activate human review** — route all affected decisions through human reviewers until remediation is complete{% else %}4. **Implement manual override** — establish a human review process for affected decisions{% endif %}
+
+### 7.3 Remediation (within 30 days)
+
+1. **Data remediation** — rebalance, augment, or correct biased training data
+2. **Model adjustment** — retrain, fine-tune, or apply fairness constraints to the model
+3. **Testing** — re-run the full bias audit to confirm remediation effectiveness
+4. **Affected individual review** — assess whether individuals affected by biased decisions require notification or compensation
+5. **Documentation** — update the AI Bias Audit Report with findings and actions taken
+
+---
+
+## 8. Documentation and Reporting
+
+### 8.1 Audit Report Contents
+
+Each bias audit must produce a report containing:
+
+- [ ] Audit date, scope, and methodology
+- [ ] AI system(s) assessed and their use cases
+- [ ] Protected attributes tested
+- [ ] Test data description and representativeness
+- [ ] Results for each bias metric (Section 6)
+- [ ] Disparate impact analysis results
+- [ ] Findings classification (no bias / potential bias / confirmed bias)
+- [ ] Remediation actions taken or planned
+- [ ] Sign-off by {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }}
+
+### 8.2 Reporting and Retention
+
+| Report Element | Audience | Retention |
+|---------------|----------|-----------|
+| Full audit report | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }}, legal counsel | 7 years |
+| Executive summary | Senior leadership, board | 7 years |
+| Remediation action plan | Technical teams, {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} | Until superseded |
+| Statistical test data and results | Audit archive | 7 years |
+
+{% if ai_generated_content_reviewed %}
+{{ business_name }} already reviews AI-generated content. Bias audit findings should be integrated into existing content review processes.
+{% endif %}
+
+---
+
+## 9. Regulatory Alignment
+
+| Regulation / Guidance | Requirement | This Procedure |
+|-----------------------|------------|----------------|
+| AI Ethics Principle 2 (Fairness) | AI systems should be inclusive and accessible, not involving unfair discrimination | Comprehensive bias testing methodology and remediation |
+| Privacy Act 1988 — APP 3 | Collection of sensitive information requires consent and must be necessary | Data audit identifies sensitive attribute collection in training data |
+| Privacy Act 1988 — APP 6 | Use and disclosure for primary purpose or reasonably expected secondary purpose | Ensures AI outputs do not discriminate in ways outside collection purpose |
+| POLA Act 2024 | Transparency in automated decision-making; reasonable steps to prevent harm | Disparate impact analysis, human review activation, affected individual assessment |
+| Age Discrimination Act 2004 | No discrimination on the basis of age | Age-based outcome testing in Phase 2 |
+| Sex Discrimination Act 1984 | No discrimination on the basis of sex, gender identity, or related attributes | Gender-based outcome testing in Phase 2 |
+| Racial Discrimination Act 1975 | No discrimination on the basis of race | Race and ethnicity outcome testing in Phase 2 |
+| Disability Discrimination Act 1992 | No discrimination on the basis of disability; reasonable adjustments | Disability-based testing; accessibility review of AI interfaces |
+{% if tranche2_aware %}| POLA Act Tranche 2 (anticipated) | Mandatory bias testing for high-risk AI systems | This procedure is designed to meet anticipated Tranche 2 requirements |{% endif %}
+| OAIC Oct 2024 | Organisations must assess AI systems for discrimination risk | Scheduled and event-triggered testing framework |
+
+---
+
+*Review frequency: Annually, after each major audit cycle, or when anti-discrimination legislation or AI regulatory guidance changes.*

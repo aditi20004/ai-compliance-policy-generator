@@ -1,0 +1,400 @@
+# Remediation Action Plan
+
+**Organisation:** {{ business_name }}
+**Industry:** {{ industry | replace("_", " ") | title }}
+**Date:** {{ effective_date }}
+**Version:** {{ version }}
+**Classification:** Confidential — For Internal Use Only
+
+---
+
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Prepared For | {{ business_name }} |
+| Responsible Officer | {{ owner }} |
+| Risk Rating | {{ risk_rating }} |
+| Compliance Score | {{ score_percentage }}% ({{ passed }}/{{ total }} items passed) |
+| Plan Created | {{ effective_date }} |
+| 30-Day Review | {{ deadline_30 }} |
+| 60-Day Review | {{ deadline_60 }} |
+| 90-Day Full Reassessment | {{ deadline_90 }} |
+
+---
+
+## 1. Executive Summary
+
+This remediation action plan addresses **{{ (critical_actions | length) + (high_actions | length) + (medium_actions | length) + (quick_wins | length) }}** compliance gaps identified in the AI6 Essential Practices assessment for **{{ business_name }}**. The organisation's current compliance score is **{{ score_percentage }}%** with a risk rating of **{{ risk_rating }}**.
+
+{{ risk_description }}
+
+Actions are prioritised by severity and grouped into four timelines:
+
+| Timeline | Priority | Actions | Target |
+|---|---|---|---|
+| 14 Days | Quick Wins | {{ quick_wins | length }} | Low-effort governance foundations |
+| 30 Days | Critical | {{ critical_actions | length }} | Highest regulatory risk items |
+| 60 Days | High | {{ high_actions | length }} | Significant risk reduction |
+| 90 Days | Medium | {{ medium_actions | length }} | Governance maturity improvement |
+
+---
+
+## 2. RACI Matrix
+
+The following responsibility matrix applies to all remediation actions in this plan.
+
+| Role | Responsibility |
+|---|---|
+| {{ owner }} (Responsible Officer) | Accountable for plan execution and progress reporting |
+| IT/Security Team | Implement technical controls (DPAs, network blocks, monitoring) |
+| Legal/Compliance | Regulatory assessment, policy review, PIA coordination |
+| HR/People | Training coordination, staff communications |
+| Senior Management | Resource allocation, executive approvals, governance oversight |
+| All Staff | Awareness, training completion, policy adherence |
+
+---
+
+{% if quick_wins %}
+## 3. Quick Wins (Within 14 Days)
+
+These items require minimal effort and deliver immediate governance value. Complete these first to build momentum.
+
+{% for action in quick_wins %}
+### 3.{{ loop.index }}. {{ action.name }}
+
+| Field | Detail |
+|---|---|
+| Severity | {{ action.severity | upper }} |
+| Regulation | {{ action.regulation }} |
+| Owner | {{ action.owner }} |
+| Deadline | {{ action.deadline }} |
+
+**Current Gap:** This item is not currently satisfied in the organisation's compliance assessment.
+
+**What To Do:**
+{{ action.description }}
+
+**Implementation Steps:**
+{% if "governance contact" in action.name | lower %}
+1. Identify a suitable individual with authority over AI usage decisions
+2. Document their name, role, and contact details in all AI governance policies
+3. Communicate the appointment to all staff via email or intranet
+4. Update the AI tool register and incident response plan with the new contact
+{% elif "training" in action.name | lower %}
+1. Research available AI and privacy training programs (OAIC offers free resources)
+2. Schedule training sessions at the recommended frequency
+3. Communicate the training schedule to all staff
+4. Track completion rates and maintain records
+{% elif "IT" in action.name | lower or "policies" in action.name | lower %}
+1. Audit existing IT policies for relevance to AI governance
+2. Identify gaps where AI-specific guidance is needed
+3. Draft initial AI addendums to existing IT policies
+4. Get management sign-off and distribute to staff
+{% else %}
+1. Review the specific requirement against current organisational practices
+2. Identify the simplest path to satisfying the compliance item
+3. Document the action taken and the evidence of compliance
+4. Update the compliance assessment record
+{% endif %}
+
+**Success Criteria:**
+- [ ] Action completed by {{ action.deadline }}
+- [ ] Evidence documented and filed
+- [ ] Relevant stakeholders notified
+- [ ] Compliance item re-assessed as PASS
+
+{% endfor %}
+
+---
+{% endif %}
+
+{% if critical_actions %}
+## 4. 30-Day Actions (Critical Priority)
+
+**Deadline: {{ deadline_30 }}**
+
+These items represent the **highest regulatory risk** to {{ business_name }}. Failure to address them exposes the organisation to substantial penalties and reputational harm. Allocate dedicated resources immediately.
+
+### Summary Table
+
+| # | Action | Regulation | Owner | Deadline | Risk If Not Addressed |
+|---|--------|-----------|-------|----------|-----------------------|
+{% for action in critical_actions %}
+| {{ loop.index }} | {{ action.name }} | {{ action.regulation }} | {{ action.owner }} | {{ action.deadline }} | Significant penalty exposure |
+{% endfor %}
+
+{% for action in critical_actions %}
+### 4.{{ loop.index }}. {{ action.name }}
+
+| Field | Detail |
+|---|---|
+| Severity | CRITICAL |
+| Regulation | {{ action.regulation }} |
+| Owner | {{ action.owner }} |
+| Deadline | {{ action.deadline }} |
+
+**Current Gap:** This critical compliance item is not currently satisfied.
+
+**What To Do:**
+{{ action.description }}
+
+**Implementation Steps:**
+{% if "shadow" in action.name | lower %}
+1. Conduct an anonymous staff survey to identify unapproved AI tool usage
+2. Review network logs and browser histories for AI tool access patterns
+3. Implement web filtering to block known unapproved AI services
+4. Establish a formal AI tool request and approval process
+5. Communicate the Shadow AI policy to all staff with amnesty period
+6. Deploy endpoint monitoring for ongoing detection
+{% elif "cross-border" in action.name | lower or "DPA" in action.name | lower or "vendor" in action.name | lower %}
+1. Inventory all AI tools that process data overseas
+2. Contact each vendor to request their standard DPA
+3. Review DPA terms with legal counsel — ensure APP 8 compliance
+4. Execute DPAs with all overseas AI tool vendors
+5. Document data flow maps showing what data goes where
+6. Establish quarterly vendor review process
+{% elif "acceptable use" in action.name | lower %}
+1. Use this tool to generate the AI Acceptable Use Policy
+2. Review the generated policy with legal counsel and management
+3. Customise any sections requiring organisation-specific detail
+4. Get formal management sign-off
+5. Distribute to all staff with mandatory acknowledgement
+6. Schedule training on the new policy
+{% elif "POLA" in action.name | lower or "automated" in action.name | lower or "transparent" in action.name | lower %}
+1. Inventory all automated decision systems currently in use
+2. For each system, document: inputs, logic, outputs, and affected individuals
+3. Draft transparency notices explaining automated decision-making
+4. Update the privacy policy to include automated decision disclosures
+5. Implement a human review mechanism for each automated decision type
+6. Test the disclosure and review process before the December 2026 deadline
+{% elif "ACL" in action.name | lower or "content" in action.name | lower or "consumer" in action.name | lower %}
+1. Identify all AI-generated customer-facing content workflows
+2. Implement mandatory human review checkpoints before publication
+3. Create a review checklist covering accuracy, completeness, and compliance
+4. Train content teams on ACL obligations (s18 strict liability)
+5. Establish an audit trail for reviewed content
+6. Conduct monthly spot-checks of published AI-generated content
+{% elif "human oversight" in action.name | lower %}
+1. Identify all AI-assisted decision processes affecting individuals
+2. Document the current level of human involvement in each process
+3. Implement mandatory human review before decisions are finalised
+4. Create escalation pathways for disputed AI-assisted decisions
+5. Train decision-makers on their review responsibilities
+6. Establish audit logging for all AI-assisted decisions
+{% else %}
+1. Assess the current state against the specific requirement
+2. Identify resources and approvals needed to address the gap
+3. Implement the required controls, policies, or processes
+4. Document evidence of compliance
+5. Communicate changes to affected stakeholders
+6. Schedule ongoing monitoring to maintain compliance
+{% endif %}
+
+**Estimated Resources:**
+- Time: 15-40 hours of staff effort
+- Budget: May require vendor engagement or legal review
+- Dependencies: Management approval, IT support
+
+**Risk If Not Addressed:**
+- Regulatory penalty exposure under {{ action.regulation }}
+- Potential data breach or privacy violation
+- Reputational damage to {{ business_name }}
+
+**Success Criteria:**
+- [ ] Implementation steps completed by {{ action.deadline }}
+- [ ] Policy or control formally documented and approved
+- [ ] Staff trained or notified as applicable
+- [ ] Compliance item re-assessed as PASS
+- [ ] Evidence filed for audit purposes
+
+{% endfor %}
+
+---
+{% endif %}
+
+{% if high_actions %}
+## 5. 60-Day Actions (High Priority)
+
+**Deadline: {{ deadline_60 }}**
+
+These items carry **significant regulatory risk** and should be addressed promptly after critical items are resolved. They contribute materially to the overall compliance score.
+
+### Summary Table
+
+| # | Action | Regulation | Owner | Deadline |
+|---|--------|-----------|-------|----------|
+{% for action in high_actions %}
+| {{ loop.index }} | {{ action.name }} | {{ action.regulation }} | {{ action.owner }} | {{ action.deadline }} |
+{% endfor %}
+
+{% for action in high_actions %}
+### 5.{{ loop.index }}. {{ action.name }}
+
+| Field | Detail |
+|---|---|
+| Severity | HIGH |
+| Regulation | {{ action.regulation }} |
+| Owner | {{ action.owner }} |
+| Deadline | {{ action.deadline }} |
+
+**What To Do:**
+{{ action.description }}
+
+**Implementation Steps:**
+{% if "PIA" in action.name | upper or "privacy impact" in action.name | lower %}
+1. Define the scope of the PIA (which AI systems, what data, what processes)
+2. Map data flows for each AI tool including inputs, processing, outputs, and storage
+3. Identify privacy risks for each data flow (collection, use, disclosure, storage, destruction)
+4. Assess risks against the APPs and assign likelihood/consequence ratings
+5. Document risk mitigation measures and residual risks
+6. Get management sign-off and schedule annual PIA reviews
+{% elif "data classification" in action.name | lower %}
+1. Use this tool to generate the Data Classification Policy
+2. Review classification tiers against the organisation's data landscape
+3. Map existing data assets to the classification tiers
+4. Train staff on classification procedures and AI-specific rules
+5. Implement technical controls to enforce classification (labelling, access controls)
+6. Distribute the policy with mandatory acknowledgement
+{% elif "incident" in action.name | lower %}
+1. Use this tool to generate the AI Incident Response Plan
+2. Customise the plan with organisation-specific contacts and procedures
+3. Establish the incident response team and assign roles
+4. Communicate the plan to all staff
+5. Schedule the first tabletop exercise within 90 days
+6. Test notification procedures with a dry run
+{% elif "governance contact" in action.name | lower %}
+1. Identify a suitable individual with authority over AI usage
+2. Document their responsibilities in a formal role description
+3. Communicate the appointment organisation-wide
+4. Update all AI governance documents with their contact details
+{% else %}
+1. Assess the current state against the specific requirement
+2. Develop an implementation plan with clear milestones
+3. Allocate resources and obtain necessary approvals
+4. Implement the required changes
+5. Verify effectiveness and document evidence
+6. Schedule ongoing monitoring
+{% endif %}
+
+**Success Criteria:**
+- [ ] Implementation completed by {{ action.deadline }}
+- [ ] Documentation and evidence filed
+- [ ] Compliance item re-assessed as PASS
+
+{% endfor %}
+
+---
+{% endif %}
+
+{% if medium_actions %}
+## 6. 90-Day Actions (Medium Priority)
+
+**Deadline: {{ deadline_90 }}**
+
+These items improve **governance maturity** and reduce long-term risk. They should be addressed after critical and high-priority items.
+
+### Summary Table
+
+| # | Action | Regulation | Owner | Deadline |
+|---|--------|-----------|-------|----------|
+{% for action in medium_actions %}
+| {{ loop.index }} | {{ action.name }} | {{ action.regulation }} | {{ action.owner }} | {{ action.deadline }} |
+{% endfor %}
+
+{% for action in medium_actions %}
+### 6.{{ loop.index }}. {{ action.name }}
+
+| Field | Detail |
+|---|---|
+| Severity | MEDIUM |
+| Regulation | {{ action.regulation }} |
+| Owner | {{ action.owner }} |
+| Deadline | {{ action.deadline }} |
+
+**What To Do:**
+{{ action.description }}
+
+**Success Criteria:**
+- [ ] Implementation completed by {{ action.deadline }}
+- [ ] Compliance item re-assessed as PASS
+
+{% endfor %}
+
+---
+{% endif %}
+
+{% if not critical_actions and not high_actions and not medium_actions and not quick_wins %}
+## 3. No Remediation Actions Required
+
+All compliance items have been satisfied. {{ business_name }} should:
+
+1. Continue monitoring Australian regulatory developments
+2. Schedule quarterly compliance reviews
+3. Maintain current governance practices
+4. Conduct biannual tabletop exercises
+5. Update policies when regulatory changes occur
+
+---
+{% endif %}
+
+## 7. Progress Tracking
+
+Use this table to track remediation progress at each review milestone.
+
+| Review Date | Items Due | Items Completed | Score Target | Actual Score | Notes |
+|---|---|---|---|---|---|
+| {{ effective_date }} (Baseline) | - | - | - | {{ score_percentage }}% | Initial assessment |
+| +14 Days | Quick Wins ({{ quick_wins | length }}) | ___ | +5-10% | ___% | |
+| {{ deadline_30 }} | Critical ({{ critical_actions | length }}) | ___ | +15-25% | ___% | |
+| {{ deadline_60 }} | High ({{ high_actions | length }}) | ___ | +10-15% | ___% | |
+| {{ deadline_90 }} | Medium ({{ medium_actions | length }}) | ___ | 80%+ target | ___% | Full reassessment |
+
+---
+
+## 8. Review Schedule
+
+| Milestone | Date | Action | Responsible |
+|-----------|------|--------|-------------|
+| Quick Wins Review | {{ effective_date }} + 14 days | Verify quick wins completed, update tracking | {{ owner }} |
+| 30-Day Review | {{ deadline_30 }} | Review critical action completion, escalate blockers | {{ owner }} |
+| 60-Day Review | {{ deadline_60 }} | Review high priority completion, adjust timelines | {{ owner }} |
+| 90-Day Full Assessment | {{ deadline_90 }} | Complete reassessment against AI6 framework | {{ owner }} |
+| Next Assessment | {{ next_assessment_date }} | Scheduled periodic reassessment | {{ owner }} |
+| POLA Act Deadline | 2026-12-10 | Automated decision disclosure must be in place | Legal/Compliance |
+
+---
+
+## 9. Escalation Procedures
+
+If remediation items cannot be completed by their deadlines:
+
+1. **Notify** the Responsible Officer at least 7 days before the deadline
+2. **Document** the blocker, its root cause, and proposed resolution
+3. **Escalate** to senior management if the blocker requires additional resources or authority
+4. **Revise** the timeline with management approval and document the revised deadline
+5. **Monitor** closely to ensure the revised deadline is met
+
+---
+
+## Appendix A: Glossary
+
+| Term | Definition |
+|---|---|
+| AI6 | Australian Government's 6 Essential Practices for safe and responsible AI |
+| APP | Australian Privacy Principle (under the Privacy Act 1988) |
+| ACL | Australian Consumer Law (Schedule 2, Competition and Consumer Act 2010) |
+| DPA | Data Processing Agreement (contractual data handling obligations) |
+| NDB | Notifiable Data Breaches scheme (Privacy Act Part IIIC) |
+| OAIC | Office of the Australian Information Commissioner |
+| PIA | Privacy Impact Assessment |
+| POLA Act | Privacy and Other Legislation Amendment Act 2024 |
+| Shadow AI | Unapproved AI tools used without organisational knowledge or oversight |
+| RACI | Responsible, Accountable, Consulted, Informed (responsibility matrix) |
+
+---
+
+*Remediation plan generated on {{ effective_date }} by the AI Compliance Policy Generator.*
+*Responsible Officer: {{ owner }}*
+*This document is confidential and intended for {{ business_name }} internal use only.*
+*Next reassessment due: {{ next_assessment_date }}*

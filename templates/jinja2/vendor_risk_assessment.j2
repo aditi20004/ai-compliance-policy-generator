@@ -1,0 +1,265 @@
+# AI Vendor Risk Assessment Policy
+
+**Organisation:** {{ business_name }}
+{% if abn %}**ABN:** {{ abn }}{% endif %}
+**Industry:** {{ industry | replace("_", " ") | title }}
+**Effective Date:** {{ effective_date }}
+**Version:** {{ version }}
+**Policy Owner:** {{ ai_governance_contact | default("To be appointed", true) }}
+**Classification:** Confidential — Management & Procurement
+
+---
+
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | AI Vendor Risk Assessment Policy |
+| Organisation | {{ business_name }} |
+| Policy Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Approved By | (Signature required) |
+
+---
+
+## 1. Purpose
+
+This policy establishes the requirements for assessing, onboarding, and continuously monitoring third-party AI tool vendors. It ensures {{ business_name }} meets its obligations under the Privacy Act 1988 (APP 8 — Cross-Border Disclosure), OAIC AI Guidance (October 2024), and the POLA Act 2024 when engaging external AI service providers.
+
+## 2. Scope
+
+This policy applies to all AI tools and services provided by third-party vendors that:
+
+- Process, store, or have access to {{ business_name }} data
+- Are used by any employee, contractor, or agent of {{ business_name }}
+- Generate outputs used in business operations or customer-facing activities
+
+### 2.1 Currently Approved AI Tools
+
+{% for tool in ai_tools_in_use %}
+- {{ tool }}
+{% endfor %}
+
+{% if ai_tools_overseas and "None — all data stays in Australia" not in ai_tools_overseas %}
+### 2.2 Overseas Data Processing
+
+The following tools process data outside Australia, triggering APP 8 obligations:
+
+{% for tool in ai_tools_overseas %}
+- {{ tool }}
+{% endfor %}
+
+Under APP 8, {{ business_name }} remains vicariously liable for the overseas provider's handling of personal information as if the act or practice had been done by {{ business_name }}.
+{% endif %}
+
+## 3. Vendor Risk Tiers
+
+All AI vendors must be classified into one of three risk tiers before onboarding:
+
+### Tier 1 — High Risk
+
+- Vendor processes Restricted or Confidential data (as defined in the Data Classification Policy)
+- Vendor makes or supports automated decisions affecting individuals
+- Vendor processes health, financial, or children's data
+- Vendor stores data outside Australia
+
+**Requirements:** Full risk assessment, DPA execution, annual audit, PIA required.
+
+### Tier 2 — Medium Risk
+
+- Vendor processes Internal-classified data only
+- Vendor provides tools used in customer-facing content generation
+- Vendor has access to employee data (non-sensitive)
+
+**Requirements:** Standard risk assessment, DPA execution, biannual review.
+
+### Tier 3 — Low Risk
+
+- Vendor processes only Public-classified data
+- No personal information processed
+- Standalone tools with no data export capability
+
+**Requirements:** Lightweight assessment, standard terms review, annual check.
+
+## 4. Pre-Onboarding Assessment
+
+Before any AI vendor is approved, the following assessment must be completed:
+
+### 4.1 Security Assessment Checklist
+
+- [ ] Vendor provides SOC 2 Type II or ISO 27001 certification
+- [ ] Data encryption at rest and in transit confirmed
+- [ ] Vendor's data retention and deletion policies reviewed
+- [ ] Incident response and breach notification process documented
+- [ ] Vendor employee access controls and background checks confirmed
+- [ ] Multi-factor authentication available for admin access
+
+### 4.2 Privacy Assessment Checklist
+
+- [ ] Data Processing Agreement (DPA) drafted and reviewed
+- [ ] Data residency locations identified and documented
+- [ ] Sub-processor list obtained and reviewed
+- [ ] Vendor's privacy policy aligns with Australian Privacy Principles
+- [ ] Data subject access request (DSAR) procedures confirmed
+- [ ] Right to data portability and deletion confirmed
+{% if pia_conducted %}
+- [x] Privacy Impact Assessment completed for this vendor category
+{% else %}
+- [ ] Privacy Impact Assessment required before onboarding Tier 1 vendors
+{% endif %}
+
+### 4.3 AI-Specific Assessment
+
+{% if vendor_ai_clauses_reviewed %}
+- [x] Vendor contracts reviewed for AI-specific clauses (model training opt-out, sub-processor lists, IP ownership)
+{% else %}
+- [ ] Vendor contracts reviewed for AI-specific clauses (model training opt-out, sub-processor lists, IP ownership) — **Action Required**
+{% endif %}
+- [ ] AI model training data sources disclosed
+- [ ] Model bias testing results provided or committed to
+- [ ] AI output explainability capabilities documented
+- [ ] Vendor confirms no use of customer data for model training (without consent)
+- [ ] Intellectual property ownership of AI outputs clarified
+- [ ] AI Ethics Principles alignment documented
+
+### 4.4 Regulatory Compliance Assessment
+
+- [ ] Vendor confirms compliance with Privacy Act 1988
+{% if automated_decisions %}
+- [ ] Vendor supports POLA Act automated decision disclosure requirements
+- [ ] Vendor can provide explanations for automated decisions on request
+{% endif %}
+{% if customer_facing_ai %}
+- [ ] Vendor confirms AI outputs do not breach Australian Consumer Law (s 18, s 29)
+- [ ] Human review process for customer-facing AI content established
+{% endif %}
+
+## 5. Data Processing Agreements
+
+{% if vendor_dpa_in_place %}
+{{ business_name }} currently has Data Processing Agreements in place with AI vendors.
+{% else %}
+{{ business_name }} does NOT currently have Data Processing Agreements in place. This is a critical compliance gap under APP 8 and must be rectified within 30 days.
+{% endif %}
+
+All DPAs must include the following minimum clauses:
+
+1. **Data handling obligations** — Vendor must process data only for the specified purpose
+2. **Sub-processor controls** — Vendor must notify {{ business_name }} before engaging sub-processors
+3. **Data breach notification** — Vendor must notify {{ business_name }} within 24 hours of a suspected breach
+4. **Data residency** — Explicit statement of where data is stored and processed
+5. **Data return/deletion** — Vendor must return or securely delete all data upon contract termination
+6. **Audit rights** — {{ business_name }} retains the right to audit vendor data handling practices
+7. **Insurance requirements** — Vendor must maintain adequate cyber insurance
+8. **Liability allocation** — Clear allocation of liability for data breaches and AI errors
+9. **Regulatory compliance** — Vendor must comply with all applicable Australian privacy and AI regulations
+
+## 6. Ongoing Monitoring
+
+### 6.1 Review Schedule
+
+| Vendor Tier | Review Frequency | Review Scope |
+|---|---|---|
+| Tier 1 (High Risk) | Quarterly | Full security + privacy + AI assessment |
+| Tier 2 (Medium Risk) | Biannually | Security + privacy review |
+| Tier 3 (Low Risk) | Annually | Standard terms review |
+
+### 6.2 Continuous Monitoring
+
+- Monitor vendor security advisories and breach notifications
+- Track changes to vendor privacy policies and terms of service
+- Review vendor sub-processor changes
+- Monitor vendor AI model updates that may affect output quality or bias
+- Track regulatory changes affecting vendor obligations
+
+### 6.3 Trigger Events for Immediate Review
+
+- Vendor data breach or security incident
+- Material change to vendor terms of service or privacy policy
+- Vendor acquisition, merger, or significant leadership change
+- New regulatory guidance affecting vendor category (e.g., OAIC updates)
+- Customer complaints related to vendor AI outputs
+- Discovery of unauthorised vendor data use
+
+## 7. Vendor Offboarding
+
+When an AI vendor relationship ends:
+
+1. **Data return** — Request full export of all {{ business_name }} data
+2. **Data deletion** — Obtain written confirmation of data deletion
+3. **Access revocation** — Remove all API keys, credentials, and integrations within 24 hours
+4. **Sub-processor notification** — Confirm vendor has notified sub-processors of termination
+5. **Audit trail** — Document offboarding in the audit log
+6. **Replacement plan** — Identify alternative tools and migration timeline
+7. **Staff notification** — Inform all users of the tool change and provide transition support
+
+## 8. Shadow AI Vendor Risk
+
+{% if shadow_ai_aware and not shadow_ai_controls %}
+{{ business_name }} has identified that employees are using unapproved AI tools but does not currently have controls in place. Unapproved AI vendors represent a significant compliance risk because:
+
+- No DPA in place — APP 8 obligations unmet
+- No security assessment — data exposure risk unknown
+- No AI-specific controls — bias, IP, and accuracy risks unmanaged
+- No audit trail — incident response compromised
+
+**Immediate action required:** Implement shadow AI detection and establish an expedited assessment process for commonly used unapproved tools.
+{% elif shadow_ai_aware and shadow_ai_controls %}
+{{ business_name }} has identified shadow AI usage and has controls in place. Continue monitoring and encourage staff to submit unapproved tools for formal assessment through the process defined in Section 4.
+{% else %}
+{{ business_name }} has not identified shadow AI usage. Consider implementing proactive detection measures (network monitoring, staff surveys) to identify unapproved tools before they create compliance exposure.
+{% endif %}
+
+## 9. Roles and Responsibilities
+
+| Role | Responsibility |
+|---|---|
+| AI Governance Contact | Approve/reject vendor onboarding, oversee ongoing monitoring |
+| Procurement | Execute DPAs, manage vendor contracts |
+| IT Security | Conduct security assessments, manage access controls |
+| Privacy Officer | Review privacy assessments, conduct PIAs for Tier 1 vendors |
+| Department Heads | Report shadow AI usage, submit new vendor requests |
+| All Staff | Use only approved vendors, report concerns |
+
+## 10. Non-Compliance
+
+Failure to follow this policy may result in:
+
+- Disciplinary action up to and including termination
+- Regulatory penalties under the Privacy Act 1988 (up to $50M or 30% of adjusted turnover)
+- Liability under the POLA Act 2024 statutory tort provisions
+- Reputational damage from vendor-related data breaches
+
+---
+
+## Appendix A: Vendor Assessment Scorecard Template
+
+| Assessment Area | Weight | Score (1-5) | Notes |
+|---|---|---|---|
+| Data Security Controls | 25% | | |
+| Privacy Compliance | 25% | | |
+| AI Ethics & Fairness | 15% | | |
+| Financial Stability | 10% | | |
+| Regulatory Compliance | 15% | | |
+| Support & SLA | 10% | | |
+| **Total Weighted Score** | 100% | | |
+
+**Scoring:** 1 = Critical gaps, 2 = Significant gaps, 3 = Adequate, 4 = Good, 5 = Excellent
+
+**Minimum threshold:** Tier 1 vendors must score 4.0+, Tier 2 must score 3.0+, Tier 3 must score 2.5+.
+
+---
+
+## Appendix B: Policy Acknowledgement
+
+I have read and understood the AI Vendor Risk Assessment Policy. I agree to comply with all requirements when engaging with third-party AI service providers.
+
+| Field | Detail |
+|---|---|
+| Name | |
+| Position | |
+| Date | |
+| Signature | |
+

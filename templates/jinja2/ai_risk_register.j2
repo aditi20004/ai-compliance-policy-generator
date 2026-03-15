@@ -1,0 +1,230 @@
+# AI Risk Register
+
+**Organisation:** {{ business_name }}
+{% if abn %}**ABN:** {{ abn }}{% endif %}
+**Industry:** {{ industry | replace("_", " ") | title }}
+**Effective Date:** {{ effective_date }}
+**Version:** {{ version }}
+**Risk Owner:** {{ ai_governance_contact | default("To be appointed", true) }}
+**Classification:** Confidential — Management Only
+
+---
+
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | AI Risk Register |
+| Organisation | {{ business_name }} |
+| Risk Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | Quarterly |
+| Approved By | (Signature required) |
+
+---
+
+## 1. Purpose
+
+This AI Risk Register provides a structured, living record of all identified risks associated with {{ business_name }}'s use of artificial intelligence. It supports compliance with:
+
+- **AI6 Essential Practice 3** — Manage Risks
+- **Privacy Act 1988** — Risk-based approach to privacy compliance
+- **OAIC AI Guidance (October 2024)** — Expectation of documented AI risk management
+- **POLA Act 2024** — Transparency in automated decision-making
+
+This register must be reviewed quarterly and updated whenever new AI tools are deployed, existing tools are modified, or new risks are identified.
+
+## 2. Risk Assessment Methodology
+
+### 2.1 Likelihood Scale
+
+| Rating | Score | Description |
+|---|---|---|
+| Rare | 1 | May occur in exceptional circumstances |
+| Unlikely | 2 | Could occur but not expected |
+| Possible | 3 | Might occur at some time |
+| Likely | 4 | Will probably occur in most circumstances |
+| Almost Certain | 5 | Expected to occur in most circumstances |
+
+### 2.2 Impact Scale
+
+| Rating | Score | Description |
+|---|---|---|
+| Insignificant | 1 | Minimal impact, easily managed |
+| Minor | 2 | Some impact, manageable with existing controls |
+| Moderate | 3 | Significant impact, requires management attention |
+| Major | 4 | Serious impact, potential regulatory consequences |
+| Catastrophic | 5 | Critical impact, existential threat or major regulatory penalty |
+
+### 2.3 Risk Rating Matrix
+
+| | Insignificant (1) | Minor (2) | Moderate (3) | Major (4) | Catastrophic (5) |
+|---|---|---|---|---|---|
+| Almost Certain (5) | Medium | High | High | Extreme | Extreme |
+| Likely (4) | Low | Medium | High | High | Extreme |
+| Possible (3) | Low | Medium | Medium | High | High |
+| Unlikely (2) | Low | Low | Medium | Medium | High |
+| Rare (1) | Low | Low | Low | Medium | Medium |
+
+---
+
+## 3. AI Risk Register — Current Risks
+
+### 3.1 Data Privacy Risks
+
+{% if ai_tools_overseas and "None — all data stays in Australia" not in ai_tools_overseas %}
+| Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
+|---|---|---|---|---|---|---|---|
+| DP-01 | Cross-border data transfer via AI tools ({{ ai_tools_overseas | join(', ') }}) exposes organisation to APP 8 vicarious liability | 4 | 4 | High | {% if vendor_dpa_in_place %}DPAs in place{% else %}NO DPAs — CRITICAL GAP{% endif %} | {{ ai_governance_contact | default("TBD", true) }} | {% if vendor_dpa_in_place %}Controlled{% else %}Open{% endif %} |
+| DP-02 | Personal information inadvertently input into AI tools by staff | 4 | 3 | High | AI Acceptable Use Policy, data classification training | {{ ai_governance_contact | default("TBD", true) }} | Active |
+{% if "Health Information" in data_types_processed %}
+| DP-03 | Health data processed by AI tools without adequate safeguards | 3 | 5 | High | Restricted classification, staff training, access controls | {{ ai_governance_contact | default("TBD", true) }} | Active |
+{% endif %}
+{% if "Children's Data (under 18)" in data_types_processed %}
+| DP-04 | Children's data (under 18) exposed through AI tools | 2 | 5 | High | Strict prohibition in AUP, data classification training | {{ ai_governance_contact | default("TBD", true) }} | Active |
+{% endif %}
+{% else %}
+| Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
+|---|---|---|---|---|---|---|---|
+| DP-01 | Personal information inadvertently input into AI tools by staff | 4 | 3 | High | AI Acceptable Use Policy, data classification training | {{ ai_governance_contact | default("TBD", true) }} | Active |
+{% endif %}
+
+{% if not pia_conducted %}
+| DP-05 | No Privacy Impact Assessment conducted for AI tools (OAIC recommends PIAs) | 5 | 3 | High | Schedule PIA within 30 days | {{ ai_governance_contact | default("TBD", true) }} | Open |
+{% endif %}
+
+### 3.2 Shadow AI Risks
+
+| Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
+|---|---|---|---|---|---|---|---|
+{% if shadow_ai_aware and not shadow_ai_controls %}
+| SA-01 | Employees using unapproved AI tools with no organisational controls | 5 | 4 | Extreme | CRITICAL: Implement detection and policy controls immediately | {{ ai_governance_contact | default("TBD", true) }} | Open |
+{% elif shadow_ai_aware and shadow_ai_controls %}
+| SA-01 | Employees using unapproved AI tools (controls in place) | 3 | 3 | Medium | Detection tools, AUP enforcement, staff awareness | {{ ai_governance_contact | default("TBD", true) }} | Controlled |
+{% else %}
+| SA-01 | Potential undetected shadow AI usage | 3 | 3 | Medium | AUP training, periodic staff surveys, network monitoring | {{ ai_governance_contact | default("TBD", true) }} | Active |
+{% endif %}
+
+### 3.3 Automated Decision Risks
+
+{% if automated_decisions %}
+| Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
+|---|---|---|---|---|---|---|---|
+| AD-01 | Automated decisions produce biased or unfair outcomes | 3 | 4 | High | Bias testing, human review process, contestability mechanism | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| AD-02 | Failure to disclose automated decisions by POLA Act deadline (Dec 2026) | 2 | 4 | Medium | Privacy policy update planned, disclosure template prepared | {{ ai_governance_contact | default("TBD", true) }} | Active |
+{% for dtype in automated_decision_types | default([]) %}
+| AD-{{ loop.index + 2 }} | {{ dtype }} decision produces incorrect outcome | 3 | 4 | High | Human oversight, appeal process, quarterly accuracy review | {{ ai_governance_contact | default("TBD", true) }} | Active |
+{% endfor %}
+{% endif %}
+
+### 3.4 Customer-Facing AI Risks
+
+{% if customer_facing_ai %}
+| Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
+|---|---|---|---|---|---|---|---|
+| CF-01 | AI-generated customer content is misleading or deceptive (ACL s 18) | 3 | 4 | High | {% if ai_generated_content_reviewed %}Human review before publication{% else %}NO REVIEW PROCESS — CRITICAL GAP{% endif %} | {{ ai_governance_contact | default("TBD", true) }} | {% if ai_generated_content_reviewed %}Controlled{% else %}Open{% endif %} |
+| CF-02 | AI hallucination in customer-facing output causes financial harm | 2 | 5 | High | Fact-checking process, human review, content guidelines | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| CF-03 | Customer not informed of AI involvement in content/recommendations | 3 | 3 | Medium | Disclosure policy, transparency statement | {{ ai_governance_contact | default("TBD", true) }} | Active |
+{% endif %}
+
+### 3.5 Vendor and Supply Chain Risks
+
+| Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
+|---|---|---|---|---|---|---|---|
+{% if not vendor_dpa_in_place %}
+| VS-01 | No Data Processing Agreements with AI vendors (APP 8 non-compliance) | 5 | 4 | Extreme | CRITICAL: Execute DPAs with all vendors within 30 days | {{ ai_governance_contact | default("TBD", true) }} | Open |
+{% else %}
+| VS-01 | AI vendor data breach (DPAs in place) | 2 | 4 | Medium | DPAs with breach notification clauses, vendor monitoring | {{ ai_governance_contact | default("TBD", true) }} | Controlled |
+{% endif %}
+| VS-02 | AI vendor changes terms of service or data handling practices | 3 | 3 | Medium | Vendor monitoring, contract review schedule | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| VS-03 | AI vendor uses customer data for model training without consent | 3 | 4 | High | DPA clauses prohibiting training data use, vendor audit | {{ ai_governance_contact | default("TBD", true) }} | Active |
+
+### 3.6 Operational Risks
+
+| Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
+|---|---|---|---|---|---|---|---|
+| OP-01 | Over-reliance on AI tools leads to skill degradation | 3 | 2 | Medium | Training program, human oversight requirements | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| OP-02 | AI tool outage disrupts business operations | 2 | 3 | Medium | Fallback procedures, multiple tool availability | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| OP-03 | Intellectual property exposure through AI tool inputs | 3 | 4 | High | Data classification policy, AUP restrictions | {{ ai_governance_contact | default("TBD", true) }} | Active |
+{% if not existing_it_policies %}
+| OP-04 | No existing IT security policies to build AI governance upon | 5 | 3 | High | Establish foundational IT security policies within 30 days | {{ ai_governance_contact | default("TBD", true) }} | Open |
+{% endif %}
+
+### 3.7 Regulatory Risks
+
+| Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
+|---|---|---|---|---|---|---|---|
+| RG-01 | Privacy Act small business exemption removed (Tranche 2 reform) | 3 | 4 | High | Prepare for full APP compliance regardless of current coverage | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| RG-02 | POLA Act commencement (Dec 2026) — organisation not prepared | 3 | 4 | High | Disclosure preparation, privacy policy updates, staff training | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| RG-03 | OAIC investigation or enforcement action | 2 | 5 | High | Compliance scorecard monitoring, proactive gap remediation | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| RG-04 | Statutory tort claim for serious invasion of privacy | 2 | 5 | High | Privacy controls, incident response plan, cyber insurance | {{ ai_governance_contact | default("TBD", true) }} | Active |
+
+---
+
+## 4. Risk Treatment Summary
+
+| Risk Rating | Count | Treatment Approach |
+|---|---|---|
+| Extreme | (see above) | Immediate action — escalate to senior management |
+| High | (see above) | Priority treatment — action plan within 30 days |
+| Medium | (see above) | Managed — monitor and review quarterly |
+| Low | (see above) | Accept — review annually |
+
+## 5. Open Action Items
+
+| Action | Risk ID | Owner | Deadline | Status |
+|---|---|---|---|---|
+{% if not vendor_dpa_in_place %}
+| Execute DPAs with all AI vendors | VS-01, DP-01 | {{ ai_governance_contact | default("TBD", true) }} | 30 days | Open |
+{% endif %}
+{% if not pia_conducted %}
+| Conduct Privacy Impact Assessment for AI tools | DP-05 | {{ ai_governance_contact | default("TBD", true) }} | 30 days | Open |
+{% endif %}
+{% if shadow_ai_aware and not shadow_ai_controls %}
+| Implement shadow AI detection controls | SA-01 | {{ ai_governance_contact | default("TBD", true) }} | 14 days | Open |
+{% endif %}
+{% if customer_facing_ai and not ai_generated_content_reviewed %}
+| Establish human review process for customer-facing AI content | CF-01 | {{ ai_governance_contact | default("TBD", true) }} | 14 days | Open |
+{% endif %}
+{% if not existing_it_policies %}
+| Establish foundational IT security policies | OP-04 | {{ ai_governance_contact | default("TBD", true) }} | 30 days | Open |
+{% endif %}
+{% if not incident_response_tested %}
+| Schedule AI incident response tabletop exercise | OP-02 | {{ ai_governance_contact | default("TBD", true) }} | 60 days | Open |
+{% endif %}
+| Review and update this risk register | All | {{ ai_governance_contact | default("TBD", true) }} | Quarterly | Ongoing |
+
+## 6. Review Log
+
+| Review Date | Reviewer | Changes Made | Next Review |
+|---|---|---|---|
+| {{ effective_date }} | {{ ai_governance_contact | default("TBD", true) }} | Initial register created | Quarterly |
+
+---
+
+## Appendix A: Risk Appetite Statement
+
+{{ business_name }} has a **low risk appetite** for AI-related risks that could result in:
+- Breach of the Privacy Act 1988 or POLA Act 2024
+- Harm to individuals through biased or unfair AI outcomes
+- Misleading or deceptive conduct under Australian Consumer Law
+- Exposure of Confidential or Restricted data
+
+{{ business_name }} has a **moderate risk appetite** for:
+- Operational risks from AI tool adoption (managed through training and fallback procedures)
+- Innovation risks from exploring new AI capabilities (managed through vendor assessment)
+
+---
+
+## Appendix B: Policy Acknowledgement
+
+I have reviewed the AI Risk Register and understand the current risk landscape for {{ business_name }}'s AI usage.
+
+| Field | Detail |
+|---|---|
+| Name | |
+| Position | |
+| Date | |
+| Signature | |
+

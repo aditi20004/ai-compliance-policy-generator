@@ -1,0 +1,205 @@
+# AI Procurement Policy
+
+**{{ business_name }}**
+*Effective Date: {{ effective_date }}*
+*Version: {{ version }}*
+
+---
+
+## 1. Purpose
+
+This policy establishes the evaluation, approval, and onboarding process for acquiring new AI tools and services at {{ business_name }}. It ensures that AI procurement decisions account for privacy obligations under the **Privacy Act 1988**, transparency requirements under the **POLA Act 2024**, and governance expectations from the **AI6 Guidance for AI Adoption** (October 2024).
+
+---
+
+## 2. Scope
+
+This policy applies to:
+
+- Purchase or subscription to any AI-powered software, platform, or API
+- Free-tier or trial usage of AI tools that process organisational or personal data
+- Open-source AI models deployed on {{ business_name }}'s infrastructure
+- AI features embedded in existing software (e.g., AI assistants in productivity suites)
+- AI tools used by contractors or third parties on {{ business_name }}'s behalf
+
+**Shadow AI note:** Using AI tools without following this procurement process constitutes Shadow AI and is governed by the {{ business_name }} AI Acceptable Use Policy.
+
+---
+
+## 3. Pre-Procurement Assessment
+
+Before any AI tool is evaluated, the requester must complete an **AI Procurement Request** addressing:
+
+### 3.1 Business Case
+
+| Question | Response Required |
+|----------|-------------------|
+| What business problem does this AI tool solve? | Description |
+| What data will the tool process? | Data types from classification policy |
+| Will the tool process personal information? | Yes / No |
+| Will the tool make or assist decisions affecting individuals? | Yes / No |
+| Who will have access to the tool? | Roles and headcount |
+| What is the expected annual cost? | Budget estimate |
+
+### 3.2 Risk Screening
+
+The following triggers require escalation to {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }} before proceeding:
+
+- The tool will process **Confidential** or **Restricted** data
+- The tool will process data of **children under 18**
+{% if "Health Information" in data_types_processed %}- The tool will process **health information**{% endif %}
+- The tool processes data **overseas** (triggers APP 8 assessment)
+- The tool makes **automated decisions** affecting individuals (triggers POLA Act assessment)
+- The tool is **free-tier** or **open-source** with unclear data handling terms
+
+---
+
+## 4. Evaluation Criteria
+
+All AI tools must be evaluated against the following criteria before approval:
+
+### 4.1 Privacy and Data Protection
+
+| Criterion | Requirement | Weight |
+|-----------|------------|--------|
+| Data processing location | Identify all data centre locations | High |
+| Data residency | Australian data hosting preferred for Confidential/Restricted data | High |
+| Model training opt-out | Vendor must offer opt-out from using customer data for model training | Critical |
+| Sub-processor disclosure | Vendor must disclose all sub-processors and their locations | High |
+| Data deletion capability | Vendor must support data deletion on request with written confirmation | High |
+| Encryption | Data encrypted in transit (TLS 1.2+) and at rest (AES-256) | High |
+
+### 4.2 Contractual Requirements
+
+Before signing, the following must be verified:
+
+- [ ] **Data Processing Agreement (DPA)** — covers APP 8 obligations for overseas processing
+- [ ] **Model training opt-out** — confirmed in writing, not just in generic terms
+- [ ] **Sub-processor list** — provided and reviewed
+- [ ] **Incident notification** — vendor commits to notifying within 72 hours of a data breach
+- [ ] **Data return/deletion** — clear terms for data portability and destruction on contract end
+- [ ] **IP ownership** — AI outputs generated using {{ business_name }}'s data belong to {{ business_name }}
+- [ ] **Liability and indemnification** — vendor accepts liability for data breaches caused by their systems
+- [ ] **Insurance** — vendor maintains adequate cyber insurance
+
+### 4.3 Security Assessment
+
+| Criterion | Acceptable Evidence |
+|-----------|-------------------|
+| Security certification | SOC 2 Type II, ISO 27001, or equivalent |
+| Penetration testing | Annual third-party pentest report |
+| Access controls | Role-based access, MFA, SSO support |
+| Audit logging | Comprehensive logs available to customer |
+| Vulnerability management | Defined patching cadence |
+
+### 4.4 AI-Specific Assessment
+
+| Criterion | Requirement |
+|-----------|------------|
+| Model transparency | Vendor discloses model type, version, and known limitations |
+| Bias testing | Vendor provides bias/fairness testing results where applicable |
+| Output accuracy | Vendor provides accuracy/hallucination benchmarks for the use case |
+| Human override | Tool supports human review and override of AI decisions |
+| Explainability | Tool can explain or justify its outputs when required |
+
+---
+
+## 5. Approval Process
+
+### 5.1 Approval Tiers
+
+| Data Classification | Approver | Additional Requirements |
+|--------------------|----------|------------------------|
+| Public / Internal only | Team manager | Standard evaluation |
+| Confidential | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} | Full evaluation + DPA |
+| Restricted | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} + senior leadership | Full evaluation + DPA + PIA |
+| Automated decisions | Senior leadership | Full evaluation + PIA + POLA Act assessment |
+
+### 5.2 Privacy Impact Assessment
+
+A PIA is **required** when the AI tool:
+- Processes sensitive information (health, biometric, children's data)
+- Makes automated decisions affecting individuals
+- Introduces a new type of personal information collection
+- Processes data overseas for the first time
+
+{% if pia_conducted %}
+{{ business_name }} has experience conducting PIAs. Apply the same methodology to new AI tools.
+{% else %}
+{{ business_name }} has not yet conducted a PIA. The OAIC provides PIA guidance at [www.oaic.gov.au](https://www.oaic.gov.au). Consider engaging external privacy counsel for the first PIA.
+{% endif %}
+
+---
+
+## 6. Onboarding Checklist
+
+Once approved, the following must be completed before the AI tool enters production:
+
+- [ ] DPA signed and filed
+- [ ] Model training opt-out confirmed in writing
+- [ ] Tool added to {{ business_name }}'s AI Tool Register
+- [ ] Data classification confirmed for all data the tool will process
+- [ ] Access controls configured (role-based, minimum necessary)
+- [ ] Logging enabled for prompts, outputs, and user activity
+- [ ] Staff training completed for authorised users
+- [ ] Data retention schedule defined for AI interactions
+- [ ] Incident response procedures updated to include the new tool
+- [ ] Review date set (6 months for initial review, then annually)
+
+---
+
+## 7. Ongoing Review
+
+All approved AI tools must be reviewed:
+
+- **6 months** after initial deployment (first review)
+- **Annually** thereafter
+- **Immediately** when the vendor changes terms, data processing locations, or ownership
+
+Review must reassess:
+- Continued business need
+- Data handling compliance
+- Vendor security posture
+- Contract terms (especially model training and sub-processors)
+- User access (remove unused accounts)
+
+---
+
+## 8. Emergency / Rapid Procurement
+
+For urgent business needs requiring AI tool adoption within 48 hours:
+
+1. Obtain verbal approval from {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }}
+2. Restrict to **Public / Internal** data only until full evaluation is complete
+3. Complete the full evaluation within 30 days
+4. If the tool fails evaluation, decommission and delete all data within 7 days
+
+---
+
+## 9. Prohibited Procurement
+
+The following AI tools must **not** be procured regardless of business case:
+
+- Tools that do not offer model training opt-out for customer data
+- Tools with no data deletion capability
+- Tools that process Restricted data outside Australia without APP 8 safeguards
+- Tools from vendors that refuse to sign a DPA
+- Tools that have no security certification and refuse third-party audit
+
+---
+
+## 10. Regulatory Alignment
+
+| Regulation | Requirement | This Policy |
+|-----------|------------|-------------|
+| APP 8 | Reasonable steps before cross-border disclosure | Data location assessment, DPA requirement |
+| APP 11 | Security of personal information | Security assessment criteria |
+| POLA Act 2024 | Automated decision transparency | PIA + POLA assessment for ADM tools |
+| AI6 Practice 1 | Understand impacts and plan accordingly | Pre-procurement risk screening |
+| AI6 Practice 2 | Decide who is accountable | Tiered approval process |
+| AI6 Practice 3 | Measure and manage risks | Evaluation criteria and ongoing review |
+| OAIC Oct 2024 | PIA before deploying AI systems | PIA requirement for high-risk tools |
+
+---
+
+*Review frequency: Annually or when procurement thresholds or regulatory requirements change.*

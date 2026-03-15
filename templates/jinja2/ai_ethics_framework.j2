@@ -1,0 +1,293 @@
+# AI Ethics & Fairness Framework
+
+**Organisation:** {{ business_name }}
+{% if abn %}**ABN:** {{ abn }}{% endif %}
+**Industry:** {{ industry | replace("_", " ") | title }}
+**Effective Date:** {{ effective_date }}
+**Version:** {{ version }}
+**Policy Owner:** {{ ai_governance_contact | default("To be appointed", true) }}
+**Classification:** Internal — All Staff
+
+---
+
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | AI Ethics & Fairness Framework |
+| Organisation | {{ business_name }} |
+| Policy Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Approved By | (Signature required) |
+
+---
+
+## 1. Purpose
+
+This framework establishes {{ business_name }}'s commitment to the ethical and fair use of artificial intelligence. It operationalises Australia's 8 AI Ethics Principles and the AI6 Essential Practices, providing practical guidance for all staff on responsible AI deployment.
+
+This framework is not aspirational — it defines binding obligations for how {{ business_name }} develops, deploys, and monitors AI systems.
+
+## 2. Australia's 8 AI Ethics Principles — Our Commitments
+
+### Principle 1: Human, Societal and Environmental Wellbeing
+
+AI systems used by {{ business_name }} must benefit individuals, society, and the environment.
+
+**Our commitments:**
+- AI tools are deployed only where they add genuine value to staff, customers, or operations
+- Environmental impact of AI compute is considered in procurement decisions
+- AI is not used to replace human judgement in decisions with significant personal impact without human oversight
+
+### Principle 2: Human-Centred Values
+
+AI must respect human rights, diversity, and individual autonomy.
+
+**Our commitments:**
+- AI systems do not discriminate on the basis of race, gender, age, disability, religion, or any protected attribute
+- Users are informed when they are interacting with AI-generated content
+{% if customer_facing_ai %}
+- All customer-facing AI content is reviewed by a human before publication (ACL s 18 compliance)
+{% endif %}
+- Staff can opt out of AI-assisted processes where reasonable alternatives exist
+
+### Principle 3: Fairness
+
+AI must be inclusive, accessible, and free from unfair bias.
+
+**Our commitments:**
+{% if automated_decisions %}
+- Automated decision systems are tested for bias before deployment and at regular intervals
+- Decisions affecting individuals can be reviewed by a human upon request
+{% for decision_type in automated_decision_types | default([]) %}
+- **{{ decision_type }}**: Bias testing conducted quarterly; outcomes monitored for disparate impact
+{% endfor %}
+{% else %}
+- If automated decision-making is introduced, bias testing will be mandatory before deployment
+{% endif %}
+- Training data sources are documented and reviewed for representativeness
+- AI tools are tested with diverse user groups before rollout
+
+### Principle 4: Privacy Protection and Security
+
+AI must respect and uphold privacy rights and data security.
+
+**Our commitments:**
+- All AI tools comply with the Privacy Act 1988 and Australian Privacy Principles
+- Data minimisation is practised — only data necessary for the AI function is collected
+{% if pia_conducted %}
+- Privacy Impact Assessments have been conducted for AI deployments
+{% else %}
+- Privacy Impact Assessments will be conducted before deploying new AI systems that process personal information (per OAIC guidance, October 2024)
+{% endif %}
+{% if vendor_dpa_in_place %}
+- Data Processing Agreements are in place with all AI vendors
+{% else %}
+- Data Processing Agreements must be established with all AI vendors within 30 days
+{% endif %}
+
+**Data types currently processed by AI systems:**
+{% for dtype in data_types_processed | default([]) %}
+- {{ dtype }}
+{% endfor %}
+
+### Principle 5: Reliability and Safety
+
+AI must operate reliably, accurately, and safely.
+
+**Our commitments:**
+- AI outputs are validated before use in critical business decisions
+- Fallback procedures exist for when AI systems fail or produce unexpected results
+- AI systems are tested in controlled environments before production deployment
+{% if incident_response_tested %}
+- AI incident response has been tested through tabletop exercises in the past 12 months
+{% else %}
+- AI incident response tabletop exercises must be scheduled within 90 days
+{% endif %}
+- Known limitations of AI tools are documented and communicated to users
+
+### Principle 6: Transparency and Explainability
+
+AI processes and outcomes must be transparent and explainable.
+
+**Our commitments:**
+{% if automated_decisions %}
+- Under the POLA Act 2024 (commencing December 2026), {{ business_name }} will disclose all automated decisions in its privacy policy
+- Individuals affected by automated decisions can request a meaningful explanation of the decision logic
+{% endif %}
+- The AI tools used by {{ business_name }} and their purposes are documented in the AI Register (Section 5)
+- Staff are trained on how approved AI tools work, including their limitations
+- AI-generated content is clearly identified where it is shared externally
+
+### Principle 7: Contestability
+
+Individuals must have the ability to challenge AI outcomes.
+
+**Our commitments:**
+{% if automated_decisions %}
+- A clear process exists for individuals to contest automated decisions
+- Contested decisions are reviewed by a qualified human within 10 business days
+- The outcome of the review and the reasoning are communicated to the individual
+{% else %}
+- If automated decision-making is introduced, a contestability process will be established before deployment
+{% endif %}
+- Staff can report concerns about AI fairness through the incident reporting process
+- Customer complaints about AI-driven outcomes are escalated and tracked
+
+### Principle 8: Accountability
+
+Those responsible for AI must be identifiable and accountable.
+
+**Our commitments:**
+- **AI Governance Contact:** {{ ai_governance_contact | default("To be appointed — this must be resolved within 14 days", true) }}
+- Each AI tool has a designated business owner responsible for its ethical use
+- AI-related decisions are logged in the organisation's audit trail
+- Regular reporting on AI ethics compliance is provided to senior management
+
+## 3. AI6 Essential Practices — Implementation
+
+{{ business_name }} operationalises the Australian Government's six essential practices for safe and responsible AI:
+
+### Practice 1: Know Your AI
+
+- Maintain a register of all AI tools in use (approved and detected shadow AI)
+- Document what each AI tool does, what data it processes, and where data is stored
+- Review the AI register quarterly
+
+### Practice 2: Be Accountable
+
+- {{ ai_governance_contact | default("Appoint an AI governance contact", true) }} is accountable for AI ethics compliance
+- Department heads are responsible for AI use within their teams
+- All staff complete AI ethics training {{ training_frequency | replace("_", " ") }}
+
+### Practice 3: Manage Risks
+
+- AI risk assessments are conducted before deploying new tools
+- Risks are documented in the AI Risk Register
+- High-risk AI applications require management approval
+
+### Practice 4: Be Transparent
+
+- Publish an AI transparency statement on the organisation's website
+{% if customer_facing_ai %}
+- Disclose AI use in customer-facing interactions
+{% endif %}
+{% if automated_decisions %}
+- Disclose automated decision-making in the organisation's privacy policy (POLA Act requirement)
+{% endif %}
+
+### Practice 5: Prioritise Safety and Fairness
+
+- Test AI tools for bias and safety before deployment
+- Monitor AI outputs for unintended consequences
+- Establish feedback channels for staff and customers
+
+### Practice 6: Engage and Review
+
+- Engage stakeholders (staff, customers, regulators) on AI governance
+- Review AI ethics practices at least {{ training_frequency | replace("_", " ") }}
+- Participate in industry forums on AI ethics and regulation
+
+## 4. Bias Testing and Fairness Monitoring
+
+### 4.1 Pre-Deployment Testing
+
+Before any AI system is used in production, the following tests must be conducted:
+
+| Test | Frequency | Responsible |
+|---|---|---|
+| Demographic parity analysis | Pre-deployment | AI Governance Contact |
+| Output accuracy across user groups | Pre-deployment | Tool Owner |
+| Edge case and adversarial testing | Pre-deployment | IT Security |
+| User acceptance testing (diverse group) | Pre-deployment | Department Head |
+
+### 4.2 Ongoing Monitoring
+
+| Metric | Threshold | Action if Exceeded |
+|---|---|---|
+| Output accuracy variation across groups | >5% variance | Suspend and investigate |
+| Customer complaint rate (AI-related) | >2% of interactions | Review and remediate |
+| False positive/negative rates | Depends on use case | Escalate to governance |
+| Staff-reported bias incidents | Any occurrence | Investigate within 5 days |
+
+## 5. AI Register
+
+The following AI tools are approved for use at {{ business_name }}:
+
+| Tool | Purpose | Data Classification | Owner |
+|---|---|---|---|
+{% for tool in ai_tools_in_use %}
+| {{ tool }} | (To be documented) | (See Data Classification Policy) | {{ ai_governance_contact | default("TBD", true) }} |
+{% endfor %}
+
+{% if shadow_ai_aware %}
+### 5.1 Shadow AI Awareness
+
+{{ business_name }} is aware that unapproved AI tools may be in use. Staff are reminded that using unapproved AI tools:
+
+- May breach this policy and the AI Acceptable Use Policy
+- Creates unmanaged risk to the organisation
+- Could expose the organisation to regulatory penalties
+
+Staff using unapproved tools should submit them for assessment through the vendor onboarding process. Amnesty for disclosure of past shadow AI usage is offered for 30 days from the effective date of this policy.
+{% endif %}
+
+## 6. Ethical Decision-Making Framework
+
+When staff encounter an ethical dilemma related to AI, they should follow this decision tree:
+
+1. **Is the AI use covered by an existing policy?** If yes, follow that policy.
+2. **Could the AI output cause harm to an individual or group?** If yes, stop and escalate.
+3. **Would you be comfortable if this AI use were made public?** If no, reconsider.
+4. **Does the AI use align with all 8 Ethics Principles?** If uncertain, consult the AI Governance Contact.
+5. **Is there a less risky alternative?** If yes, prefer the less risky option.
+
+## 7. Training Requirements
+
+| Audience | Training Content | Frequency |
+|---|---|---|
+| All Staff | AI Ethics Principles, acceptable use, bias awareness | {{ training_frequency | replace("_", " ") | title }} |
+| Management | Governance responsibilities, risk oversight, regulatory updates | {{ training_frequency | replace("_", " ") | title }} |
+| AI Tool Owners | Bias testing, monitoring, vendor management | Quarterly |
+| AI Governance Contact | Full regulatory landscape, incident management, audit | Quarterly |
+
+## 8. Reporting and Escalation
+
+### 8.1 Ethics Concern Reporting
+
+Staff can report AI ethics concerns through:
+- Direct report to AI Governance Contact ({{ ai_governance_contact | default("to be appointed", true) }})
+- Incident reporting channel (as defined in the AI Incident Response Plan)
+- Anonymous reporting (if available)
+
+### 8.2 Escalation Matrix
+
+| Issue Severity | Escalated To | Response Time |
+|---|---|---|
+| Low (e.g., minor output quality) | Tool Owner | 5 business days |
+| Medium (e.g., suspected bias) | AI Governance Contact | 2 business days |
+| High (e.g., discriminatory outcome) | Senior Management | 24 hours |
+| Critical (e.g., harm to individual) | CEO + Legal | Immediate |
+
+## 9. Review and Continuous Improvement
+
+- This framework is reviewed {{ training_frequency | replace("_", " ") }}
+- Review incorporates: regulatory updates, incident learnings, staff feedback, industry best practices
+- Changes to this framework require approval from senior management
+- A summary of AI ethics performance is reported to the board annually
+
+---
+
+## Appendix A: Policy Acknowledgement
+
+I have read and understood the AI Ethics & Fairness Framework. I commit to applying these principles in my use of AI tools at {{ business_name }}.
+
+| Field | Detail |
+|---|---|
+| Name | |
+| Position | |
+| Date | |
+| Signature | |
+

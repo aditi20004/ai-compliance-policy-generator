@@ -1,0 +1,325 @@
+# AI Acceptable Use Policy
+
+**Organisation:** {{ business_name }}
+{% if abn %}**ABN:** {{ abn }}{% endif %}
+**Industry:** {{ industry | replace("_", " ") | title }}
+**Effective Date:** {{ effective_date }}
+**Version:** {{ version }}
+**Policy Owner:** {{ ai_governance_contact | default("To be appointed", true) }}
+**Classification:** Internal — All Staff
+
+---
+
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | AI Acceptable Use Policy |
+| Organisation | {{ business_name }} |
+| Policy Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Next Review Date | See Section 11 |
+| Approved By | (Signature required) |
+| Industry | {{ industry | replace("_", " ") | title }} |
+| Employees Covered | {{ employee_count }} |
+
+### Version History
+
+| Version | Date | Author | Changes |
+|---|---|---|---|
+| {{ version }} | {{ effective_date }} | AI Compliance Policy Generator | Initial policy generation |
+
+---
+
+## 1. Purpose
+
+This policy establishes the acceptable use of Artificial Intelligence (AI) tools and systems within {{ business_name }}. It ensures AI is used responsibly, ethically, and in compliance with Australian regulations including the Privacy Act 1988, the Australian AI Ethics Principles, and applicable industry standards.
+
+## 2. Scope
+
+This policy applies to all employees, contractors, and third parties of {{ business_name }} ({{ employee_count }} staff) who use or interact with AI tools in the course of their work.
+
+### 2.1 AI Tools Covered
+
+The following AI tools are currently approved for use within the organisation:
+
+{% for tool in ai_tools_in_use %}
+- {{ tool }}
+{% endfor %}
+
+Any AI tool not listed above requires approval from {{ ai_governance_contact | default("the AI Governance Contact", true) }} before use.
+
+## 3. Approved Uses
+
+AI tools may be used for the following purposes:
+
+- Drafting and editing documents, communications, and reports
+- Code assistance and review (where applicable)
+- Data analysis and summarisation of non-sensitive information
+- Research and information gathering from public sources
+- Process automation for routine administrative tasks
+
+## 4. Prohibited Uses
+
+The following uses of AI are strictly prohibited:
+
+- Inputting **Restricted** or **Confidential** data into external AI tools without explicit approval
+{% if "Health Information" in data_types_processed %}
+- Processing patient or health information through unapproved AI systems
+{% endif %}
+{% if "Financial Data (transactions, account numbers)" in data_types_processed %}
+- Using AI for financial decisions without human review and approval
+{% endif %}
+{% if "Personal Information (names, emails, addresses)" in data_types_processed %}
+- Processing personal information through AI without consent or lawful basis under the Privacy Act 1988
+{% endif %}
+- Using AI-generated content as final output without human review
+- Inputting trade secrets, proprietary algorithms, or competitive intelligence
+- Using AI to make automated decisions that significantly affect individuals without human oversight
+{% if automated_decisions %}
+- Making solely automated decisions affecting individual rights without documented human review process
+{% endif %}
+- Using AI to generate misleading, discriminatory, or harmful content
+- Circumventing security controls or access restrictions using AI tools
+
+## 5. Data Handling Requirements
+
+### 5.1 Data Classification for AI Use
+
+Before using any data with AI tools, staff must classify it according to the organisation's Data Classification Policy:
+
+| Classification | AI Use Permitted | Conditions |
+|---|---|---|
+| **Public** | Yes | No restrictions |
+| **Internal** | Yes | Approved tools only |
+| **Confidential** | Restricted | Written approval required |
+| **Restricted** | No | Prohibited in external AI tools |
+
+### 5.2 Data Types Processed
+
+{{ business_name }} processes the following data types that require special consideration when used with AI:
+
+{% for dtype in data_types_processed | default([]) %}
+- {{ dtype }}
+{% endfor %}
+
+{% if revenue_exceeds_threshold %}
+### 5.3 Privacy Act Compliance
+
+As an organisation exceeding the $3 million annual revenue threshold, {{ business_name }} is bound by the Australian Privacy Principles (APPs) under the Privacy Act 1988. All AI use involving personal information must comply with:
+
+- **APP 3** — Collection of personal information must be necessary and lawful
+- **APP 6** — Use and disclosure limited to the primary purpose of collection
+- **APP 8** — Cross-border disclosure restrictions apply to AI tools hosted overseas
+- **APP 11** — Reasonable steps to protect personal information from misuse
+{% endif %}
+
+{% if annual_revenue == "under_3m" %}
+### 5.4 Small Business Exemption Status
+
+{{ business_name }} currently falls under the small business exemption (annual revenue under $3 million) and may not be bound by all Australian Privacy Principles. However, this exemption is under active review and may be removed by future legislative reform. {{ business_name }} adopts these AI use controls as best practice and to ensure readiness for any change in regulatory status. Note that certain obligations (such as the statutory tort for serious invasion of privacy) apply regardless of revenue — see Section 12.
+{% endif %}
+
+{% if ai_tools_overseas and ai_tools_overseas | length > 0 %}
+## 5A. APP 8 — Cross-Border Disclosure Obligations
+
+{{ business_name }} uses the following AI tools that are hosted or operated overseas:
+
+{% for tool in ai_tools_overseas %}
+- {{ tool }}
+{% endfor %}
+
+Under **Australian Privacy Principle 8**, before disclosing personal information to an overseas recipient (including via an overseas-hosted AI tool), {{ business_name }} must:
+
+1. Take reasonable steps to ensure the overseas recipient handles personal information in accordance with the APPs
+2. Assess whether the recipient country has substantially similar privacy protections, or obtain the individual's informed consent
+3. Be accountable for any acts or practices of the overseas recipient that breach the APPs, as if {{ business_name }} had committed the breach itself
+4. Maintain a record of all overseas disclosures, including the country, recipient, and purpose
+
+**Staff obligations:**
+- Do **not** input personal information into any overseas AI tool unless a cross-border disclosure assessment has been completed and approved
+- Contact {{ ai_governance_contact | default("the AI Governance Contact", true) }} before processing personal information with any of the overseas tools listed above
+- Document each instance of cross-border data disclosure in the AI usage register
+{% endif %}
+
+{% if shadow_ai_aware is defined and shadow_ai_aware %}
+## 5B. Shadow AI Policy
+
+{{ business_name }} has identified awareness of shadow AI use (unapproved AI tools used without organisational knowledge or oversight). The following procedures apply:
+
+### Detection
+- Periodic network and endpoint monitoring to identify unapproved AI tool access
+- Staff surveys and self-reporting mechanisms to capture undisclosed AI usage
+- Review of browser extensions, SaaS subscriptions, and API integrations for AI capabilities
+
+### Reporting
+- Staff who become aware of shadow AI use (by themselves or others) must report it to {{ ai_governance_contact | default("the AI Governance Contact", true) }} without delay
+- Reports can be made anonymously through the organisation's reporting channel
+- There will be no punitive action for voluntary self-disclosure within 14 days of this policy's effective date (amnesty period)
+
+### Response Procedures
+1. **Assess** the shadow AI tool — what data was processed, what outputs were generated, and what risks exist
+2. **Contain** — cease use of the unapproved tool immediately and preserve any interaction logs
+3. **Evaluate** — determine whether the tool meets organisational security and privacy requirements for potential approval
+4. **Remediate** — if personal or sensitive data was input, initiate the AI Incident Response Plan
+{% if shadow_ai_controls is defined and shadow_ai_controls %}
+5. **Technical controls** are in place (e.g., web filtering, endpoint restrictions) to block access to known unapproved AI services
+{% else %}
+5. **Technical controls** should be implemented to block access to known unapproved AI services — this is a current gap that {{ business_name }} should address
+{% endif %}
+{% endif %}
+
+{% if customer_facing_ai is defined and customer_facing_ai %}
+## 5C. Australian Consumer Law (ACL) — AI-Generated Content Compliance
+
+{{ business_name }} uses AI to generate or assist in creating customer-facing content. Under the **Australian Consumer Law** (Schedule 2 of the Competition and Consumer Act 2010), the following obligations apply:
+
+- AI-generated content must not be **misleading or deceptive**, or likely to mislead or deceive (ACL s 18)
+- AI-generated representations about goods or services must not be **false or misleading** (ACL ss 29, 33)
+- All customer-facing AI-generated content **must be reviewed by a qualified human** before publication or distribution
+{% if ai_generated_content_reviewed is defined and ai_generated_content_reviewed %}
+- {{ business_name }} has confirmed that AI-generated customer-facing content undergoes human review prior to release
+{% else %}
+- **ACTION REQUIRED:** {{ business_name }} must implement a mandatory human review process for all AI-generated customer-facing content before publication
+{% endif %}
+- Staff must not publish AI-generated product descriptions, marketing claims, customer advice, or support responses without verification of factual accuracy
+- Records of AI-generated content and associated human review must be maintained for audit purposes
+{% endif %}
+
+{% if automated_decisions %}
+## 6. Human Oversight for Automated Decisions
+
+{{ business_name }} uses AI for automated decisions that affect individuals. The following safeguards are mandatory:
+
+- All AI-assisted decisions must be reviewed by a qualified human before being finalised
+- Individuals affected by AI-assisted decisions must be informed that AI was used
+- A mechanism for individuals to request human review of AI-assisted decisions must be available
+- Records of AI-assisted decisions, including inputs and outputs, must be maintained for audit purposes
+- Regular bias testing and fairness audits of automated decision systems are required
+
+### 6.1 POLA Act 2024 — Automated Decision Transparency
+
+The **Privacy and Other Legislation Amendment (POLA) Act 2024** introduces transparency obligations for automated decision-making. {{ business_name }} must prepare for compliance by the **December 2026 deadline**:
+
+- {{ business_name }} must disclose in its privacy policy: the types of personal information used, the kinds of substantially automated decisions made, and whether those decisions significantly affect individuals (APP 1.7-1.9)
+- Individuals should be able to request **human review** of automated decisions that significantly affect them
+
+{% if automated_decision_types and automated_decision_types | length > 0 %}
+{{ business_name }} currently uses automated decision-making for the following purposes:
+
+{% for decision_type in automated_decision_types | default([]) %}
+- {{ decision_type }}
+{% endfor %}
+
+Each of these automated decision types must have:
+1. A documented human review pathway
+2. A transparency notice provided to affected individuals
+3. Bias testing and fairness audit records
+4. A designated human reviewer with authority to override the AI decision
+{% endif %}
+{% endif %}
+
+## 7. Transparency and Disclosure
+
+- Staff must disclose when AI has been used to generate or substantially assist in creating work products
+- External communications materially generated by AI must be reviewed for accuracy before distribution
+- {{ business_name }} will maintain a register of AI systems in use and their purposes
+
+## 8. Training and Awareness
+
+- All staff will receive AI policy training {{ training_frequency | replace("_", " ") }}
+- New employees must complete AI awareness training during onboarding
+- Updates to this policy will be communicated and additional training provided as needed
+{% if not existing_it_policies %}
+- As {{ business_name }} is developing its IT policy framework, this AI policy will serve as a foundational document
+{% endif %}
+
+## 9. Incident Reporting
+
+Any AI-related incidents must be reported immediately to {{ ai_governance_contact | default("the AI Governance Contact", true) }}, including:
+
+- Data breaches involving AI tools
+- AI-generated outputs that are inaccurate, biased, or harmful
+- Unauthorised use of AI tools
+- Suspected misuse of AI by third parties
+
+Refer to the AI Incident Response Plan for detailed procedures.
+
+## 10. Compliance and Enforcement
+
+- Violations of this policy may result in disciplinary action
+- Regular audits will be conducted to ensure compliance
+- This policy will be reviewed {{ training_frequency | replace("_", " ") }} or when significant changes occur
+
+## 11. Review Schedule
+
+| Review Activity | Frequency |
+|---|---|
+| Policy review and update | {{ training_frequency | replace("_", " ") | title }} |
+| AI tools register update | Quarterly |
+| Compliance audit | Annually |
+| Staff training | {{ training_frequency | replace("_", " ") | title }} |
+
+## 12. Statutory Tort — Serious Invasion of Privacy
+
+The **Privacy and Other Legislation Amendment Act** introduces a **statutory tort for serious invasion of privacy**. This applies to **all organisations regardless of size or annual revenue**, including those otherwise exempt under the small business exemption.
+
+{{ business_name }} and its staff must be aware that:
+
+- Any **serious invasion of privacy** — including through misuse of AI tools — may give rise to a **civil cause of action** by affected individuals
+- This includes intrusion upon seclusion and misuse of private information via AI systems
+- Affected individuals can seek **compensation, injunctions, and other remedies** through the courts
+- The tort applies to conduct that a reasonable person would consider **highly offensive**, taking into account the nature of the privacy interest, the purpose of the invasion, and the means used
+- **Intentional or reckless** use of AI tools to invade privacy carries heightened legal risk
+
+**Staff obligations:**
+- Never use AI tools to access, compile, infer, or disclose private information beyond what is necessary and authorised for a lawful purpose
+- Report any suspected privacy invasion involving AI tools immediately under Section 9 above
+
+---
+
+## Appendix A: Definitions and Glossary
+
+| Term | Definition |
+|---|---|
+| AI Tool | Any software system that uses artificial intelligence, machine learning, or large language models to process data, generate content, or assist decision-making |
+| Shadow AI | AI tools used by staff without organisational knowledge, approval, or oversight |
+| Personal Information | Information or an opinion about an identified individual, or an individual who is reasonably identifiable (Privacy Act 1988 s 6(1)) |
+| Sensitive Information | A subset of personal information including health, biometric, genetic data, and information about racial or ethnic origin, political opinions, or criminal records |
+| APP | Australian Privacy Principle — the 13 principles governing personal information handling under the Privacy Act 1988 |
+| ACL | Australian Consumer Law — Schedule 2 of the Competition and Consumer Act 2010 |
+| POLA Act | Privacy and Other Legislation Amendment Act 2024 — introduces automated decision transparency and statutory tort |
+| DPA | Data Processing Agreement — a contract establishing data handling obligations between an organisation and a vendor |
+| NDB | Notifiable Data Breaches scheme — mandatory reporting of eligible data breaches to the OAIC |
+| PIA | Privacy Impact Assessment — a systematic assessment of privacy risks |
+| OAIC | Office of the Australian Information Commissioner — Australia's national privacy regulator |
+| Cross-Border Disclosure | Disclosing personal information to an overseas recipient, including via overseas-hosted AI tools (APP 8) |
+| Statutory Tort | A civil cause of action for serious invasion of privacy introduced by the POLA Act 2024 |
+| AI6 | The Australian Government's 6 Essential Practices for safe and responsible AI |
+
+---
+
+## Appendix B: Policy Acknowledgement Form
+
+I acknowledge that I have read, understood, and agree to comply with this AI Acceptable Use Policy.
+
+**Name:** ____________________________
+
+**Position:** ____________________________
+
+**Department:** ____________________________
+
+**Signature:** ____________________________
+
+**Date:** ____________________________
+
+---
+
+**Approved by:** ____________________________
+
+**Date:** ____________________________
+
+**Next Review Date:** ____________________________
+

@@ -1,0 +1,227 @@
+# Board AI Risk Briefing
+
+**{{ business_name }}** — Confidential
+
+**Date:** {{ effective_date }}
+{% if ai_governance_contact %}**Prepared By:** {{ ai_governance_contact }}{% endif %}
+
+---
+
+## Executive Summary
+
+This briefing provides the board and senior leadership with an overview of {{ business_name }}'s AI usage, associated regulatory obligations, risk exposure, and governance posture. Directors have a duty of care under the **Corporations Act 2001 s180** to be informed about material risks — AI governance is now a material risk for organisations of all sizes.
+
+### Key Metrics at a Glance
+
+| Metric | Status |
+|--------|--------|
+| **Industry** | {{ industry | replace("_", " ") | title }} |
+| **Employees** | {{ employee_count }} |
+| **AI Tools in Use** | {{ ai_tools_in_use | length if ai_tools_in_use else 0 }} |
+| **Data Types Processed via AI** | {{ data_types_processed | length if data_types_processed else 0 }} |
+| **Automated Decisions** | {{ "Yes" if automated_decisions else "No" }} |
+| **Customer-Facing AI** | {{ "Yes" if customer_facing_ai else "No" }} |
+| **Shadow AI Controls** | {{ "Yes" if shadow_ai_controls else "No" }} |
+| **Privacy Act Covered** | {{ "Yes" if (revenue_exceeds_threshold or trades_in_personal_info) else "No (small business exemption — expected to be removed)" }} |
+
+---
+
+## 1. Current AI Tool Usage
+
+{% if ai_tools_in_use %}
+{{ business_name }} has approved the following AI tools:
+
+{% for tool in ai_tools_in_use %}
+- {{ tool }}
+{% endfor %}
+
+{% if ai_tools_overseas %}
+### Overseas Data Processing
+
+The following tools process data outside Australia, triggering APP 8 vicarious liability:
+
+{% for tool in ai_tools_overseas %}
+{% if tool != "None — all data stays in Australia" %}
+- {{ tool }}
+{% endif %}
+{% endfor %}
+
+{% if vendor_dpa_in_place %}
+Data Processing Agreements are in place with overseas vendors.
+{% else %}
+**ACTION REQUIRED**: No Data Processing Agreements exist with overseas AI vendors. The organisation is vicariously liable under Section 16C for any privacy breach by these overseas providers.
+{% endif %}
+{% endif %}
+{% else %}
+{{ business_name }} has not formally approved any AI tools. However, research indicates **80% of SME employees use unapproved AI tools** (Shadow AI), making governance policies critical even before formal adoption.
+{% endif %}
+
+---
+
+## 2. Regulatory Landscape
+
+### Laws That Apply Now
+
+| Regulation | Obligation | Status |
+|------------|-----------|--------|
+{% if revenue_exceeds_threshold or trades_in_personal_info %}
+| **Privacy Act 1988** | Full APP compliance for AI data processing | Covered |
+| **NDB Scheme** | Assess eligible data breaches within 30 days; notify OAIC and affected individuals if serious harm likely | Applies |
+{% else %}
+| **Privacy Act 1988** | Small business exemption applies (expected removal under Tranche 2) | Exempt |
+{% endif %}
+| **Statutory Tort** | Any organisation can be sued for serious invasions of privacy | Applies |
+| **ACL ss18, 29, 33** | AI-generated customer content must not be misleading | {{ "Applies" if customer_facing_ai else "Low risk" }} |
+| **OAIC AI Guidance (Oct 2024)** | Best practice expectations for AI governance | Guidance |
+
+### Coming: POLA Act 2024 (Commences 10 December 2026)
+
+{% if automated_decisions %}
+**This directly affects {{ business_name }}.** The POLA Act requires:
+
+1. **Disclosure** in the privacy policy of automated decisions that substantially affect individuals.
+2. **Types of personal information** used in automated decisions must be listed.
+3. **Whether decisions significantly affect** the individual must be stated.
+
+{{ business_name }} makes the following automated decisions:
+
+{% for dtype in automated_decision_types | default([]) %}
+- {{ dtype }}
+{% endfor %}
+
+**Compliance deadline: 10 December 2026.**
+{% else %}
+{{ business_name }} does not currently use AI for automated decisions affecting individuals. No immediate POLA Act action required, but monitor for changes as AI adoption grows.
+{% endif %}
+
+---
+
+## 3. Risk Assessment Summary
+
+### Shadow AI Risk
+
+{% if shadow_ai_controls %}
+Technical and/or policy controls are in place to detect unapproved AI usage. This is a **managed risk**.
+{% else %}
+{% if shadow_ai_aware %}
+Management is **aware** that employees are using unapproved AI tools but **no controls are in place**. This is a **high, unmanaged risk**.
+{% else %}
+Management has **not assessed** whether employees are using unapproved AI tools. Given industry research showing 80% shadow AI adoption, this is a **critical blind spot**.
+{% endif %}
+
+**Recommended Actions:**
+- Deploy DNS-level blocking of unapproved AI services
+- Conduct anonymous staff survey on AI tool usage
+- Implement network monitoring for AI service traffic
+{% endif %}
+
+### Data Exposure Risk
+
+| Data Type | AI Processing Risk |
+|-----------|-------------------|
+{% for dtype in data_types_processed | default([]) %}
+{% if "Health" in dtype or "Biometric" in dtype or "Children" in dtype %}
+| {{ dtype }} | **HIGH** — Sensitive information requires enhanced protections |
+{% elif "Financial" in dtype or "Employee" in dtype %}
+| {{ dtype }} | **MEDIUM** — Requires access controls and DPAs |
+{% else %}
+| {{ dtype }} | Standard — Follow data classification policy |
+{% endif %}
+{% endfor %}
+
+{% if customer_facing_ai %}
+### Consumer Law Risk
+
+{{ business_name }} uses AI to generate customer-facing content. Under the **Australian Consumer Law (ACL)**:
+
+- **Section 18** (misleading conduct) is **strict liability** — no intent required.
+- If AI generates inaccurate product claims, pricing, or recommendations, the organisation is liable.
+{% if ai_generated_content_reviewed %}
+- **Mitigation**: Human review is in place before publication.
+{% else %}
+- **ACTION REQUIRED**: No human review process exists. This exposes the organisation to ACL penalties of up to **$50 million**.
+{% endif %}
+{% endif %}
+
+---
+
+## 4. Governance Posture
+
+### Controls Assessment
+
+| Control | In Place? | Priority |
+|---------|----------|----------|
+| Named AI governance contact | {{ "Yes — " + ai_governance_contact if ai_governance_contact else "**No** — Critical gap" }} | High |
+| AI acceptable use policy | {{ "Generated" if "ai_acceptable_use" in (policy_types or []) else "**Not yet generated**" }} | Critical |
+| Privacy policy | {{ "Yes" if has_privacy_policy else "**No** — Required under APP 1" }} | Critical |
+| Data classification policy | {{ "Generated" if "data_classification" in (policy_types or []) else "**Not yet generated**" }} | High |
+| Incident response plan | {{ "Generated" if "incident_response" in (policy_types or []) else "**Not yet generated**" }} | High |
+| Incident response tested | {{ "Yes" if incident_response_tested else "**No** — Tabletop exercise recommended" }} | Medium |
+| Staff AI training | {{ training_frequency | replace("_", " ") | title }} | Medium |
+| Privacy Impact Assessment | {{ "Conducted" if pia_conducted else "**Not conducted**" }} | {{ "Critical" if automated_decisions else "High" }} |
+| Vendor DPAs | {{ "In place" if vendor_dpa_in_place else "**Not in place**" }} | {{ "Critical" if ai_tools_overseas else "Medium" }} |
+| Board AI briefing | {{ "Yes" if board_ai_awareness else "**This is the first briefing**" }} | High |
+| AI access restricted by role | {{ "Yes" if ai_access_restricted else "**No** — All employees can access AI tools" }} | Medium |
+| AI prompts/outputs logged | {{ "Yes" if ai_outputs_logged else "**No** — No audit trail for AI usage" }} | Medium |
+| Data retention policy for AI | {{ "Yes" if has_data_retention_policy else "**No** — APP 11 requires data destruction policy" }} | High |
+| Consent mechanisms for AI | {{ "Yes" if consent_mechanism_exists else "**No** — APPs 3 & 6 require consent" }} | High |
+
+---
+
+## 5. Recommended Board Actions
+
+### Immediate (Next 30 Days)
+
+1. **Approve this briefing** and acknowledge AI as a material governance risk.
+{% if not ai_governance_contact %}
+2. **Appoint a named AI governance contact** responsible for policy implementation and incident response.
+{% endif %}
+{% if not shadow_ai_controls %}
+3. **Authorise Shadow AI controls** — approve budget for DNS blocking and network monitoring of unapproved AI services.
+{% endif %}
+{% if not has_privacy_policy %}
+4. **Commission a privacy policy** that covers AI data processing (APP 1 obligation).
+{% endif %}
+
+### Short-Term (Next 90 Days)
+
+1. Ensure all core governance policies are generated and distributed to staff.
+{% if not pia_conducted %}
+2. **Commission a Privacy Impact Assessment** for AI tools processing personal information.
+{% endif %}
+{% if not vendor_dpa_in_place and ai_tools_overseas %}
+3. **Execute Data Processing Agreements** with overseas AI vendors (APP 8 obligation).
+{% endif %}
+4. Schedule staff AI training (OAIC recommends bi-annual).
+
+### Before December 2026
+
+{% if automated_decisions %}
+1. **Update privacy policy** with POLA Act automated decision disclosures.
+2. **Implement contestability mechanisms** — individuals must be able to request human review of automated decisions.
+3. **Document decision logic** for all AI-assisted decisions that substantially affect individuals.
+{% else %}
+1. Monitor for changes in AI tool usage that may trigger POLA Act obligations.
+2. Update privacy policy to reflect any new AI-assisted processing.
+{% endif %}
+
+---
+
+## 6. Director Liability Considerations
+
+Directors should be aware of:
+
+- **Corporations Act s180**: Duty of care requires being informed about AI risks.
+- **Section 16C Privacy Act**: Vicarious liability for overseas AI vendor breaches.
+- **Statutory Tort**: Any organisation (regardless of size) can be sued for serious privacy invasions.
+{% if customer_facing_ai %}
+- **ACL Strict Liability**: No intent required for misleading AI-generated customer content.
+{% endif %}
+
+Regular board briefings on AI governance (recommended quarterly) demonstrate due diligence and reduce personal liability risk.
+
+---
+
+*This briefing is classified Confidential — Internal Use Only. Prepared for {{ business_name }} board and senior leadership.*
+
+**Next Review Date:** {{ next_review_date | default("Quarterly") }}

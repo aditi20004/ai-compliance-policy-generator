@@ -1,0 +1,249 @@
+# AI Supply Chain and Third-Party Audit Template
+
+**{{ business_name }}**
+*Effective Date: {{ effective_date }}*
+*Version: {{ version }}*
+
+---
+
+## 1. Purpose
+
+This template provides a structured framework for assessing and managing risks in {{ business_name }}'s AI supply chain. It covers vendor inventories, sub-processor mapping, model provider assessments, data flow documentation, and annual audit procedures. This template aligns with **APP 8** (cross-border disclosure), **AI6 Guidance for AI Adoption** (Practice 6: Provide appropriate transparency), and **OAIC guidance on privacy and AI** (October 2024).
+
+---
+
+## 2. Scope
+
+This audit template applies to all third-party AI tool vendors, sub-processors, AI model providers, open-source AI models, cloud infrastructure providers hosting AI workloads, and data annotation or training data service providers used by {{ business_name }}.
+
+---
+
+## 3. Vendor Inventory
+
+### 3.1 AI Vendor Register
+
+Maintain a complete inventory of all AI vendors and services. Update this register whenever a new AI tool is onboarded or an existing tool is decommissioned.
+
+{% if ai_tools_in_use %}
+**Current AI tools in use at {{ business_name }}:**
+
+| # | Tool / Vendor | Service Type | Data Types Processed | Data Location | DPA Status | Last Reviewed |
+|---|---------------|-------------|---------------------|---------------|------------|---------------|
+{% for tool in ai_tools_in_use %}| {{ loop.index }} | {{ tool }} | | | | {% if vendor_dpa_in_place %}In place{% else %}Not in place{% endif %} | |
+{% endfor %}
+{% else %}
+{{ business_name }} has not yet registered any AI tools. Complete this inventory as a priority action item using the table format above.
+{% endif %}
+
+### 3.2 Vendor Classification
+
+| Classification | Criteria | Review Frequency |
+|---------------|----------|-----------------|
+| Critical | Processes Restricted/Confidential data; core to operations | Quarterly |
+| High | Processes Internal data; significant business dependency | Six-monthly |
+| Medium | Processes Public data only; limited dependency | Annually |
+| Low | No data processing; ancillary service | Biannually |
+
+{% if ai_tools_overseas %}
+**AI tools processing data overseas (requiring enhanced oversight):**
+{% for tool in ai_tools_overseas %}
+- {{ tool }}
+{% endfor %}
+
+These vendors are classified as **Critical** or **High** risk by default due to cross-border data flows and must be subject to APP 8 assessments.
+{% endif %}
+
+---
+
+## 4. Sub-Processor Mapping
+
+### 4.1 Sub-Processor Register
+
+For each AI vendor, document all sub-processors that access or process {{ business_name }}'s data:
+
+| Primary Vendor | Sub-Processor | Service Provided | Data Accessed | Location | DPA in Place |
+|---------------|---------------|-----------------|---------------|----------|-------------|
+| [Vendor] | [Sub-processor] | [Service type] | [PI / non-PI] | [Country] | [Yes / No] |
+
+### 4.2 Sub-Processor Requirements
+
+All AI vendor contracts must include: obligation to disclose all current sub-processors before contract execution; 30 days advance notice before engaging new sub-processors; right for {{ business_name }} to object; flow-down of data protection obligations; and equivalent audit rights for sub-processors.
+
+{% if vendor_dpa_in_place %}
+{{ business_name }}'s standard DPA should be reviewed to ensure sub-processor requirements are adequately addressed.
+{% else %}
+**Action required:** {{ business_name }} does not have standard DPAs in place. Sub-processor obligations must be included in any DPA template developed.
+{% endif %}
+
+---
+
+## 5. Model Provider Assessment
+
+### 5.1 Foundation Model Assessment
+
+For each AI model provider (e.g., OpenAI, Google, Anthropic, Meta), assess the following:
+
+| Assessment Area | Questions to Address | Vendor Response |
+|----------------|---------------------|----------------|
+| Training data sources | What data was the model trained on? Does it include Australian personal information? | |
+| Training data consent | Was consent obtained for personal information in training data? | |
+| Copyright and IP | Does the vendor provide IP indemnification for model outputs? | |
+| Bias and fairness testing | Has the model been tested for bias? Are results published? | |
+| Explainability | Can the model provide explanations for its outputs? | |
+| Safety testing | Has the model undergone red-teaming or safety evaluation? | |
+| Model card availability | Does the vendor publish a model card disclosing capabilities and limitations? | |
+| Data retention | Does the vendor retain prompts or outputs? For how long? | |
+| Training opt-out | Can {{ business_name }} opt out of its data being used for model training? | |
+
+{% if bias_testing_conducted %}
+{{ business_name }} has conducted bias testing. Cross-reference {{ business_name }}'s bias testing results with the vendor's bias testing disclosures to identify gaps.
+{% else %}
+**Recommendation:** {{ business_name }} should conduct independent bias testing for AI models used in high-risk decision-making contexts, regardless of vendor-provided testing results.
+{% endif %}
+
+---
+
+## 6. Data Flow Diagrams
+
+### 6.1 Documentation Requirements
+
+For each AI tool in the vendor inventory, document data flows covering: data source, {{ business_name }} system, AI vendor API/platform, and sub-processors. For each stage, record data type, classification, encryption method, processing location, and retention period.
+
+### 6.2 Data Flow Checklist
+
+For each documented data flow, verify:
+
+- [ ] All data types are identified and classified
+- [ ] All processing locations are documented (including sub-processor locations)
+- [ ] Encryption is applied in transit and at rest at every stage
+- [ ] Retention periods are defined for each stage of the data flow
+- [ ] Data deletion procedures are documented for each stage
+- [ ] Cross-border transfers are identified and APP 8 assessments completed
+
+{% if data_overseas_mapped %}
+{{ business_name }} has mapped overseas data flows. Incorporate AI-specific data flows into the existing overseas data flow mapping.
+{% else %}
+**Action required:** {{ business_name }} has not mapped overseas data flows. As a priority, document all AI-related cross-border data transfers to comply with APP 8.
+{% endif %}
+
+---
+
+## 7. Annual Audit Checklist
+
+Conduct the following audit annually for all AI vendors classified as Critical or High risk. Medium-risk vendors should be audited biennially.
+
+### 7.1 Contractual and Security Compliance
+
+- [ ] DPA is current and has not been amended without {{ business_name }}'s consent
+- [ ] Sub-processor list is current — no unauthorised sub-processors added
+- [ ] Model training opt-out remains in effect
+- [ ] Incident notification obligations are current (within 72 hours)
+- [ ] Data deletion and portability terms confirmed; IP ownership terms unchanged
+- [ ] Security certification (SOC 2 Type II, ISO 27001, IRAP) is current
+- [ ] Annual penetration test report reviewed — no critical findings unresolved
+- [ ] Vendor has not experienced an undisclosed data breach since the last audit
+- [ ] Access controls reviewed — RBAC, MFA, and SSO remain in place
+
+### 7.3 Privacy and AI-Specific Controls
+
+- [ ] Vendor privacy policy reviewed — no adverse changes
+- [ ] Data processing locations have not changed without notification
+- [ ] Data retention periods have not been extended without consent
+- [ ] Model version in use is documented and current
+- [ ] Bias testing results reviewed (if applicable to use case)
+- [ ] Output accuracy benchmarks reviewed — no significant degradation
+- [ ] Human override capability confirmed as operational
+- [ ] AI-specific incident response procedures tested
+
+{% if vendor_audit_rights %}
+{{ business_name }} has audit rights with its AI vendors. Exercise these rights at least annually for Critical vendors and biennially for High-risk vendors.
+{% else %}
+**Action required:** {{ business_name }} does not have contractual audit rights with AI vendors. Negotiate audit rights into existing and future vendor agreements. Where vendors refuse audit rights, request SOC 2 Type II reports or equivalent independent assurance.
+{% endif %}
+
+---
+
+## 8. Risk Scoring Matrix
+
+Score each AI vendor on the following dimensions (1 = Low to 5 = Critical):
+
+| Dimension | 1 (Low) | 3 (Medium) | 5 (Critical) | Score |
+|-----------|---------|------------|---------------|-------|
+| Data sensitivity | Public data only | Internal data | Restricted / sensitive PI | |
+| Data volume | Minimal | Moderate | Large-scale PI processing | |
+| Cross-border transfers | Australia only | Adequate-protection jurisdiction | No data protection framework | |
+| Business dependency | Nice-to-have | Supports key process | Core to operations | |
+| Vendor maturity | Enterprise, established | Mid-market | Startup, unproven | |
+| Security posture | SOC 2 + ISO 27001 | SOC 2 only | No certification | |
+| Incident history | No breaches | Minor incidents | Major breach in last 3 years | |
+| AI-specific risks | Low autonomy, human-reviewed | Moderate autonomy | Fully automated decisions | |
+
+**Total score interpretation:**
+
+| Score Range | Risk Level | Review Frequency | Escalation |
+|-------------|-----------|-----------------|------------|
+| 8-16 | Low | Annually | Standard review |
+| 17-24 | Medium | Six-monthly | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} |
+| 25-32 | High | Quarterly | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} + senior leadership |
+| 33-40 | Critical | Monthly | Senior leadership + legal review |
+
+{% if ai_supply_chain_assessed %}
+{{ business_name }} has assessed AI supply chain risks. Apply this scoring matrix to the existing assessment and update risk scores at each review cycle.
+{% else %}
+**Action required:** {{ business_name }} has not assessed AI supply chain risks. Complete risk scoring for all current AI vendors within 90 days.
+{% endif %}
+
+---
+
+## 9. Incident Notification Chain
+
+### 9.1 Vendor Incident Notification Requirements
+
+All AI vendor contracts must require notification to {{ business_name }} in the following scenarios:
+
+| Incident Type | Notification Timeframe | Notify |
+|---------------|----------------------|--------|
+| Data breach involving {{ business_name }}'s data | Within 72 hours | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} |
+| Unauthorised sub-processor access or model compromise | Within 48 hours | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} + IT security |
+| Service outage affecting data integrity | Within 24 hours | IT operations |
+| Change in data processing location or sub-processors | 30 days advance notice | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} |
+| Regulatory action against vendor | Within 5 business days | Legal + {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} |
+
+### 9.2 {{ business_name }} Internal Escalation
+
+1. Receive vendor notification and log in incident register ({{ ai_governance_contact if ai_governance_contact else "AI governance contact" }})
+2. Assess severity and determine if NDB scheme reporting is required ({{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} + legal)
+3. If eligible data breach — notify OAIC within 30 days or as soon as practicable (senior leadership)
+4. Notify affected individuals if required under the NDB scheme (senior leadership)
+5. Conduct root cause analysis with the vendor ({{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} + IT security)
+6. Update risk score and review vendor classification ({{ ai_governance_contact if ai_governance_contact else "AI governance contact" }})
+
+{% if ndb_ai_process %}
+{{ business_name }} has an NDB process that covers AI-related incidents. Ensure this process is tested annually with a tabletop exercise involving an AI vendor breach scenario.
+{% else %}
+**Action required:** {{ business_name }} should ensure its Notifiable Data Breaches process explicitly covers incidents originating from AI vendors and sub-processors. The OAIC provides NDB guidance at [www.oaic.gov.au](https://www.oaic.gov.au).
+{% endif %}
+
+{% if ai_incident_register %}
+{{ business_name }} maintains an AI incident register. All vendor-reported incidents must be recorded in this register within 24 hours of receipt.
+{% else %}
+**Recommendation:** {{ business_name }} should establish an AI incident register to track vendor-reported incidents alongside internally detected AI incidents.
+{% endif %}
+
+---
+
+## 10. Regulatory Alignment
+
+| Regulation / Guidance | Requirement | This Template |
+|----------------------|-------------|---------------|
+| APP 8 | Reasonable steps before cross-border disclosure | Vendor inventory, sub-processor mapping, DPA requirements |
+| APP 11 | Reasonable steps to protect PI | Security audit checklist, vendor risk scoring |
+| AI6 Practice 3 | Measure and manage risks throughout lifecycle | Risk scoring matrix, annual audit checklist |
+| AI6 Practice 5 | Secure AI systems | Security posture assessment, incident notification chain |
+| AI6 Practice 6 | Provide appropriate transparency | Vendor transparency, model provider assessment |
+| OAIC Oct 2024 | Due diligence for AI service providers | Comprehensive vendor assessment and audit framework |
+| NDB Scheme | Notify OAIC of eligible data breaches | Incident notification chain and NDB escalation |
+
+{% if tranche2_aware %}**Note:** {{ business_name }} is aware of Tranche 2 reforms to the Privacy Act. Future updates will incorporate any additional supply chain obligations introduced by Tranche 2.{% endif %}
+
+*Review frequency: Annually, when new AI vendors are onboarded, or when regulatory requirements for supply chain management change.*

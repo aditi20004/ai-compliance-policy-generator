@@ -1,0 +1,450 @@
+# AI Incident Response Plan
+
+**Organisation:** {{ business_name }}
+{% if abn %}**ABN:** {{ abn }}{% endif %}
+**Industry:** {{ industry | replace("_", " ") | title }}
+**Effective Date:** {{ effective_date }}
+**Version:** {{ version }}
+**Incident Response Lead:** {{ ai_governance_contact | default("To be appointed", true) }}
+**Classification:** Internal — All Staff
+
+---
+
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | AI Incident Response Plan |
+| Organisation | {{ business_name }} |
+| Incident Response Lead | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Next Review Date | See Section 7 |
+| Approved By | (Signature required) |
+| Last Tabletop Exercise | {{ "Completed" if incident_response_tested else "NOT YET CONDUCTED" }} |
+
+### Version History
+
+| Version | Date | Author | Changes |
+|---|---|---|---|
+| {{ version }} | {{ effective_date }} | AI Compliance Policy Generator | Initial plan generation |
+
+---
+
+## 1. Purpose
+
+This plan establishes procedures for detecting, responding to, and recovering from AI-related incidents within {{ business_name }}. It ensures timely and effective response to minimise harm, comply with regulatory obligations including the Notifiable Data Breaches (NDB) scheme, and maintain stakeholder trust.
+
+## 2. Scope
+
+This plan covers incidents involving any AI system used by {{ business_name }}, including:
+
+{% for tool in ai_tools_in_use %}
+- {{ tool }}
+{% endfor %}
+- Any future AI tools deployed within the organisation
+
+## 3. AI Incident Categories
+
+### 3.1 Severity Levels
+
+| Level | Description | Examples | Response Time |
+|---|---|---|---|
+| **Critical** | Severe harm to individuals or regulatory breach | Data breach via AI, discriminatory automated decisions | Immediate (within 1 hour) |
+| **High** | Significant operational impact or potential harm | AI system generating harmful content, unauthorised data processing | Within 4 hours |
+| **Medium** | Moderate impact, no immediate harm | AI accuracy degradation, minor policy violation | Within 24 hours |
+| **Low** | Minimal impact, learning opportunity | Incorrect AI output caught by review, minor misuse | Within 72 hours |
+
+### 3.2 Incident Types
+
+1. **Data Breach via AI** — Personal or sensitive data exposed through AI tool
+2. **AI Output Harm** — AI generates biased, discriminatory, or harmful content used in decisions
+3. **Unauthorised AI Use** — Staff using unapproved AI tools or processing restricted data
+4. **AI System Compromise** — AI tool or integration point is compromised by threat actor
+5. **Automated Decision Failure** — AI-assisted decision causes harm to individual
+{% if automated_decisions %}
+6. **Fairness/Bias Incident** — AI automated decision system produces discriminatory outcomes
+{% endif %}
+7. **Intellectual Property Exposure** — Trade secrets or proprietary data input to external AI
+8. **Regulatory Non-Compliance** — AI use violates Privacy Act, APPs, or other obligations
+9. **Shadow AI Incident** — Unapproved AI tool discovered in use, potentially processing organisational or personal data
+10. **ACL Breach — Misleading AI Content** — AI generates misleading or deceptive customer-facing content in breach of the Australian Consumer Law
+11. **POLA Act Non-Compliance** — Failure to meet automated decision transparency obligations under the Privacy and Other Legislation Amendment Act 2024
+12. **Statutory Tort — Privacy Invasion via AI** — AI tool used in a manner that constitutes a serious invasion of an individual's privacy, giving rise to civil liability
+
+{% if ai_tools_overseas and ai_tools_overseas | length > 0 %}
+### 3.3 AI Tool-Specific Incident Procedures
+
+The following overseas-hosted AI tools are in use and require tool-specific incident procedures:
+
+{% for tool in ai_tools_overseas %}
+#### {{ tool }}
+
+1. **Detection** — Monitor for unauthorised data input, unexpected outputs, or service compromise involving {{ tool }}
+2. **Containment** — Revoke API keys or access tokens for {{ tool }}; disable integrations; block access at the network level if necessary
+3. **Data assessment** — Determine what data was sent to {{ tool }}, whether it included personal or confidential information, and whether the tool retains data for model training
+4. **Cross-border notification** — If personal information was disclosed to {{ tool }} (hosted overseas), assess APP 8 cross-border disclosure obligations and potential NDB scheme notification
+5. **Vendor engagement** — Contact {{ tool }}'s support or data protection team to request data deletion, incident details, and confirmation of data handling
+6. **Recovery** — Restore normal operations only after confirming the root cause is resolved and appropriate controls are in place
+
+{% endfor %}
+{% endif %}
+
+## 4. Incident Response Phases
+
+### Phase 1: Detection and Reporting
+
+**All staff are responsible for reporting suspected AI incidents immediately.**
+
+**Detection Sources:**
+- Staff observation and reporting
+- Automated monitoring and alerts
+- Customer or third-party complaints
+- Audit findings
+- Regulatory notifications
+
+**Reporting Procedure:**
+1. Identify the suspected incident and gather initial facts
+2. Report to {{ ai_governance_contact | default("the AI Governance Contact", true) }} via phone and email
+3. Complete the AI Incident Report Form (Appendix A)
+4. Do NOT attempt to investigate or remediate without authorisation
+5. Preserve all evidence — do not delete logs, outputs, or communications
+
+**Initial Assessment Checklist:**
+- [ ] What AI system is involved?
+- [ ] What data was processed or exposed?
+- [ ] How many individuals are potentially affected?
+- [ ] Is the incident ongoing?
+- [ ] What is the severity level?
+
+### Phase 2: Containment
+
+**Immediate Actions (Critical/High):**
+1. Isolate the affected AI system — revoke access tokens, disable integrations
+2. Preserve audit logs and AI interaction histories
+3. Notify the Incident Response Team
+4. If data breach: begin NDB scheme assessment
+
+**Short-Term Containment:**
+1. Block access to affected AI tools if necessary
+2. Identify scope — which data, systems, and users are affected
+3. Implement temporary workarounds for business continuity
+4. Engage external cybersecurity support if needed
+
+### Phase 2a: Shadow AI Incident Response
+
+When unapproved AI tool usage (shadow AI) is detected:
+
+1. **Identify** the shadow AI tool, the staff member(s) involved, and the duration of use
+2. **Assess** what data was input — classify the data and determine if personal, confidential, or restricted information was processed
+3. **Contain** — immediately cease use of the unapproved tool; revoke any access credentials or API keys
+4. **Preserve evidence** — capture screenshots, interaction logs, browser history, and any outputs generated
+5. **Determine breach status** — if personal information was input to an external unapproved tool, assess whether a notifiable data breach has occurred
+6. **Evaluate the tool** — determine whether the shadow AI tool should be formally assessed for potential approval or permanently blocked
+7. **Remediate** — request data deletion from the unapproved AI provider where possible; update network controls to block access
+8. **Report** — document the incident and report to {{ ai_governance_contact | default("the AI Governance Contact", true) }}; escalate to management if sensitive data was involved
+
+### Phase 2b: ACL Breach — Misleading AI-Generated Content
+
+When AI generates misleading or deceptive customer-facing content:
+
+1. **Identify** the misleading content and all channels through which it was distributed (website, email, social media, customer communications)
+2. **Immediately withdraw** the content from all distribution channels
+3. **Assess scope** — determine how many customers received or viewed the misleading content
+4. **Correct** — issue corrective communications to affected customers with accurate information
+5. **Review** — examine the AI tool, prompt, and review process that allowed the misleading content to be published
+6. **Assess regulatory exposure** — determine whether the content constitutes a breach of ACL sections 18, 29, or 33 (misleading or deceptive conduct, false representations)
+7. **Notify** — if the breach is material, seek legal advice on whether notification to the ACCC is warranted
+8. **Strengthen controls** — enhance the human review process for AI-generated customer content; update review checklists and training
+
+### Phase 2c: POLA Act Non-Compliance Response
+
+When a failure to meet automated decision transparency obligations is identified:
+
+1. **Identify** the automated decision system and the specific transparency obligation that was not met
+2. **Assess** how many individuals were affected by decisions made without proper transparency notices
+3. **Suspend** the automated decision process if ongoing non-compliance cannot be immediately rectified
+4. **Notify affected individuals** — provide retrospective transparency notices explaining:
+   - That an automated decision was made affecting them
+   - The types of personal information used in the decision
+   - Whether the decision significantly affects the individual
+   - Their right to request human review
+5. **Offer human review** — proactively offer human review of all decisions made during the non-compliance period
+6. **Document** the root cause and timeline of non-compliance
+7. **Remediate** — implement the required transparency mechanisms before resuming automated decisions
+8. **Report** — assess whether notification to the OAIC is required; seek legal advice on regulatory exposure
+
+### Phase 2d: Statutory Tort — Privacy Invasion via AI
+
+When AI tools are used in a manner that may constitute a serious invasion of privacy:
+
+1. **Identify** the AI tool, the conduct, and the individual(s) whose privacy was invaded
+2. **Immediately cease** the conduct and isolate the AI system involved
+3. **Assess severity** — determine whether a reasonable person would consider the invasion highly offensive, considering:
+   - The nature and sensitivity of the private information
+   - The purpose of the invasion (was there a lawful basis?)
+   - The means used (was the AI tool used deliberately or recklessly?)
+   - The extent of disclosure or exposure
+4. **Preserve evidence** — retain all logs, outputs, and records related to the AI activity
+5. **Seek legal advice** — the statutory tort creates a civil cause of action; obtain legal counsel on {{ business_name }}'s exposure and response obligations
+6. **Notify affected individuals** — inform the individual(s) whose privacy was invaded, including what occurred and what remedial steps are being taken
+7. **Remediate** — implement controls to prevent recurrence; update AI tool access permissions and monitoring
+8. **Record** — document the incident, legal advice received, and remedial actions in the incident register
+
+**Note:** The statutory tort applies to all organisations regardless of revenue or small business exemption status.
+
+{% if revenue_exceeds_threshold %}
+### Phase 3: Notification
+
+**Notifiable Data Breaches (NDB) Scheme**
+
+As {{ business_name }} exceeds the $3M revenue threshold, the following obligations apply under the Privacy Act 1988:
+
+**Assessment Period:** You have **30 days** to assess whether a data breach is notifiable.
+
+**A breach is notifiable when:**
+- There is unauthorised access to, disclosure of, or loss of personal information
+- A reasonable person would conclude the breach is likely to result in serious harm
+- The organisation has not been able to prevent the likely risk of serious harm through remedial action
+
+**Notification Requirements:**
+1. **OAIC Notification** — Submit statement to the Office of the Australian Information Commissioner via [oaic.gov.au](https://www.oaic.gov.au)
+2. **Individual Notification** — Notify affected individuals as soon as practicable, including:
+   - Description of the breach
+   - Type of information involved
+   - Steps the organisation is taking
+   - Steps individuals can take to protect themselves
+   - Contact details for further information
+
+**AI-Specific Considerations for Notification:**
+- If personal data was input to an external AI tool, assess whether the AI provider's data handling constitutes a breach
+- Consider whether AI-generated outputs could re-identify anonymised individuals
+- Document whether the AI tool retains data for model training
+{% else %}
+### Phase 3: Notification
+
+Although {{ business_name }} may not currently be bound by the Notifiable Data Breaches scheme, best practice recommends:
+
+1. Assessing whether any data breach involving AI could cause serious harm
+2. Voluntarily notifying the OAIC for significant breaches
+3. Notifying affected individuals where harm is likely
+4. Maintaining records of all breach assessments
+{% endif %}
+
+{% if automated_decisions %}
+### Phase 3a: Automated Decision Incident Response
+
+When an AI automated decision system causes harm:
+
+1. **Suspend** the automated decision process immediately
+2. **Identify** all individuals affected by the decision
+3. **Review** all decisions made by the system in the relevant period
+4. **Contact** affected individuals and offer human review of their case
+5. **Document** the root cause — was it data bias, model error, or system failure?
+6. **Remediate** — correct individual decisions and update the AI system
+7. **Report** to relevant regulator if rights were infringed
+{% endif %}
+
+### Phase 4: Eradication and Recovery
+
+**Eradication:**
+1. Identify and remove the root cause of the incident
+2. If data was exposed to external AI: request deletion from the AI provider
+3. Update access controls, API keys, and authentication credentials
+4. Patch or update affected AI systems
+5. Review and update data classification controls
+
+**Recovery:**
+1. Restore normal AI operations with enhanced monitoring
+2. Verify AI systems are functioning correctly before full restoration
+3. Implement additional controls to prevent recurrence
+4. Update AI tool approvals if necessary
+5. Communicate resolution to affected stakeholders
+
+### Phase 5: Lessons Learned
+
+**Post-Incident Review (within 14 days of resolution):**
+
+1. Conduct a post-incident review meeting with all involved parties
+2. Document:
+   - Timeline of events
+   - Effectiveness of the response
+   - Root cause analysis
+   - What worked well and what needs improvement
+   - Regulatory compliance gaps identified
+3. Update this plan based on lessons learned
+4. Update training materials to address the incident type
+5. Record findings in the audit log
+
+## 5. Roles and Responsibilities
+
+| Role | Responsibility |
+|---|---|
+| **AI Governance Contact** ({{ ai_governance_contact | default("TBA", true) }}) | Overall incident response coordination, regulatory notifications |
+| **IT/Security Team** | Technical containment, evidence preservation, system restoration |
+| **Legal/Compliance** | Regulatory assessment, NDB scheme compliance, legal advice |
+| **Management** | Resource allocation, stakeholder communication, strategic decisions |
+| **All Staff** | Incident detection and reporting, evidence preservation |
+
+## 6. Communication Plan
+
+### Internal Communication
+- Incident Response Team: Immediate notification via secure channel
+- Management: Briefing within 2 hours of Critical/High incidents
+- All staff: Update as appropriate after containment
+
+### External Communication
+- Regulator (OAIC): As required under NDB scheme
+- Affected individuals: As required, with approved messaging
+- Media: Only through authorised spokesperson
+- AI tool vendors: As needed for investigation and remediation
+
+## 7. Testing and Maintenance
+
+| Activity | Frequency |
+|---|---|
+| Tabletop exercise | Biannually |
+| Plan review and update | {{ training_frequency | replace("_", " ") | title }} |
+| Staff training on incident procedures | {{ training_frequency | replace("_", " ") | title }} |
+| Contact list verification | Quarterly |
+
+{% if incident_response_tested is defined %}
+{% if incident_response_tested %}
+### 7.1 Tabletop Exercise Status
+
+{{ business_name }} has confirmed that incident response tabletop exercises have been conducted. To maintain readiness:
+
+- Continue conducting tabletop exercises **biannually** as scheduled above
+- Include the following AI-specific scenarios in future exercises:
+  - Shadow AI discovery involving personal data
+  - AI-generated misleading customer content (ACL breach)
+  - Cross-border data exposure via overseas AI tool
+  - Automated decision failure affecting multiple individuals
+  - Statutory tort claim arising from AI-assisted privacy invasion
+- Document exercise outcomes, identified gaps, and improvement actions
+- Update this plan based on exercise findings
+{% else %}
+### 7.1 Tabletop Exercise Status
+
+**ACTION REQUIRED:** {{ business_name }} has not yet conducted incident response tabletop exercises. Tabletop exercises are critical for ensuring the incident response team can execute this plan effectively under pressure.
+
+{{ business_name }} should:
+
+1. **Schedule** an initial tabletop exercise within 90 days
+2. **Design scenarios** covering AI-specific incidents including:
+   - Shadow AI discovery involving personal data
+   - AI-generated misleading customer content (ACL breach)
+   - Cross-border data exposure via overseas AI tool
+   - Automated decision failure affecting multiple individuals
+   - Statutory tort claim arising from AI-assisted privacy invasion
+3. **Include** all incident response roles (AI Governance Contact, IT/Security, Legal, Management)
+4. **Document** findings and update this plan accordingly
+5. **Establish** a biannual exercise cadence going forward
+{% endif %}
+{% endif %}
+
+## 8. Key Contacts
+
+| Contact | Name | Phone | Email |
+|---|---|---|---|
+| AI Governance Contact | {{ ai_governance_contact | default("________________", true) }} | ____________ | ____________ |
+| IT/Security Lead | ________________ | ____________ | ____________ |
+| Legal Counsel | ________________ | ____________ | ____________ |
+| OAIC | N/A | 1300 363 992 | enquiries@oaic.gov.au |
+
+---
+
+## Appendix A: AI Incident Report Form
+
+**Date/Time of Detection:** ____________________________
+
+**Reported By:** ____________________________
+
+**AI System Involved:** ____________________________
+
+**Incident Type:** [ ] Data Breach  [ ] AI Output Harm  [ ] Unauthorised AI Use  [ ] System Compromise  [ ] Automated Decision Failure  [ ] Shadow AI  [ ] ACL Breach  [ ] POLA Non-Compliance  [ ] Statutory Tort  [ ] Other
+
+**Incident Description:**
+
+____________________________________________________________________
+
+**Data Types Affected:** {% for dtype in data_types_processed | default([]) %}{{ dtype }}{{ ", " if not loop.last }}{% endfor %}
+
+**Estimated Number of Affected Individuals:** ____________________________
+
+**Severity Level:** [ ] Critical  [ ] High  [ ] Medium  [ ] Low
+
+**Immediate Actions Taken:**
+
+____________________________________________________________________
+
+**Evidence Preserved:** [ ] Yes  [ ] No
+
+---
+
+## Appendix B: Definitions and Glossary
+
+| Term | Definition |
+|---|---|
+| AI Incident | Any event involving an AI system that causes or may cause harm, regulatory breach, data loss, or reputational damage |
+| Eligible Data Breach | A data breach likely to result in serious harm to individuals (NDB scheme, Privacy Act Part IIIC) |
+| Shadow AI | AI tools used by staff without organisational knowledge, approval, or oversight |
+| Containment | Actions taken to limit the scope and impact of an incident |
+| Eradication | Removing the root cause of an incident from the environment |
+| NDB | Notifiable Data Breaches scheme — mandatory reporting of eligible data breaches to the OAIC |
+| OAIC | Office of the Australian Information Commissioner — Australia's national privacy regulator |
+| Statutory Tort | A civil cause of action for serious invasion of privacy (POLA Act 2024) — applies to ALL organisations |
+| ACL | Australian Consumer Law — strict liability for misleading or deceptive conduct (s 18) |
+| POLA Act | Privacy and Other Legislation Amendment Act 2024 |
+| Tabletop Exercise | A discussion-based exercise simulating an incident scenario to test response procedures |
+| ACSC | Australian Cyber Security Centre |
+| RTO | Recovery Time Objective — the maximum acceptable time to restore operations |
+| RPO | Recovery Point Objective — the maximum acceptable data loss measured in time |
+
+---
+
+## Appendix C: Incident Severity Quick Reference
+
+| Severity | Response Time | Examples | Escalation |
+|---|---|---|---|
+| Critical | Within 1 hour | Data breach via AI, discriminatory automated decisions, statutory tort | Immediate management + legal |
+| High | Within 4 hours | Harmful AI output, unauthorised data processing | Management briefing within 2 hours |
+| Medium | Within 24 hours | AI accuracy issues, minor policy violation | Governance contact + team lead |
+| Low | Within 72 hours | Incorrect output caught by review, minor misuse | Governance contact |
+
+---
+
+## Appendix D: Regulatory Notification Quick Reference
+
+| Regulator | When to Notify | How to Notify | Timeframe |
+|---|---|---|---|
+| OAIC | Eligible data breach likely to cause serious harm | oaic.gov.au NDB form | Within 30 days of becoming aware |
+| ACCC | Material ACL breach (misleading AI content) | accc.gov.au | As soon as practicable |
+| APRA (if applicable) | Material information security incident | APRA notification portal | Within 72 hours |
+| Affected Individuals | Eligible data breach notification | Direct communication | As soon as practicable after OAIC notification |
+
+---
+
+## Appendix E: Policy Acknowledgement Form
+
+I acknowledge that I have read and understood this AI Incident Response Plan. I understand my responsibility to report suspected AI incidents immediately.
+
+**Name:** ____________________________
+
+**Position:** ____________________________
+
+**Department:** ____________________________
+
+**Signature:** ____________________________
+
+**Date:** ____________________________
+
+---
+
+**Approved by:** ____________________________
+
+**Date:** ____________________________
+
+**Next Review Date:** ____________________________
+

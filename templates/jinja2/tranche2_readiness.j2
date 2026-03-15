@@ -1,0 +1,241 @@
+# POLA Act Tranche 2 Readiness Plan
+
+**{{ business_name }}**
+*Effective Date: {{ effective_date }}*
+*Version: {{ version }}*
+
+---
+
+## 1. Purpose
+
+This readiness plan prepares {{ business_name }} for the anticipated requirements of **Tranche 2** of the **Privacy and Other Legislation Amendment (POLA) Act 2024**. While Tranche 1 introduced the statutory tort of serious invasion of privacy, children's privacy protections, and enhanced enforcement powers, Tranche 2 is expected to introduce **high-risk AI regulation**, **mandatory AI registers**, and **enhanced transparency obligations**. This plan identifies gaps between {{ business_name }}'s current posture and anticipated requirements, and provides an implementation timeline.
+
+{% if tranche2_aware %}
+{{ business_name }} has acknowledged awareness of Tranche 2. This plan formalises that awareness into concrete readiness actions.
+{% else %}
+**Note:** {{ business_name }} has not yet formally acknowledged Tranche 2 preparations. This plan should be reviewed and endorsed by senior leadership as a priority.
+{% endif %}
+
+---
+
+## 2. Background — What Tranche 2 Is Expected to Require
+
+Based on the Attorney-General's Department consultations, the OAIC's forward guidance, and the AI6 Guidance for AI Adoption (October 2024), Tranche 2 is anticipated to include the following:
+
+| Anticipated Requirement | Description | Likelihood |
+|------------------------|------------|------------|
+| High-risk AI classification | Mandatory identification and classification of AI systems that pose significant risk to individuals | High |
+| Conformity assessment | Independent assessment of high-risk AI systems against safety, fairness, and transparency standards | High |
+| Mandatory AI register | Organisations must maintain and, in some cases, publish a register of AI systems in use | High |
+| Enhanced transparency | Individuals must be informed when AI is used in decisions that affect them, with explanation of logic | High |
+| Algorithmic impact assessments | Mandatory impact assessments for AI systems with significant effects on individuals | Medium-High |
+| Human oversight requirements | Mandated human review for specified categories of automated decisions | Medium |
+| AI incident reporting | Mandatory reporting of AI-related incidents (bias events, safety failures, rights impacts) | Medium |
+| Extraterritorial reach | Requirements applied to overseas AI providers processing Australians' data | Medium |
+
+---
+
+## 3. High-Risk AI System Identification
+
+### 3.1 Identification Criteria
+
+{{ business_name }} must assess each AI system against the following criteria to determine if it is likely to be classified as high-risk under Tranche 2:
+
+| Criterion | High-Risk Indicator | {{ business_name }} Assessment |
+|-----------|--------------------|-----------------------------|
+| Decision impact | AI makes or materially assists decisions affecting individuals' legal rights, access to services, employment, credit, insurance, or housing | To be assessed per system |
+| Vulnerability of subjects | AI processes data of children, elderly persons, persons with disability, or First Nations peoples | To be assessed per system |
+| Scale | AI affects a large number of individuals | To be assessed per system |
+| Reversibility | AI decisions are difficult or impossible to reverse | To be assessed per system |
+| Autonomy | AI operates with limited or no human oversight | To be assessed per system |
+| Data sensitivity | AI processes sensitive information as defined by the Privacy Act | To be assessed per system |
+
+### 3.2 Current AI Systems Assessment
+
+{% if ai_tools_in_use %}
+| AI System | Likely High-Risk | Reason |
+|-----------|-----------------|--------|
+{% for tool in ai_tools_in_use %}| {{ tool }} | To be determined | Requires assessment against Section 3.1 criteria |
+{% endfor %}
+{% else %}
+{{ business_name }} has not yet catalogued its AI systems. An AI tool inventory is a **prerequisite** for Tranche 2 readiness.
+{% endif %}
+
+{% if automated_decision_types %}
+### 3.3 Automated Decision Types Requiring Priority Assessment
+
+The following automated decision types are most likely to be classified as high-risk:
+
+{% for adt in automated_decision_types %}- {{ adt }}
+{% endfor %}
+{% endif %}
+
+---
+
+## 4. Conformity Assessment Preparation
+
+Tranche 2 is expected to require independent conformity assessment for high-risk AI systems. {{ business_name }} should prepare by:
+
+### 4.1 Internal Readiness Checklist
+
+- [ ] AI system documentation is complete (purpose, design, training data, limitations)
+- [ ] Bias and fairness testing has been conducted
+{% if bias_testing_conducted %} *Status: Bias testing has been conducted*
+{% else %} **Gap: Bias testing has not been conducted — begin immediately for high-risk systems**
+{% endif %}
+- [ ] Privacy Impact Assessments are current for all AI systems
+{% if pia_conducted %} *Status: PIA has been conducted*
+{% else %} **Gap: PIA has not been conducted — critical for conformity assessment**
+{% endif %}
+- [ ] Technical documentation covers model architecture, training methodology, and validation results
+- [ ] Performance metrics are tracked and recorded (accuracy, precision, recall, fairness metrics)
+- [ ] Human oversight mechanisms are documented and operational
+{% if human_review_available %} *Status: Human review is available*
+{% else %} **Gap: Human review not yet implemented**
+{% endif %}
+- [ ] Incident history is maintained (bugs, errors, complaints, bias events)
+{% if ai_incident_register %} *Status: AI incident register is maintained*
+{% else %} **Gap: AI incident register not yet established**
+{% endif %}
+
+### 4.2 External Assessor Preparation
+
+| Action | Description | Timeline |
+|--------|------------|----------|
+| Identify potential assessors | Research accredited AI audit firms in Australia | 6 months before anticipated commencement |
+| Budget allocation | Secure budget for conformity assessments (estimated $20,000 - $100,000 per high-risk system) | Next budget cycle |
+| Pre-assessment gap analysis | Engage an assessor for an informal readiness review | 3 months before anticipated commencement |
+| Evidence package preparation | Compile all documentation required for assessment | Ongoing |
+
+---
+
+## 5. Mandatory AI Register Requirements
+
+### 5.1 Register Contents (Anticipated)
+
+{{ business_name }} should begin building its AI register now, structured to meet anticipated Tranche 2 requirements:
+
+| Register Field | Description | Status |
+|---------------|------------|--------|
+| AI system name | Name and version of the AI system | {% if ai_tools_in_use %}Partially complete{% else %}Not started{% endif %} |
+| Vendor / provider | Organisation that developed or provides the AI system | {% if ai_tools_in_use %}Partially complete{% else %}Not started{% endif %} |
+| Purpose and use case | Description of what the AI system does and why | To be documented |
+| Data types processed | Personal information and other data processed by the system | {% if data_types_processed %}Partially complete{% else %}Not started{% endif %} |
+| Decision types | Types of decisions made or assisted by the AI system | {% if automated_decision_types %}Partially complete{% else %}Not started{% endif %} |
+| Risk classification | High / Medium / Low risk per Section 3.1 criteria | Not started |
+| Deployment date | When the AI system was first deployed | To be documented |
+| Last assessment date | Date of most recent PIA, bias audit, or security assessment | To be documented |
+| Data location | Where the AI system processes and stores data | {% if data_overseas_mapped %}Mapped{% else %}Not mapped{% endif %} |
+| Human oversight | Description of human review mechanisms | To be documented |
+| Transparency measures | How individuals are informed about AI use | {% if ai_disclosure_to_customers %}Partially in place{% else %}Not started{% endif %} |
+
+### 5.2 Current AI Tool Inventory
+
+{% if ai_tools_in_use %}
+| Tool | Overseas Data Processing | DPA in Place |
+|------|------------------------|-------------|
+{% for tool in ai_tools_in_use %}| {{ tool }} | {% if tool in ai_tools_overseas %}Yes{% else %}To be confirmed{% endif %} | {% if vendor_dpa_in_place %}Yes{% else %}No{% endif %} |
+{% endfor %}
+{% else %}
+**Critical gap:** No AI tool inventory exists. Begin cataloguing immediately.
+{% endif %}
+
+---
+
+## 6. Enhanced Transparency Obligations
+
+### 6.1 Anticipated Requirements
+
+Tranche 2 is expected to require:
+
+- **Notification at point of interaction** — individuals must know they are interacting with AI
+- **Explanation of logic** — individuals must be able to understand how AI decisions are made
+- **Right to human review** — individuals must be able to request human reconsideration of AI decisions
+- **AI-generated content labelling** — AI-generated text, images, and media must be identified as such
+
+### 6.2 Current State Assessment
+
+| Requirement | Current Status | Gap |
+|-------------|---------------|-----|
+| AI disclosure to customers | {% if ai_disclosure_to_customers %}In place{% else %}Not in place{% endif %} | {% if ai_disclosure_to_customers %}Monitor for enhanced requirements{% else %}Implement AI disclosure mechanism{% endif %} |
+| AI content review process | {% if ai_generated_content_reviewed %}In place{% else %}Not in place{% endif %} | {% if ai_generated_content_reviewed %}Extend to include labelling{% else %}Implement content review and labelling{% endif %} |
+| Human review availability | {% if human_review_available %}Available{% else %}Not available{% endif %} | {% if human_review_available %}Document and formalise process{% else %}Implement human review mechanism{% endif %} |
+| Privacy policy references AI | {% if has_privacy_policy %}Policy exists — check AI references{% else %}No privacy policy{% endif %} | {% if has_privacy_policy %}Ensure AI processing is specifically described{% else %}Create privacy policy with AI disclosure{% endif %} |
+{% if ai_in_marketing %}| AI in marketing transparency | To be assessed | Ensure marketing AI use is disclosed to recipients |{% endif %}
+{% if ai_copyright_assessed %}| AI content copyright assessment | Assessed | Maintain records for transparency obligations |{% else %}| AI content copyright assessment | Not assessed | Conduct assessment before Tranche 2 |{% endif %}
+
+---
+
+## 7. Gap Analysis Checklist
+
+### 7.1 Current State vs. Expected Requirements
+
+| # | Expected Requirement | Current State | Gap | Priority |
+|---|---------------------|---------------|-----|----------|
+| 1 | AI system inventory / register | {% if ai_tools_in_use %}Partial — {{ ai_tools_in_use | length }} tools identified{% else %}No inventory{% endif %} | {% if ai_tools_in_use %}Complete register fields per Section 5.1{% else %}Build complete AI register{% endif %} | Critical |
+| 2 | High-risk AI classification | Not yet performed | Assess all AI systems per Section 3.1 | Critical |
+| 3 | PIAs for AI systems | {% if pia_conducted %}Conducted{% else %}Not conducted{% endif %} | {% if pia_conducted %}Ensure PIAs cover all AI systems{% else %}Conduct PIAs for all high-risk AI systems{% endif %} | Critical |
+| 4 | Bias testing programme | {% if bias_testing_conducted %}Conducted{% else %}Not conducted{% endif %} | {% if bias_testing_conducted %}Formalise as recurring programme{% else %}Establish bias testing programme{% endif %} | High |
+| 5 | Human oversight mechanisms | {% if human_review_available %}Available{% else %}Not available{% endif %} | {% if human_review_available %}Document and formalise{% else %}Implement for high-risk systems{% endif %} | High |
+| 6 | Transparency and disclosure | {% if ai_disclosure_to_customers %}Partial{% else %}Not in place{% endif %} | Implement comprehensive AI disclosure | High |
+| 7 | AI incident register | {% if ai_incident_register %}Maintained{% else %}Not established{% endif %} | {% if ai_incident_register %}Ensure covers Tranche 2 fields{% else %}Establish AI incident register{% endif %} | High |
+| 8 | Vendor DPAs and audit rights | {% if vendor_dpa_in_place %}DPAs in place{% else %}No DPAs{% endif %} / {% if vendor_audit_rights %}Audit rights secured{% else %}No audit rights{% endif %} | {% if not vendor_dpa_in_place %}Negotiate DPAs{% endif %}{% if not vendor_audit_rights %} Secure audit rights{% endif %}{% if vendor_dpa_in_place and vendor_audit_rights %}Maintain and review{% endif %} | High |
+| 9 | Data overseas mapping | {% if data_overseas_mapped %}Mapped{% else %}Not mapped{% endif %} | {% if data_overseas_mapped %}Keep current{% else %}Map all overseas data flows{% endif %} | Medium |
+| 10 | AI supply chain assessment | {% if ai_supply_chain_assessed %}Assessed{% else %}Not assessed{% endif %} | {% if ai_supply_chain_assessed %}Maintain and update{% else %}Conduct AI supply chain assessment{% endif %} | Medium |
+| 11 | Conformity assessment readiness | Not started | Begin pre-assessment activities per Section 4 | Medium |
+| 12 | Shadow AI controls | {% if shadow_ai_controls %}In place{% else %}Not in place{% endif %} | {% if shadow_ai_controls %}Maintain detection programme{% else %}Implement Shadow AI detection{% endif %} | Medium |
+
+---
+
+## 8. Implementation Timeline
+
+| Phase | Activities | Target Completion |
+|-------|-----------|-------------------|
+| **Phase 1 — Foundation** (Months 1-3) | Complete AI system inventory; classify all systems against high-risk criteria; conduct gap analysis; secure senior leadership endorsement | {{ effective_date }} + 3 months |
+| **Phase 2 — Critical Gaps** (Months 3-6) | Conduct PIAs for high-risk systems; implement human oversight mechanisms; establish AI incident register; negotiate vendor DPAs and audit rights | {{ effective_date }} + 6 months |
+| **Phase 3 — Compliance Build** (Months 6-9) | Implement transparency and disclosure mechanisms; establish bias testing programme; build comprehensive AI register; map overseas data flows | {{ effective_date }} + 9 months |
+| **Phase 4 — Assessment Readiness** (Months 9-12) | Engage conformity assessor for pre-assessment; conduct internal audit against anticipated requirements; remediate identified gaps; prepare evidence packages | {{ effective_date }} + 12 months |
+| **Phase 5 — Monitoring** (Ongoing) | Monitor Attorney-General's Department announcements; adjust plan as Tranche 2 details are confirmed; maintain continuous compliance | Ongoing |
+
+### 8.1 Key Milestones
+
+- [ ] AI system inventory completed
+- [ ] High-risk AI systems identified and classified
+- [ ] PIAs completed for all high-risk systems
+- [ ] AI register built and populated
+- [ ] Transparency mechanisms deployed
+- [ ] Bias testing programme operational
+- [ ] Human oversight mechanisms formalised
+- [ ] Conformity assessor engaged
+- [ ] Pre-assessment completed
+- [ ] Full readiness achieved
+
+---
+
+## 9. Governance and Accountability
+
+| Role | Responsibility |
+|------|---------------|
+| {{ ai_governance_contact if ai_governance_contact else "AI Governance Contact (to be appointed)" }} | Overall accountability for Tranche 2 readiness; progress reporting to senior leadership |
+| Senior leadership | Endorse readiness plan; allocate budget and resources; review progress quarterly |
+| IT / Security | Technical implementation of AI register, monitoring, and transparency mechanisms |
+| Legal counsel | Monitor legislative developments; advise on compliance interpretation |
+| Business unit leads | Identify AI systems within their units; cooperate with assessments |
+
+---
+
+## 10. Regulatory Alignment
+
+| Regulation / Guidance | Requirement | This Plan |
+|-----------------------|------------|-----------|
+| POLA Act 2024 — Tranche 1 | Statutory tort, children's privacy, enhanced enforcement | Foundation for Tranche 2 — ensure Tranche 1 compliance first |
+| POLA Act — Tranche 2 (anticipated) | High-risk AI regulation, mandatory registers, conformity assessment | Comprehensive readiness plan with gap analysis and timeline |
+| Privacy Act 1988 — APPs | Existing privacy obligations apply to all AI processing | Gap analysis includes APP compliance for AI systems |
+| AI6 Guidance (Oct 2024) | Six practices for responsible AI adoption | AI6 practices inform readiness activities across all phases |
+| OAIC Oct 2024 Guidance | PIA requirements, transparency obligations, accountability | PIA programme and transparency mechanisms in Phase 2-3 |
+| AI Ethics Principles | Eight principles for responsible AI in Australia | Ethics framework underpins conformity assessment preparation |
+{% if essential_eight_applied %}| Essential Eight | Cyber security baseline for AI infrastructure | Applied — maintain alignment as Tranche 2 may reference security standards |{% else %}| Essential Eight | Cyber security baseline for AI infrastructure | Not yet applied — implement alongside Tranche 2 preparation |{% endif %}
+
+---
+
+*Review frequency: Quarterly until Tranche 2 commences, then as required by the legislation. Monitor Attorney-General's Department announcements for legislative updates.*
