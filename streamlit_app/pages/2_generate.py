@@ -9,7 +9,12 @@ from components.sidebar import render_sidebar
 
 from app.audit import log_event
 from app.database import SessionLocal, init_db
-from app.generator import generate_policy
+from app.generator import (
+    TEMPLATE_CATEGORIES,
+    TEMPLATE_LABELS,
+    generate_policy,
+    recommend_templates,
+)
 from app.models import Organisation, PolicyDocument, org_to_dict
 
 render_sidebar()
@@ -33,66 +38,75 @@ try:
 
     st.write(f"Generating policies for **{org.business_name}**")
 
-    template_labels = {
-        "ai_acceptable_use": "AI Acceptable Use Policy",
-        "data_classification": "Data Classification for AI",
-        "incident_response": "AI Incident Response Plan",
-        "remediation_action_plan": "Remediation Action Plan",
-        "vendor_risk_assessment": "AI Vendor Risk Assessment",
-        "ai_ethics_framework": "AI Ethics & Fairness Framework",
-        "employee_ai_training": "Employee AI Training Guide",
-        "ai_risk_register": "AI Risk Register",
-        "privacy_policy": "Privacy Policy (APP-Compliant)",
-        "board_ai_briefing": "Board AI Risk Briefing",
-        "ai_transparency_statement": "AI Transparency Statement",
-        "ai_data_retention": "AI Data Retention & Destruction Policy",
-        "ai_procurement": "AI Procurement Policy",
-        "shadow_ai_playbook": "Shadow AI Detection & Response Playbook",
-        "bias_audit_procedure": "AI Bias & Fairness Audit Procedure",
-        "statutory_tort_defence": "Statutory Tort Defence Checklist",
-        "tranche2_readiness": "POLA Act Tranche 2 Readiness Plan",
-        "ai_tool_approval": "AI Tool Approval & Onboarding Process",
-        "essential_eight_ai": "Essential Eight Controls for AI",
-        "copyright_ip_policy": "AI Copyright & IP Policy",
-        "ai_supply_chain_audit": "AI Supply Chain Audit Template",
-    }
-
-    # Core policy templates shown on this page; remediation + compliance report generated from the Compliance page
-    _generate_page_templates = [
-        "ai_acceptable_use",
-        "privacy_policy",
-        "data_classification",
-        "incident_response",
-        "vendor_risk_assessment",
-        "ai_ethics_framework",
-        "employee_ai_training",
-        "ai_risk_register",
-        "board_ai_briefing",
-        "ai_transparency_statement",
-        "ai_data_retention",
-        "ai_procurement",
-        "shadow_ai_playbook",
-        "bias_audit_procedure",
-        "statutory_tort_defence",
-        "tranche2_readiness",
-        "ai_tool_approval",
-        "essential_eight_ai",
-        "copyright_ip_policy",
-        "ai_supply_chain_audit",
-    ]
+    questionnaire_data = org_to_dict(org)
+    recs = recommend_templates(questionnaire_data)
+    recommended = recs["recommended"]
+    optional = recs["optional"]
 
     # Accept pre-selection from Compliance page "Fix this" buttons
     _preselect = st.session_state.get("preselect_templates")
-    _default = _preselect if _preselect else _generate_page_templates
-
-    selected_templates = st.multiselect(
-        "Select policy documents to generate:",
-        options=_generate_page_templates,
-        default=_default,
-        format_func=lambda x: template_labels.get(x, x),
-    )
-    # Clear preselection after widget is created (so user changes persist)
     st.session_state.pop("preselect_templates", None)
+
+    # --- Policy Selection UI ---
+    st.markdown("### Select policies to generate")
+    st.caption(
+        "Policies are recommended based on your questionnaire responses. "
+        "Deselect any you don't need, or expand **Additional policies** to add more."
+    )
+
+    # Quick action buttons
+    sel_col1, sel_col2 = st.columns(2)
+    with sel_col1:
+        if st.button("Select all recommended", use_container_width=True, key="sel_recommended"):
+            st.session_state["_gen_selected"] = list(recommended)
+            st.rerun()
+    with sel_col2:
+        if st.button("Select all", use_container_width=True, key="sel_all"):
+            st.session_state["_gen_selected"] = list(recommended) + list(optional)
+            st.rerun()
+
+    # Determine default selection
+    if _preselect:
+        default_selection = _preselect
+    elif "_gen_selected" in st.session_state:
+        default_selection = st.session_state["_gen_selected"]
+    else:
+        default_selection = list(recommended)
+
+    # Build category-grouped display
+    selected_templates = []
+
+    for category, cat_templates in TEMPLATE_CATEGORIES.items():
+        cat_recommended = [t for t in cat_templates if t in recommended]
+        cat_optional = [t for t in cat_templates if t in optional]
+
+        if not cat_recommended and not cat_optional:
+            continue
+
+        with st.expander(f"**{category}** ({len(cat_recommended)} recommended, {len(cat_optional)} optional)", expanded=bool(cat_recommended)):
+            for t in cat_recommended:
+                label = TEMPLATE_LABELS.get(t, t)
+                checked = st.checkbox(
+                    f"{label}",
+                    value=t in default_selection,
+                    key=f"gen_{t}",
+                    help="Recommended based on your profile",
+                )
+                if checked:
+                    selected_templates.append(t)
+
+            if cat_optional:
+                for t in cat_optional:
+                    label = TEMPLATE_LABELS.get(t, t)
+                    checked = st.checkbox(
+                        f"{label}",
+                        value=t in default_selection,
+                        key=f"gen_{t}",
+                    )
+                    if checked:
+                        selected_templates.append(t)
+
+    st.divider()
 
     output_format = st.selectbox(
         "Output format:",
@@ -119,15 +133,15 @@ try:
             else "Set your API key in .env to unlock AI-enhanced policy generation."
         )
 
+    st.markdown(f"**{len(selected_templates)}** policies selected")
+
     if st.button("Generate Policies", type="primary", use_container_width=True):
         if not selected_templates:
-            st.warning("Please select at least one template.")
+            st.warning("Please select at least one policy.")
         else:
-            questionnaire_data = org_to_dict(org)
-
             for template_type in selected_templates:
                 try:
-                    with st.spinner(f"Generating {template_labels[template_type]}..."):
+                    with st.spinner(f"Generating {TEMPLATE_LABELS.get(template_type, template_type)}..."):
                         # Board briefing needs policy_types context
                         if template_type == "board_ai_briefing":
                             from app.generator import build_board_briefing_context
@@ -188,7 +202,7 @@ try:
                         <div class="section-card" style="border-left:4px solid #16a34a;">
                             <div style="display:flex;align-items:center;gap:10px;">
                                 <span style="color:#16a34a;font-size:1.2rem;font-weight:bold;">Done</span>
-                                <span style="font-weight:600;color:#1a3c6e;">{template_labels[template_type]}</span>
+                                <span style="font-weight:600;color:#1a3c6e;">{TEMPLATE_LABELS.get(template_type, template_type)}</span>
                                 <span class="version-badge" style="background:#f0fdf4;color:#16a34a;border-color:#16a34a20;">v{policy.version}</span>
                                 <span style="color:#64748b;font-size:0.8rem;">{output_format.upper()}</span>
                             </div>
@@ -198,7 +212,7 @@ try:
                         )
                 except Exception as e:
                     db.rollback()
-                    st.error(f"Failed to generate {template_labels[template_type]}: {e}")
+                    st.error(f"Failed to generate {TEMPLATE_LABELS.get(template_type, template_type)}: {e}")
 
             st.info("Navigate to the **Policies** page to download your documents.")
 

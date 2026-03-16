@@ -26,11 +26,152 @@ TEMPLATE_TYPES = {
     "bias_audit_procedure": "bias_audit_procedure.j2",
     "statutory_tort_defence": "statutory_tort_defence.j2",
     "tranche2_readiness": "tranche2_readiness.j2",
-    "ai_tool_approval": "ai_tool_approval.j2",
     "essential_eight_ai": "essential_eight_ai.j2",
     "copyright_ip_policy": "copyright_ip_policy.j2",
     "ai_supply_chain_audit": "ai_supply_chain_audit.j2",
 }
+
+# Centralised template labels — single source of truth for all UI pages
+TEMPLATE_LABELS = {
+    "ai_acceptable_use": "AI Acceptable Use Policy",
+    "privacy_policy": "Privacy Policy (APP-Compliant)",
+    "data_classification": "Data Classification for AI",
+    "incident_response": "AI Incident Response Plan",
+    "employee_ai_training": "Employee AI Training Guide",
+    "ai_risk_register": "AI Risk Register",
+    "board_ai_briefing": "Board AI Risk Briefing",
+    "ai_ethics_framework": "AI Ethics & Fairness Framework",
+    "vendor_risk_assessment": "AI Vendor Risk Assessment",
+    "ai_procurement": "AI Procurement & Tool Approval Policy",
+    "ai_supply_chain_audit": "AI Supply Chain Audit Template",
+    "shadow_ai_playbook": "Shadow AI Detection & Response Playbook",
+    "bias_audit_procedure": "AI Bias & Fairness Audit Procedure",
+    "ai_data_retention": "AI Data Retention & Destruction Policy",
+    "essential_eight_ai": "Essential Eight Controls for AI",
+    "ai_transparency_statement": "AI Transparency Statement",
+    "copyright_ip_policy": "AI Copyright & IP Policy",
+    "statutory_tort_defence": "Statutory Tort Defence Checklist",
+    "tranche2_readiness": "POLA Act Tranche 2 Readiness Plan",
+    "remediation_action_plan": "Remediation Action Plan",
+    "compliance_report": "Compliance Report",
+}
+
+# Policy categories for the Generate page
+TEMPLATE_CATEGORIES = {
+    "Core Governance": [
+        "ai_acceptable_use",
+        "privacy_policy",
+        "data_classification",
+        "incident_response",
+        "employee_ai_training",
+    ],
+    "Risk & Oversight": [
+        "ai_risk_register",
+        "board_ai_briefing",
+        "ai_ethics_framework",
+        "bias_audit_procedure",
+        "essential_eight_ai",
+    ],
+    "Vendor & Supply Chain": [
+        "vendor_risk_assessment",
+        "ai_procurement",
+        "ai_supply_chain_audit",
+    ],
+    "Specialist Policies": [
+        "shadow_ai_playbook",
+        "ai_data_retention",
+        "ai_transparency_statement",
+        "copyright_ip_policy",
+        "statutory_tort_defence",
+        "tranche2_readiness",
+    ],
+}
+
+
+def recommend_templates(org_data: dict) -> dict[str, list[str]]:
+    """Return recommended and optional template keys based on org profile.
+
+    Returns {"recommended": [...], "optional": [...]} from the generatable
+    templates (excludes remediation_action_plan and compliance_report which
+    are generated from the Compliance page).
+    """
+    recommended = set()
+    optional = set()
+
+    # Core governance — always recommended
+    for t in TEMPLATE_CATEGORIES["Core Governance"]:
+        recommended.add(t)
+
+    # Risk & Oversight
+    recommended.add("ai_risk_register")
+    recommended.add("board_ai_briefing")
+    if org_data.get("automated_decisions") or org_data.get("customer_facing_ai"):
+        recommended.add("ai_ethics_framework")
+    else:
+        optional.add("ai_ethics_framework")
+    if org_data.get("automated_decisions") or org_data.get("ai_profiling_or_eligibility"):
+        recommended.add("bias_audit_procedure")
+    else:
+        optional.add("bias_audit_procedure")
+    if not org_data.get("essential_eight_applied"):
+        recommended.add("essential_eight_ai")
+    else:
+        optional.add("essential_eight_ai")
+
+    # Vendor & Supply Chain
+    has_overseas = any(
+        o for o in (org_data.get("ai_tools_overseas") or [])
+        if o != "None — all data stays in Australia"
+    )
+    if org_data.get("ai_tools_in_use") or has_overseas:
+        recommended.add("vendor_risk_assessment")
+        recommended.add("ai_procurement")
+    else:
+        optional.add("vendor_risk_assessment")
+        optional.add("ai_procurement")
+    if has_overseas:
+        recommended.add("ai_supply_chain_audit")
+    else:
+        optional.add("ai_supply_chain_audit")
+
+    # Specialist Policies
+    if not org_data.get("shadow_ai_controls"):
+        recommended.add("shadow_ai_playbook")
+    else:
+        optional.add("shadow_ai_playbook")
+    if not org_data.get("has_data_retention_policy"):
+        recommended.add("ai_data_retention")
+    else:
+        optional.add("ai_data_retention")
+    if org_data.get("customer_facing_ai"):
+        recommended.add("ai_transparency_statement")
+    else:
+        optional.add("ai_transparency_statement")
+    if org_data.get("ai_in_marketing") or org_data.get("customer_facing_ai"):
+        recommended.add("copyright_ip_policy")
+    else:
+        optional.add("copyright_ip_policy")
+    # Statutory tort applies to everyone under POLA Act
+    recommended.add("statutory_tort_defence")
+    if org_data.get("automated_decisions"):
+        recommended.add("tranche2_readiness")
+    else:
+        optional.add("tranche2_readiness")
+
+    return {
+        "recommended": sorted(recommended, key=lambda t: _template_sort_key(t)),
+        "optional": sorted(optional, key=lambda t: _template_sort_key(t)),
+    }
+
+
+def _template_sort_key(template_type: str) -> tuple[int, str]:
+    """Sort templates by category order, then alphabetically within category."""
+    order = 0
+    for idx, (_, templates) in enumerate(TEMPLATE_CATEGORIES.items()):
+        if template_type in templates:
+            order = idx
+            break
+    return (order, template_type)
 
 # SECURITY NOTE: autoescape is intentionally disabled because templates output
 # Markdown/plain text (rendered to PDF), NOT browser-served HTML. Enabling

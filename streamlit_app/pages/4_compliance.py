@@ -12,6 +12,7 @@ from components.sidebar import render_sidebar
 
 from app.compliance_checker import calculate_compliance_score, get_industry_benchmarks, save_compliance_snapshot
 from app.database import SessionLocal, init_db
+from app.generator import TEMPLATE_LABELS as _CENTRAL_LABELS
 from app.models import ComplianceEvidence, Organisation, PolicyDocument, RemediationAction, org_to_dict
 
 # Map checklist gap names to the template that fixes them
@@ -26,8 +27,8 @@ _GAP_TO_TEMPLATE = {
     "Training frequency meets OAIC recommendation": "employee_ai_training",
     "Board/executive AI awareness": "board_ai_briefing",
     "Privacy Impact Assessment conducted": "ai_ethics_framework",
-    "Data retention policy for AI outputs": "data_classification",
-    "Data retention period meets APP 11 minimisation": "data_classification",
+    "Data retention policy for AI outputs": "ai_data_retention",
+    "Data retention period meets APP 11 minimisation": "ai_data_retention",
     "AI tool register maintained": "ai_acceptable_use",
     "Cross-border data flows mapped": "vendor_risk_assessment",
     "Human oversight for high-impact AI decisions": "ai_ethics_framework",
@@ -58,28 +59,7 @@ _GAP_TO_TEMPLATE = {
     "Named AI governance contact": "ai_acceptable_use",
 }
 
-_TEMPLATE_LABELS = {
-    "ai_acceptable_use": "AI Acceptable Use Policy",
-    "data_classification": "Data Classification Policy",
-    "incident_response": "Incident Response Plan",
-    "vendor_risk_assessment": "Vendor Risk Assessment",
-    "privacy_policy": "Privacy Policy",
-    "employee_ai_training": "Employee AI Training Guide",
-    "board_ai_briefing": "Board AI Briefing",
-    "ai_ethics_framework": "AI Ethics Framework",
-    "ai_risk_register": "AI Risk Register",
-    "ai_transparency_statement": "AI Transparency Statement",
-    "ai_data_retention": "AI Data Retention & Destruction Policy",
-    "ai_procurement": "AI Procurement Policy",
-    "shadow_ai_playbook": "Shadow AI Playbook",
-    "bias_audit_procedure": "Bias & Fairness Audit Procedure",
-    "statutory_tort_defence": "Statutory Tort Defence Checklist",
-    "tranche2_readiness": "Tranche 2 Readiness Plan",
-    "ai_tool_approval": "AI Tool Approval Process",
-    "essential_eight_ai": "Essential Eight for AI",
-    "copyright_ip_policy": "Copyright & IP Policy",
-    "ai_supply_chain_audit": "Supply Chain Audit Template",
-}
+_TEMPLATE_LABELS = _CENTRAL_LABELS
 
 render_sidebar()
 init_db()

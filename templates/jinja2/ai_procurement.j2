@@ -1,4 +1,4 @@
-# AI Procurement Policy
+# AI Procurement & Tool Approval Policy
 
 **{{ business_name }}**
 *Effective Date: {{ effective_date }}*
@@ -8,7 +8,7 @@
 
 ## 1. Purpose
 
-This policy establishes the evaluation, approval, and onboarding process for acquiring new AI tools and services at {{ business_name }}. It ensures that AI procurement decisions account for privacy obligations under the **Privacy Act 1988**, transparency requirements under the **POLA Act 2024**, and governance expectations from the **AI6 Guidance for AI Adoption** (October 2024).
+This policy establishes the end-to-end process for requesting, evaluating, approving, onboarding, and decommissioning AI tools and services at {{ business_name }}. It ensures that AI procurement decisions account for privacy obligations under the **Privacy Act 1988**, transparency requirements under the **POLA Act 2024**, and governance expectations from the **AI6 Guidance for AI Adoption** (October 2024).
 
 ---
 
@@ -22,35 +22,65 @@ This policy applies to:
 - AI features embedded in existing software (e.g., AI assistants in productivity suites)
 - AI tools used by contractors or third parties on {{ business_name }}'s behalf
 
-**Shadow AI note:** Using AI tools without following this procurement process constitutes Shadow AI and is governed by the {{ business_name }} AI Acceptable Use Policy.
+{% if shadow_ai_controls %}
+{{ business_name }} has shadow AI controls in place. Any AI tool adoption that bypasses this process will be treated as a shadow AI incident and escalated under the AI Acceptable Use Policy.
+{% else %}
+**Shadow AI note:** Using AI tools without following this procurement process constitutes Shadow AI and is governed by the {{ business_name }} AI Acceptable Use Policy. {{ business_name }} does not currently have technical shadow AI controls — implementing this process is a critical first step.
+{% endif %}
 
 ---
 
-## 3. Pre-Procurement Assessment
+## 3. AI Tool Request
 
-Before any AI tool is evaluated, the requester must complete an **AI Procurement Request** addressing:
+All requests for new AI tools must be submitted to {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }} using the following template.
 
 ### 3.1 Business Case
 
-| Question | Response Required |
-|----------|-------------------|
-| What business problem does this AI tool solve? | Description |
+| Field | Response Required |
+|-------|-------------------|
+| Requester name and role | Full name and position |
+| Date of request | DD/MM/YYYY |
+| Tool name and vendor | Product name and vendor entity |
+| Business problem being solved | Description of the use case |
+| Expected benefit | Efficiency gain, cost saving, or capability uplift |
+| Alternatives considered | At least one alternative (including manual process) |
 | What data will the tool process? | Data types from classification policy |
 | Will the tool process personal information? | Yes / No |
 | Will the tool make or assist decisions affecting individuals? | Yes / No |
 | Who will have access to the tool? | Roles and headcount |
-| What is the expected annual cost? | Budget estimate |
+| Estimated annual cost | Dollar figure or "free-tier" |
 
-### 3.2 Risk Screening
+### 3.2 Data Classification
+
+| Question | Answer |
+|----------|--------|
+| What data types will the tool process? | Select from classification policy |
+| Will the tool process sensitive information (health, biometric, children's data)? | Yes / No |
+| What is the highest data classification level? | Public / Internal / Confidential / Restricted |
+| Will data be sent overseas? | Yes / No — if yes, specify countries |
+
+{% if data_types_processed %}
+**Data types currently processed by {{ business_name }}:**
+{% for dtype in data_types_processed %}
+- {{ dtype }}
+{% endfor %}
+{% endif %}
+
+### 3.3 Risk Screening
 
 The following triggers require escalation to {{ ai_governance_contact if ai_governance_contact else "the AI governance contact" }} before proceeding:
 
-- The tool will process **Confidential** or **Restricted** data
-- The tool will process data of **children under 18**
-{% if "Health Information" in data_types_processed %}- The tool will process **health information**{% endif %}
-- The tool processes data **overseas** (triggers APP 8 assessment)
-- The tool makes **automated decisions** affecting individuals (triggers POLA Act assessment)
-- The tool is **free-tier** or **open-source** with unclear data handling terms
+| Risk Indicator | Impact |
+|----------------|--------|
+| Processes personal information | Triggers APP compliance review |
+| Processes sensitive information | Requires PIA |
+| Makes automated decisions affecting individuals | Triggers POLA Act assessment |
+| Sends data overseas | Triggers APP 8 cross-border assessment |
+| Free-tier or unclear data handling terms | Requires enhanced vendor due diligence |
+| Processes data of children under 18 | Requires escalation to senior leadership |
+| Is customer-facing | Requires transparency and disclosure review |
+
+{% if "Health Information" in data_types_processed %}- The tool will process **health information** — requires escalation regardless of classification tier{% endif %}
 
 ---
 
@@ -68,6 +98,13 @@ All AI tools must be evaluated against the following criteria before approval:
 | Sub-processor disclosure | Vendor must disclose all sub-processors and their locations | High |
 | Data deletion capability | Vendor must support data deletion on request with written confirmation | High |
 | Encryption | Data encrypted in transit (TLS 1.2+) and at rest (AES-256) | High |
+| Consent mechanisms | Where applicable, valid consent obtained before data processing | High |
+
+{% if has_privacy_policy %}
+Cross-reference the vendor's privacy practices against {{ business_name }}'s own privacy policy for consistency.
+{% else %}
+**Action required:** {{ business_name }} should establish a privacy policy before onboarding AI tools that process personal information.
+{% endif %}
 
 ### 4.2 Contractual Requirements
 
@@ -82,15 +119,28 @@ Before signing, the following must be verified:
 - [ ] **Liability and indemnification** — vendor accepts liability for data breaches caused by their systems
 - [ ] **Insurance** — vendor maintains adequate cyber insurance
 
+{% if vendor_dpa_in_place %}
+{{ business_name }} has existing DPA templates. Apply the standard DPA to all new AI vendor engagements.
+{% else %}
+{{ business_name }} does not currently have a standard DPA in place. A DPA template should be developed with legal counsel before onboarding any AI tool that processes personal information.
+{% endif %}
+
 ### 4.3 Security Assessment
 
 | Criterion | Acceptable Evidence |
 |-----------|-------------------|
-| Security certification | SOC 2 Type II, ISO 27001, or equivalent |
+| Security certification | SOC 2 Type II, ISO 27001, or IRAP assessment |
 | Penetration testing | Annual third-party pentest report |
-| Access controls | Role-based access, MFA, SSO support |
-| Audit logging | Comprehensive logs available to customer |
+| Access controls | RBAC, MFA, SSO support |
+| Audit logging | Comprehensive activity logs accessible to {{ business_name }} |
 | Vulnerability management | Defined patching cadence |
+| Incident response | Documented IR plan with notification within 72 hours |
+
+{% if essential_eight_applied %}
+Evaluate the tool against {{ business_name }}'s Essential Eight maturity baseline. See the Essential Eight Controls for AI Systems policy for detailed mapping.
+{% else %}
+**Recommendation:** {{ business_name }} should consider applying the ACSC Essential Eight framework to AI tool security assessments.
+{% endif %}
 
 ### 4.4 AI-Specific Assessment
 
@@ -108,12 +158,22 @@ Before signing, the following must be verified:
 
 ### 5.1 Approval Tiers
 
-| Data Classification | Approver | Additional Requirements |
-|--------------------|----------|------------------------|
-| Public / Internal only | Team manager | Standard evaluation |
-| Confidential | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} | Full evaluation + DPA |
-| Restricted | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} + senior leadership | Full evaluation + DPA + PIA |
-| Automated decisions | Senior leadership | Full evaluation + PIA + POLA Act assessment |
+| Data Classification | Risk Level | Approver | Additional Requirements |
+|--------------------|------------|----------|------------------------|
+| Public | Low | Team manager | Standard evaluation |
+| Internal | Low | Team manager + IT review | Standard evaluation + security check |
+| Confidential | Medium | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} | Full evaluation + DPA signed |
+| Confidential | High | {{ ai_governance_contact if ai_governance_contact else "AI governance contact" }} + senior leadership | Full evaluation + DPA + PIA |
+| Restricted | Any | Senior leadership + legal | Full evaluation + DPA + PIA + legal review |
+| Automated decisions | Any | Senior leadership | Full evaluation + PIA + POLA Act assessment |
+
+{% if automated_decision_types %}
+**Current automated decision types at {{ business_name }}:**
+{% for adt in automated_decision_types %}
+- {{ adt }}
+{% endfor %}
+Any new tool that introduces additional automated decision types requires senior leadership approval.
+{% endif %}
 
 ### 5.2 Privacy Impact Assessment
 
@@ -131,24 +191,49 @@ A PIA is **required** when the AI tool:
 
 ---
 
-## 6. Onboarding Checklist
+## 6. Trial and Sandbox Requirements
+
+All new AI tools must undergo a **mandatory trial period** before full production deployment:
+
+| Requirement | Detail |
+|-------------|--------|
+| Trial duration | Minimum 30 days, maximum 90 days |
+| Data restriction | Trial must use **Public or Internal data only** — no Confidential or Restricted data |
+| User restriction | Maximum 5 users during trial unless otherwise approved |
+| Monitoring | Weekly usage and output reviews during trial |
+| Success criteria | Defined before trial begins — must be measurable |
+| Trial exit decision | Approve for production, extend trial, or decommission |
+
+{% if ai_generated_content_reviewed %}
+{{ business_name }} reviews AI-generated content before use. During trial periods, **all** AI outputs must be reviewed by a designated reviewer before being used in any business process.
+{% else %}
+**Recommendation:** {{ business_name }} should implement AI output review processes, particularly during trial periods, to assess accuracy and suitability before production rollout.
+{% endif %}
+
+---
+
+## 7. Onboarding Checklist
 
 Once approved, the following must be completed before the AI tool enters production:
 
 - [ ] DPA signed and filed
 - [ ] Model training opt-out confirmed in writing
-- [ ] Tool added to {{ business_name }}'s AI Tool Register
+- [ ] Tool added to {{ business_name }}'s AI Tool Register with all required metadata
 - [ ] Data classification confirmed for all data the tool will process
-- [ ] Access controls configured (role-based, minimum necessary)
+- [ ] Access controls configured (role-based, minimum necessary, MFA enabled)
 - [ ] Logging enabled for prompts, outputs, and user activity
 - [ ] Staff training completed for authorised users
-- [ ] Data retention schedule defined for AI interactions
+- [ ] Data retention schedule defined and configured
 - [ ] Incident response procedures updated to include the new tool
-- [ ] Review date set (6 months for initial review, then annually)
+- [ ] Privacy collection notice updated if the tool collects new personal information
+{% if customer_facing_ai %}- [ ] Customer-facing transparency notice updated to disclose use of the AI tool{% endif %}
+{% if ai_disclosure_to_customers %}- [ ] Customer disclosure statement reviewed and published{% endif %}
+- [ ] Review date set — 3 months for initial review during trial, then annually
+- [ ] Backup and recovery procedures documented for AI configurations and data
 
 ---
 
-## 7. Ongoing Review
+## 8. Ongoing Review
 
 All approved AI tools must be reviewed:
 
@@ -165,7 +250,7 @@ Review must reassess:
 
 ---
 
-## 8. Emergency / Rapid Procurement
+## 9. Emergency / Rapid Procurement
 
 For urgent business needs requiring AI tool adoption within 48 hours:
 
@@ -176,7 +261,21 @@ For urgent business needs requiring AI tool adoption within 48 hours:
 
 ---
 
-## 9. Prohibited Procurement
+## 10. Decommissioning Process
+
+When an AI tool is retired, the following steps must be completed:
+
+1. **Data export** — extract and store any data required for retention obligations
+2. **Data deletion** — request written confirmation from the vendor that all {{ business_name }} data has been deleted
+3. **Access revocation** — disable all user accounts and API keys immediately
+4. **Register update** — update the AI Tool Register to reflect decommissioned status and date
+5. **Sub-processor review** — confirm the vendor's sub-processors have also deleted {{ business_name }}'s data
+6. **Log preservation** — retain audit logs for the period required by the data retention policy
+7. **Lessons learned** — document any issues, risks, or findings for future procurement decisions
+
+---
+
+## 11. Prohibited Procurement
 
 The following AI tools must **not** be procured regardless of business case:
 
@@ -188,16 +287,42 @@ The following AI tools must **not** be procured regardless of business case:
 
 ---
 
-## 10. Regulatory Alignment
+## 12. Current AI Tools Inventory
 
-| Regulation | Requirement | This Policy |
-|-----------|------------|-------------|
-| APP 8 | Reasonable steps before cross-border disclosure | Data location assessment, DPA requirement |
-| APP 11 | Security of personal information | Security assessment criteria |
+{% if ai_tools_in_use %}
+**AI tools currently in use at {{ business_name }}:**
+
+| # | Tool |
+|---|------|
+{% for tool in ai_tools_in_use %}| {{ loop.index }} | {{ tool }} |
+{% endfor %}
+{% else %}
+{{ business_name }} has not yet registered any AI tools. This approval process should be applied retrospectively to any AI tools already in use.
+{% endif %}
+
+{% if ai_tools_overseas %}
+**AI tools processing data overseas:**
+
+{% for tool in ai_tools_overseas %}
+- {{ tool }}
+{% endfor %}
+
+These tools require APP 8 cross-border disclosure assessments. Ensure DPAs are in place for each.
+{% endif %}
+
+---
+
+## 13. Regulatory Alignment
+
+| Regulation / Guidance | Requirement | This Policy |
+|----------------------|-------------|-------------|
+| APP 8 | Reasonable steps before cross-border disclosure | Data location assessment, DPA requirement, overseas tool tracking |
+| APP 11 | Security of personal information | Security assessment criteria, Essential Eight alignment |
 | POLA Act 2024 | Automated decision transparency | PIA + POLA assessment for ADM tools |
-| AI6 Practice 1 | Understand impacts and plan accordingly | Pre-procurement risk screening |
-| AI6 Practice 2 | Decide who is accountable | Tiered approval process |
-| AI6 Practice 3 | Measure and manage risks | Evaluation criteria and ongoing review |
+| AI6 Practice 1 | Understand impacts and plan accordingly | Risk screening, business case requirements |
+| AI6 Practice 2 | Decide who is accountable | Tiered approval process with named approvers |
+| AI6 Practice 3 | Measure and manage risks | Trial period, evaluation criteria, ongoing review |
+| AI6 Practice 6 | Provide appropriate transparency | Onboarding checklist includes disclosure steps |
 | OAIC Oct 2024 | PIA before deploying AI systems | PIA requirement for high-risk tools |
 
 ---

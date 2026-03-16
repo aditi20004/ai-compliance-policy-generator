@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from components.sidebar import render_sidebar
 
 from app.database import SessionLocal, init_db
+from app.generator import TEMPLATE_LABELS
 from app.models import Organisation, PolicyDocument
 
 render_sidebar()
@@ -37,30 +38,7 @@ try:
         st.info("No policies generated yet. Go to the Generate page to create some.")
         st.stop()
 
-    template_labels = {
-        "ai_acceptable_use": "AI Acceptable Use Policy",
-        "privacy_policy": "Privacy Policy (APP-Compliant)",
-        "data_classification": "Data Classification for AI",
-        "incident_response": "AI Incident Response Plan",
-        "remediation_action_plan": "Remediation Action Plan",
-        "compliance_report": "Compliance Report",
-        "vendor_risk_assessment": "AI Vendor Risk Assessment",
-        "ai_ethics_framework": "AI Ethics & Fairness Framework",
-        "employee_ai_training": "Employee AI Training Guide",
-        "ai_risk_register": "AI Risk Register",
-        "board_ai_briefing": "Board AI Risk Briefing",
-        "ai_transparency_statement": "AI Transparency Statement",
-        "ai_data_retention": "AI Data Retention & Destruction Policy",
-        "ai_procurement": "AI Procurement Policy",
-        "shadow_ai_playbook": "Shadow AI Detection & Response Playbook",
-        "bias_audit_procedure": "AI Bias & Fairness Audit Procedure",
-        "statutory_tort_defence": "Statutory Tort Defence Checklist",
-        "tranche2_readiness": "POLA Act Tranche 2 Readiness Plan",
-        "ai_tool_approval": "AI Tool Approval & Onboarding Process",
-        "essential_eight_ai": "Essential Eight Controls for AI",
-        "copyright_ip_policy": "AI Copyright & IP Policy",
-        "ai_supply_chain_audit": "AI Supply Chain Audit Template",
-    }
+    template_labels = TEMPLATE_LABELS
 
     _TYPE_COLORS = {
         "ai_acceptable_use": "#1a3c6e",
@@ -81,7 +59,6 @@ try:
         "bias_audit_procedure": "#7c3aed",
         "statutory_tort_defence": "#ea580c",
         "tranche2_readiness": "#0891b2",
-        "ai_tool_approval": "#2563eb",
         "essential_eight_ai": "#1a3c6e",
         "copyright_ip_policy": "#16a34a",
         "ai_supply_chain_audit": "#0891b2",

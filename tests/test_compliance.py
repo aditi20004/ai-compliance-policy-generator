@@ -144,7 +144,6 @@ ALL_POLICY_TYPES = {
     "bias_audit_procedure",
     "statutory_tort_defence",
     "tranche2_readiness",
-    "ai_tool_approval",
     "essential_eight_ai",
     "copyright_ip_policy",
     "ai_supply_chain_audit",
