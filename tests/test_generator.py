@@ -104,8 +104,8 @@ def test_compliance_checker_new_items():
 
     policy_types = {"ai_acceptable_use", "data_classification", "incident_response"}
     result = calculate_compliance_score(SAMPLE_DATA, policy_types)
-    # Should have 40 items (expanded checklist with GRC improvements)
-    assert result["total"] == 40
+    # Should have 41 items (expanded checklist with GRC improvements + data retention period check)
+    assert result["total"] == 41
     # Shadow AI controls = False should now FAIL (fixed logic)
     shadow_item = next(i for i in result["checklist"] if i["name"] == "Shadow AI controls in place")
     assert shadow_item["passed"] is False

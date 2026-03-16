@@ -90,8 +90,10 @@ def _estimate_max_penalty_exposure(org_data: dict) -> dict:
 
     # Shadow AI breach cost — applies if no controls regardless of awareness
     if not org_data.get("shadow_ai_controls"):
-        estimated_items["Shadow AI data breach cost — estimated (IBM 2025)"] = ESTIMATED_COSTS["shadow_ai_sme"]
-        est_total += ESTIMATED_COSTS["shadow_ai_sme"]
+        employee_count = org_data.get("employee_count", 10)
+        shadow_cost = min(int(ESTIMATED_COSTS["shadow_ai_sme"] * max(employee_count / 200, 0.5)), 2_000_000)
+        estimated_items["Shadow AI data breach cost — estimated (IBM 2025)"] = shadow_cost
+        est_total += shadow_cost
 
     # NDB scheme — failure to notify breach involving AI systems
     if is_covered and not org_data.get("ndb_ai_process"):
@@ -127,6 +129,9 @@ def _estimate_max_penalty_exposure(org_data: dict) -> dict:
 
 def _ai6_checklist(org_data: dict, policy_types: set[str]) -> list[dict]:
     """Map compliance to AI6 6 essential practices with weighted severity."""
+
+    employee_count = org_data.get("employee_count", 10)
+    is_large_org = employee_count >= 200
 
     overseas = org_data.get("ai_tools_overseas", [])
     has_overseas = any(o for o in overseas if o != "None — all data stays in Australia")
@@ -181,7 +186,7 @@ def _ai6_checklist(org_data: dict, policy_types: set[str]) -> list[dict]:
             "name": "AI prompts and outputs logged",
             "description": "AI interactions are logged for audit, incident investigation, and quality assurance.",
             "passed": org_data.get("ai_outputs_logged", False),
-            "weight": 6,
+            "weight": 8 if is_large_org else 6,
             "severity": "medium",
             "regulation": "AI6 Practice 1, OAIC Guidance (accountability)",
             "recommendation": "Implement logging of AI prompts and outputs to support audit trails and incident investigation.",
@@ -214,8 +219,8 @@ def _ai6_checklist(org_data: dict, policy_types: set[str]) -> list[dict]:
             "name": "Board/executive AI awareness",
             "description": "Board or senior leadership has been briefed on AI risks and governance obligations.",
             "passed": org_data.get("board_ai_awareness", False),
-            "weight": 7,
-            "severity": "high",
+            "weight": 9 if (org_data.get("automated_decisions") or org_data.get("customer_facing_ai")) else 7,
+            "severity": "critical" if (org_data.get("automated_decisions") and not org_data.get("board_ai_awareness")) else "high",
             "regulation": "Corporations Act s180 (duty of care), AI6 Practice 2",
             "recommendation": "Brief the board or senior leadership on AI risks, regulatory obligations, and the organisation's governance posture. Directors have a duty of care to understand material risks.",
         },
@@ -251,6 +256,16 @@ def _ai6_checklist(org_data: dict, policy_types: set[str]) -> list[dict]:
             "severity": "high" if has_sensitive else "medium",
             "regulation": "APP 11 (destruction/de-identification), AI6 Practice 3",
             "recommendation": "Establish a data retention policy covering AI outputs, prompt logs, and processed data. APP 11 requires destroying personal information no longer needed.",
+        },
+        {
+            "ai6_practice": "3. Measure and Manage Risks",
+            "name": "Data retention period meets APP 11 minimisation",
+            "description": "AI data retention period is proportionate and meets APP 11 data minimisation requirements.",
+            "passed": org_data.get("has_data_retention_policy", False) and org_data.get("data_retention_period") in ("30_days", "90_days", "1_year"),
+            "weight": 5,
+            "severity": "medium" if has_sensitive else "low",
+            "regulation": "APP 11 (destruction/de-identification)",
+            "recommendation": "Reduce AI data retention to under 1 year. APP 11 requires destroying personal information no longer needed.",
         },
         {
             "ai6_practice": "3. Measure and Manage Risks",
@@ -367,7 +382,11 @@ def _ai6_checklist(org_data: dict, policy_types: set[str]) -> list[dict]:
             "description": "Human review is mandatory before AI-assisted decisions affecting individuals are finalised.",
             "passed": (
                 not org_data.get("automated_decisions", False)
-                or (org_data.get("pia_conducted", False) and "ai_acceptable_use" in policy_types)
+                or (
+                    org_data.get("human_review_available", False)
+                    and org_data.get("pia_conducted", False)
+                    and "ai_acceptable_use" in policy_types
+                )
             ),
             "weight": 10,
             "severity": "critical" if _has_high_impact(org_data) else "medium",
@@ -399,7 +418,7 @@ def _ai6_checklist(org_data: dict, policy_types: set[str]) -> list[dict]:
             "name": "AI access restricted by role",
             "description": "AI tool access is role-based, not universal across all employees.",
             "passed": org_data.get("ai_access_restricted", False),
-            "weight": 6,
+            "weight": 8 if is_large_org else 6,
             "severity": "medium",
             "regulation": "AI6 Practice 5, ACSC Essential Eight (application control)",
             "recommendation": "Restrict AI tool access by role to minimise risk of sensitive data exposure. Not all employees need access to all AI capabilities.",
@@ -473,8 +492,8 @@ def _ai6_checklist(org_data: dict, policy_types: set[str]) -> list[dict]:
             "name": "Training frequency meets OAIC recommendation",
             "description": "Staff training occurs at least bi-annually as recommended by the OAIC.",
             "passed": org_data.get("training_frequency") in ("monthly", "quarterly", "biannually", "on_policy_change"),
-            "weight": 4,
-            "severity": "low",
+            "weight": 7 if (is_large_org and (org_data.get("customer_facing_ai") or org_data.get("automated_decisions"))) else 4,
+            "severity": "high" if (is_large_org and (org_data.get("customer_facing_ai") or org_data.get("automated_decisions"))) else "low",
             "regulation": "OAIC Oct 2024 Guidance",
             "recommendation": "Increase training frequency to at least bi-annually per OAIC recommendation.",
         },
@@ -492,7 +511,7 @@ def _ai6_checklist(org_data: dict, policy_types: set[str]) -> list[dict]:
             "ai6_practice": "6. Maintain Human Control",
             "name": "APP 2 — Anonymity/pseudonymity option for AI interactions",
             "description": "Individuals can interact with AI systems anonymously or pseudonymously where practicable.",
-            "passed": org_data.get("consent_mechanism_exists", False),
+            "passed": org_data.get("has_privacy_policy", False),
             "weight": 5,
             "severity": "medium",
             "regulation": "APP 2 (anonymity and pseudonymity)",
@@ -502,7 +521,7 @@ def _ai6_checklist(org_data: dict, policy_types: set[str]) -> list[dict]:
             "ai6_practice": "6. Maintain Human Control",
             "name": "APP 10 — Quality assurance for AI-processed data",
             "description": "Organisation ensures personal information processed by AI is accurate, up-to-date, and complete.",
-            "passed": org_data.get("ai_generated_content_reviewed", False) or org_data.get("ai_outputs_logged", False),
+            "passed": org_data.get("ai_generated_content_reviewed", False) and org_data.get("ai_outputs_logged", False),
             "weight": 6,
             "severity": "medium",
             "regulation": "APP 10 (quality of personal information)",
@@ -602,6 +621,11 @@ def calculate_compliance_score(org_data: dict, policy_types: set[str]) -> dict:
 
     passed = sum(1 for item in checklist if item["passed"])
     total = len(checklist)
+
+    # Compounding penalty: systemic governance failure
+    failed_count = total - passed
+    if total > 0 and (failed_count / total) > 0.6:
+        score_percentage = round(score_percentage * 0.9)
 
     # Group by AI6 practice
     by_practice: dict[str, dict[str, list | int]] = {}

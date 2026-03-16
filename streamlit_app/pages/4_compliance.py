@@ -27,6 +27,7 @@ _GAP_TO_TEMPLATE = {
     "Board/executive AI awareness": "board_ai_briefing",
     "Privacy Impact Assessment conducted": "ai_ethics_framework",
     "Data retention policy for AI outputs": "data_classification",
+    "Data retention period meets APP 11 minimisation": "data_classification",
     "AI tool register maintained": "ai_acceptable_use",
     "Cross-border data flows mapped": "vendor_risk_assessment",
     "Human oversight for high-impact AI decisions": "ai_ethics_framework",

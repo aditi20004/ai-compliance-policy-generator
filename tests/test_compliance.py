@@ -427,6 +427,12 @@ class TestScoringAlgorithm:
         total_weight = sum(i["weight"] for i in result["checklist"])
         earned_weight = sum(i["weight"] for i in result["checklist"] if i["passed"])
         expected = round((earned_weight / total_weight) * 100)
+        # Compounding penalty applies if >60% items fail
+        passed = sum(1 for i in result["checklist"] if i["passed"])
+        total = len(result["checklist"])
+        failed_count = total - passed
+        if total > 0 and (failed_count / total) > 0.6:
+            expected = round(expected * 0.9)
         assert result["score_percentage"] == expected
         assert result["total_weight"] == total_weight
         assert result["earned_weight"] == earned_weight
@@ -479,7 +485,10 @@ class TestPenaltyExposure:
         exposure = _estimate_max_penalty_exposure(org)
         assert "Shadow AI data breach cost — estimated (IBM 2025)" in exposure["items"]
         assert "Shadow AI data breach cost — estimated (IBM 2025)" in exposure["estimated_items"]
-        assert exposure["estimated_items"]["Shadow AI data breach cost — estimated (IBM 2025)"] == ESTIMATED_COSTS["shadow_ai_sme"]
+        # Shadow AI cost now scales by employee_count / 200 (floor 0.5, cap $2M)
+        employee_count = org.get("employee_count", 10)
+        expected_cost = min(int(ESTIMATED_COSTS["shadow_ai_sme"] * max(employee_count / 200, 0.5)), 2_000_000)
+        assert exposure["estimated_items"]["Shadow AI data breach cost — estimated (IBM 2025)"] == expected_cost
 
     def test_no_shadow_ai_cost_with_controls(self):
         org = {**SAMPLE_ORG, "shadow_ai_controls": True}
@@ -636,11 +645,17 @@ class TestPenaltyExposureExtended:
 
 
 class TestHumanOversight:
-    def test_passes_with_pia_and_policy(self):
-        org = {**SAMPLE_ORG, "automated_decisions": True, "pia_conducted": True}
+    def test_passes_with_pia_and_policy_and_review(self):
+        org = {**SAMPLE_ORG, "automated_decisions": True, "pia_conducted": True, "human_review_available": True}
         items = _ai6_checklist(org, {"ai_acceptable_use"})
         item = next(i for i in items if i["name"] == "Human oversight for high-impact AI decisions")
         assert item["passed"] is True
+
+    def test_fails_without_human_review(self):
+        org = {**SAMPLE_ORG, "automated_decisions": True, "pia_conducted": True, "human_review_available": False}
+        items = _ai6_checklist(org, {"ai_acceptable_use"})
+        item = next(i for i in items if i["name"] == "Human oversight for high-impact AI decisions")
+        assert item["passed"] is False
 
     def test_fails_without_pia(self):
         org = {**SAMPLE_ORG, "automated_decisions": True, "pia_conducted": False}

@@ -24,6 +24,106 @@ from app.questionnaire import (
 
 render_sidebar()
 
+
+def _build_questionnaire_csv(ans: dict) -> str:
+    """Build a CSV string of questionnaire responses for download."""
+    import csv
+    import io
+
+    _QUESTION_MAP = [
+        ("Organisation Profile", None),
+        ("business_name", "1. Business name"),
+        ("abn", "2. ABN"),
+        ("industry", "3. Industry sector"),
+        ("employee_count", "4. Number of employees"),
+        ("annual_revenue", "5. Annual revenue range"),
+        ("AI Tool Usage", None),
+        ("ai_tools_in_use", "6. AI tools in use"),
+        ("ai_tools_overseas", "7. AI tools processing data overseas"),
+        ("shadow_ai_aware", "8. Aware of unapproved AI usage"),
+        ("shadow_ai_controls", "9. Shadow AI controls in place"),
+        ("Customer-Facing AI & Access Controls", None),
+        ("customer_facing_ai", "10. AI generates customer-facing content"),
+        ("ai_generated_content_reviewed", "11. AI content reviewed before publication/delivery"),
+        ("ai_access_restricted", "12. AI access restricted by role"),
+        ("ai_outputs_logged", "13. AI prompts and outputs logged"),
+        ("Data & Automated Decisions", None),
+        ("data_types_processed", "14. Data types processed with AI"),
+        ("trades_in_personal_info", "15. Trades in personal information"),
+        ("has_data_retention_policy", "16. Data retention/deletion policy exists"),
+        ("consent_mechanism_exists", "17. Consent mechanism for AI data processing"),
+        ("automated_decisions", "18. AI used for automated decisions"),
+        ("automated_decision_types", "19. Types of automated decisions"),
+        ("data_retention_period", "20. Data retention period"),
+        ("ai_profiling_or_eligibility", "21. AI used for profiling/eligibility"),
+        ("bias_testing_conducted", "22. Bias testing conducted"),
+        ("ai_copyright_assessed", "23. Copyright/IP risk assessed"),
+        ("ai_in_marketing", "24. AI used in marketing"),
+        ("human_review_available", "25. Individuals can request human review of decisions"),
+        ("Vendor & Compliance Posture", None),
+        ("vendor_dpa_in_place", "26. DPAs with AI vendors"),
+        ("pia_conducted", "27. Privacy Impact Assessment conducted"),
+        ("has_privacy_policy", "28. Published privacy policy"),
+        ("existing_it_policies", "29. Existing IT security policies"),
+        ("vendor_ai_clauses_reviewed", "30. Vendor AI clauses reviewed"),
+        ("incident_response_tested", "31. Incident response tested"),
+        ("vendor_audit_rights", "32. Vendor audit rights in contracts"),
+        ("ndb_ai_process", "33. NDB 72-hour notification process"),
+        ("ai_incident_register", "34. AI incident register maintained"),
+        ("essential_eight_applied", "35. Essential Eight applied to AI"),
+        ("Governance", None),
+        ("board_ai_awareness", "36. Board/leadership AI briefing"),
+        ("training_frequency", "37. Staff training frequency"),
+        ("ai_governance_contact", "38. AI governance contact"),
+        ("ai_disclosure_to_customers", "39. AI use disclosed to customers"),
+        ("ai_supply_chain_assessed", "40. AI supply chain assessed"),
+        ("tranche2_aware", "41. POLA Act Tranche 2 awareness"),
+        ("data_overseas_mapped", "42. AI data overseas mapped"),
+    ]
+
+    _REVENUE_LABELS = {
+        "under_3m": "Under $3 million",
+        "3m_to_10m": "$3M - $10M",
+        "10m_to_50m": "$10M - $50M",
+        "over_50m": "Over $50M",
+    }
+
+    _RETENTION_LABELS = {
+        "30_days": "30 days",
+        "90_days": "90 days",
+        "1_year": "1 year",
+        "3_years": "3 years",
+        "no_defined_period": "No defined period",
+    }
+
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["Section / Question", "Response"])
+
+    for key, label in _QUESTION_MAP:
+        if label is None:
+            writer.writerow([f"--- {key} ---", ""])
+            continue
+        val = ans.get(key)
+        if isinstance(val, bool):
+            val = "Yes" if val else "No"
+        elif isinstance(val, list):
+            val = "; ".join(val) if val else "None"
+        elif key == "annual_revenue":
+            val = _REVENUE_LABELS.get(val, val)
+        elif key == "data_retention_period":
+            val = _RETENTION_LABELS.get(val, val)
+        elif key == "industry" and val:
+            val = val.replace("_", " ").title()
+        elif key == "training_frequency" and val:
+            val = val.replace("_", " ").title()
+        elif val is None:
+            val = ""
+        writer.writerow([label, val])
+
+    return buf.getvalue()
+
+
 st.title("Organisation Questionnaire")
 
 # Check if we're in edit mode (editing an existing org)
@@ -164,6 +264,10 @@ if step == 1:
         index=industry_options.index(current_ind) if current_ind in industry_options else 0,
         format_func=lambda x: x.replace("_", " ").title(),
     )
+    if industry == "technology":
+        st.info("Technology companies: Pay special attention to copyright/IP questions — GitHub Copilot and code generation tools create unique IP risks.")
+    elif industry in ("healthcare", "finance", "insurance"):
+        st.info(f"{industry.title()} sector: Your industry has elevated regulatory requirements. Ensure PIA and DPA questions are answered carefully.")
     employee_count = st.number_input(
         "4. Number of employees *", min_value=1, value=answers.get("employee_count", 10), step=1
     )
@@ -196,7 +300,9 @@ if step == 1:
             if errors:
                 for e in errors:
                     st.error(e)
-            else:
+            if not abn.strip() and annual_revenue in ("10m_to_50m", "over_50m"):
+                st.warning("ABN is recommended for organisations with >$10M revenue for ASIC and regulatory compliance.")
+            if not errors:
                 answers["business_name"] = business_name.strip()
                 answers["abn"] = abn.replace(" ", "") if abn.strip() else None
                 answers["industry"] = industry
@@ -272,11 +378,12 @@ elif step == 3:
     )
 
     reviewed = st.radio(
-        "11. Is all AI-generated customer-facing content reviewed by a human before publication?",
+        "11. Is all AI-generated customer-facing content reviewed by a human before publication or delivery?",
         options=[True, False],
         index=0 if answers.get("ai_generated_content_reviewed") else 1,
         format_func=lambda x: "Yes" if x else "No",
         horizontal=True,
+        help="This is about content quality review BEFORE customers see it (marketing, chatbot responses, recommendations). Triggers ACL strict liability if 'No'.",
     )
 
     ai_restricted = st.radio(
@@ -421,7 +528,7 @@ elif step == 4:
     )
 
     human_review = st.radio(
-        "25. Is there a process for individuals to request human review of AI-assisted decisions?",
+        "25. Can individuals request a human review of automated decisions that affect them?",
         options=[True, False],
         index=0 if answers.get("human_review_available") else 1,
         format_func=lambda x: "Yes" if x else "No",
@@ -686,7 +793,7 @@ elif step == 7:
         unsafe_allow_html=True,
     )
     st.write(
-        f"Customer-Facing AI: **{_yn(answers.get('customer_facing_ai'))}** | Human Review: **{_yn(answers.get('ai_generated_content_reviewed'))}**"
+        f"Customer-Facing AI: **{_yn(answers.get('customer_facing_ai'))}** | Content Pre-Review: **{_yn(answers.get('ai_generated_content_reviewed'))}**"
     )
 
     st.markdown(
@@ -710,7 +817,7 @@ elif step == 7:
     st.write(
         f"Copyright Assessed: **{_yn(answers.get('ai_copyright_assessed'))}** | AI in Marketing: **{_yn(answers.get('ai_in_marketing'))}**"
     )
-    st.write(f"Human Review Available: **{_yn(answers.get('human_review_available'))}**")
+    st.write(f"Contestable Decisions (Human Review): **{_yn(answers.get('human_review_available'))}**")
 
     st.markdown(
         """<div class="section-card"><div class="section-card-header">Vendor & Compliance Posture</div></div>""",
@@ -740,6 +847,17 @@ elif step == 7:
     )
     st.write(
         f"Tranche 2 Aware: **{_yn(answers.get('tranche2_aware'))}** | Data Overseas Mapped: **{_yn(answers.get('data_overseas_mapped'))}**"
+    )
+
+    _csv_data = _build_questionnaire_csv(answers)
+    _safe_name = "".join(c if c.isalnum() or c in "-_ " else "" for c in answers.get("business_name", "questionnaire"))[:80]
+    st.download_button(
+        label="Download Responses as CSV",
+        data=_csv_data,
+        file_name=f"questionnaire_{_safe_name}.csv",
+        mime="text/csv",
+        key="dl_csv_review",
+        use_container_width=True,
     )
 
     col1, col2 = st.columns(2)
@@ -855,6 +973,21 @@ elif step == 7:
 elif step > total_steps:
     st.success(f"Questionnaire complete for **{st.session_state.get('business_name', '')}**")
     st.info("Go to the **Generate** page to create your policy documents, then check your **Compliance Scorecard**.")
+
+    if answers:
+        _csv_done = _build_questionnaire_csv(answers)
+        _safe_done = "".join(
+            c if c.isalnum() or c in "-_ " else "" for c in st.session_state.get("business_name", "questionnaire")
+        )[:80]
+        st.download_button(
+            label="Download Submitted Responses as CSV",
+            data=_csv_done,
+            file_name=f"questionnaire_{_safe_done}.csv",
+            mime="text/csv",
+            key="dl_csv_done",
+            use_container_width=True,
+        )
+
     if st.button("Start Over"):
         st.session_state.q_step = 1
         st.session_state.q_answers = {}
