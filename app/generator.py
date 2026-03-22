@@ -230,6 +230,7 @@ LOGO_PATH = Path(__file__).resolve().parent.parent / "assets" / "company_logo.pn
 class PolicyPDF(FPDF):
     def __init__(self, title_text="Policy Document", org_name="", doc_date=""):
         super().__init__()
+        self.alias_nb_pages()
         self.title_text = title_text
         self.org_name = org_name
         self.doc_date = doc_date
@@ -351,7 +352,7 @@ class PolicyPDF(FPDF):
         self.set_font("DejaVu", "I", 7)
         self.set_text_color(150, 150, 150)
         self.cell(95, 10, f"{self.org_name} — Confidential", align="L")
-        self.cell(95, 10, f"Page {self.page_no()}/{self.pages_count}", align="R")
+        self.cell(95, 10, f"Page {self.page_no()}/{{nb}}", align="R")
 
 
 def _parse_table(lines: list[str], start_idx: int) -> tuple[list[list[str]], int]:
@@ -568,9 +569,12 @@ def markdown_to_pdf(md_content: str, output_path: Path) -> None:
 
         # Heading 1
         if stripped.startswith("# ") and not stripped.startswith("## "):
+            # Prevent orphaned heading — ensure space for heading + at least 2 lines
+            if pdf.get_y() > pdf.h - 50:
+                pdf.add_page()
             pdf.set_font("DejaVu", "B", 18)
             pdf.set_text_color(26, 60, 110)
-            pdf.multi_cell(0, 10, _clean_md(stripped[2:]))
+            pdf.multi_cell(0, 10, _clean_md(stripped[2:]), align="L")
             pdf.set_draw_color(26, 60, 110)
             pdf.set_line_width(0.5)
             pdf.line(10, pdf.get_y(), 200, pdf.get_y())
@@ -580,20 +584,28 @@ def markdown_to_pdf(md_content: str, output_path: Path) -> None:
 
         # Heading 2
         if stripped.startswith("## ") and not stripped.startswith("### "):
-            pdf.ln(4)
+            # Prevent orphaned heading — ensure space for heading + at least 2 lines
+            if pdf.get_y() > pdf.h - 40:
+                pdf.add_page()
+            else:
+                pdf.ln(4)
             pdf.set_font("DejaVu", "B", 14)
             pdf.set_text_color(26, 60, 110)
-            pdf.multi_cell(0, 8, _clean_md(stripped[3:]))
+            pdf.multi_cell(0, 8, _clean_md(stripped[3:]), align="L")
             pdf.ln(2)
             i += 1
             continue
 
         # Heading 3
         if stripped.startswith("### "):
-            pdf.ln(2)
+            # Prevent orphaned heading
+            if pdf.get_y() > pdf.h - 35:
+                pdf.add_page()
+            else:
+                pdf.ln(2)
             pdf.set_font("DejaVu", "B", 11)
             pdf.set_text_color(51, 51, 51)
-            pdf.multi_cell(0, 7, _clean_md(stripped[4:]))
+            pdf.multi_cell(0, 7, _clean_md(stripped[4:]), align="L")
             pdf.ln(1)
             i += 1
             continue
@@ -604,9 +616,9 @@ def markdown_to_pdf(md_content: str, output_path: Path) -> None:
             pdf.set_text_color(0, 0, 0)
             checked = "[x]" in stripped.lower()
             text = re.sub(r"^- \[.\]\s*", "", stripped)
-            marker = "[X]" if checked else "[ ]"
+            marker = "\u2611" if checked else "\u2610"
             pdf.set_x(left_margin + 8)
-            pdf.multi_cell(0, 6, f"{marker} {_clean_md(text)}")
+            pdf.multi_cell(0, 6, f"{marker}  {_clean_md(text)}", align="L")
             i += 1
             continue
 
@@ -616,7 +628,7 @@ def markdown_to_pdf(md_content: str, output_path: Path) -> None:
             pdf.set_text_color(0, 0, 0)
             text = stripped[2:]
             pdf.set_x(left_margin + 8)
-            pdf.multi_cell(0, 6, f"  {_clean_md(text)}")
+            pdf.multi_cell(0, 6, f"\u2022  {_clean_md(text)}", align="L")
             i += 1
             continue
 
@@ -626,14 +638,14 @@ def markdown_to_pdf(md_content: str, output_path: Path) -> None:
             pdf.set_font("DejaVu", "", 10)
             pdf.set_text_color(0, 0, 0)
             pdf.set_x(left_margin + 8)
-            pdf.multi_cell(0, 6, f"{num_match.group(1)}. {_clean_md(num_match.group(2))}")
+            pdf.multi_cell(0, 6, f"{num_match.group(1)}. {_clean_md(num_match.group(2))}", align="L")
             i += 1
             continue
 
         # Regular text (including bold lines)
         pdf.set_font("DejaVu", "", 10)
         pdf.set_text_color(0, 0, 0)
-        pdf.multi_cell(0, 6, _clean_md(stripped))
+        pdf.multi_cell(0, 6, _clean_md(stripped), align="L")
         i += 1
 
     try:

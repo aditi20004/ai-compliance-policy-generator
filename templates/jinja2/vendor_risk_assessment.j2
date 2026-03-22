@@ -1,7 +1,9 @@
 # AI Vendor Risk Assessment Policy
 
 **Organisation:** {{ business_name }}
-{% if abn %}**ABN:** {{ abn }}{% endif %}
+{% if abn %}
+**ABN:** {{ abn }}
+{% endif %}
 **Industry:** {{ industry | replace("_", " ") | title }}
 **Effective Date:** {{ effective_date }}
 **Version:** {{ version }}

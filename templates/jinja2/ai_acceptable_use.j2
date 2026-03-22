@@ -1,7 +1,9 @@
 # AI Acceptable Use Policy
 
 **Organisation:** {{ business_name }}
-{% if abn %}**ABN:** {{ abn }}{% endif %}
+{% if abn %}
+**ABN:** {{ abn }}
+{% endif %}
 **Industry:** {{ industry | replace("_", " ") | title }}
 **Effective Date:** {{ effective_date }}
 **Version:** {{ version }}
@@ -117,7 +119,7 @@ As an organisation exceeding the $3 million annual revenue threshold, {{ busines
 {% endif %}
 
 {% if annual_revenue == "under_3m" %}
-### 5.4 Small Business Exemption Status
+### 5.3 Small Business Exemption Status
 
 {{ business_name }} currently falls under the small business exemption (annual revenue under $3 million) and may not be bound by all Australian Privacy Principles. However, this exemption is under active review and may be removed by future legislative reform. {{ business_name }} adopts these AI use controls as best practice and to ensure readiness for any change in regulatory status. Note that certain obligations (such as the statutory tort for serious invasion of privacy) apply regardless of revenue — see Section 12.
 {% endif %}
