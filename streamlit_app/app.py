@@ -44,8 +44,16 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- Check if org exists and belongs to this session ---
+# --- Clear stale session state from previous visitors ---
 _session_org_ids = st.session_state.get("session_org_ids", set())
+if st.session_state.get("org_id") and st.session_state.get("org_id") not in _session_org_ids:
+    for _stale_key in ["org_id", "business_name", "q_step", "q_answers", "q_session_key", "q_edit_org_id", "preselect_templates", "logo_path"]:
+        st.session_state.pop(_stale_key, None)
+    for _key in list(st.session_state.keys()):
+        if _key.startswith(("snapshot_saved_", "_compliance_report", "_remediation", "_ev_saved_", "_logo_saved_")):
+            del st.session_state[_key]
+
+# --- Check if org exists and belongs to this session ---
 has_org = (
     "org_id" in st.session_state
     and st.session_state.get("org_id")
