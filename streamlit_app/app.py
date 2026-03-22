@@ -490,3 +490,10 @@ if not has_org:
     - **ACSC Essential Eight** — baseline cyber security controls for AI systems
     """
     )
+
+    st.divider()
+    st.caption(
+        "**Disclaimer:** This tool provides general guidance and template documents to assist with AI governance. "
+        "It does not constitute legal, financial, or professional advice. Organisations should seek independent "
+        "legal counsel to ensure policies meet their specific regulatory obligations."
+    )
