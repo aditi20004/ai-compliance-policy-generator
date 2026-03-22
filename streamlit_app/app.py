@@ -37,7 +37,7 @@ st.markdown(
         AI Compliance Policy Generator
     </div>
     <div style="font-size:1.1rem; color:#c7d8f0; margin-top:6px;">
-        Generate regulation-aligned AI governance documents for Australian SMEs
+        Generate regulation-aligned AI governance policies, compliance scorecards, and penalty exposure reports for Australian organisations
     </div>
 </div>
 """,
@@ -335,30 +335,58 @@ for update in _REG_UPDATES:
     )
 
 if not has_org:
-    # --- Getting Started (no org yet) ---
-    st.markdown("### Get Started in 3 Steps")
+    # --- What This Tool Does ---
+    st.markdown(
+        """
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:28px 32px; margin-bottom:24px;">
+        <div style="font-size:1.25rem; font-weight:700; color:#1a3c6e; margin-bottom:12px;">
+            What is this?
+        </div>
+        <div style="font-size:0.95rem; color:#334155; line-height:1.7;">
+            This tool helps Australian businesses create AI governance policies that comply with
+            the <strong>Privacy Act 1988</strong>, the <strong>POLA Act 2024</strong>, and current
+            <strong>OAIC guidance</strong> on AI and privacy. It is designed for <strong>SMEs,
+            enterprises, and consultants</strong> who use AI tools (chatbots, content generators,
+            automated decision-making) and need compliant, boardroom-ready policy documents
+            without hiring a specialist firm.
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    # --- How It Works ---
+    st.markdown("### How It Works")
 
     col1, col2, col3 = st.columns(3)
 
     _steps = [
-        ("1", "1. Questionnaire", "Answer 21 questions about your organisation's AI usage and data practices"),
+        (
+            "1",
+            "1. Answer the Questionnaire",
+            "Complete a guided questionnaire covering your AI tools, data practices, vendor relationships, and governance posture. Takes about 10 minutes.",
+        ),
         (
             "2",
             "2. Generate Policies",
-            "Auto-generate AI Acceptable Use, Data Classification, and Incident Response policies",
+            "The app recommends policies based on your profile and generates up to 19 regulation-aligned documents in PDF or Markdown — ready to customise and adopt.",
         ),
-        ("3", "3. Check Compliance", "View your AI6 scorecard, penalty exposure, and industry benchmarks"),
+        (
+            "3",
+            "3. Review Compliance",
+            "Get a scored compliance scorecard mapped to Australia's AI6 Essential Practices, with penalty exposure estimates and actionable remediation steps.",
+        ),
     ]
     for col, (icon, title, desc) in zip([col1, col2, col3], _steps):
         with col:
             st.markdown(
                 f"""
             <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:24px; text-align:center;
-                        min-height:180px; display:flex; flex-direction:column; justify-content:center;
-                        box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:box-shadow 0.2s ease;">
+                        min-height:200px; display:flex; flex-direction:column; justify-content:center;
+                        box-shadow:0 1px 4px rgba(0,0,0,0.05);">
                 <div style="font-size:2rem; margin-bottom:8px;">{icon}</div>
                 <div style="font-weight:700; color:#1a3c6e; margin-bottom:6px;">{title}</div>
-                <div style="font-size:0.85rem; color:#64748b;">{desc}</div>
+                <div style="font-size:0.85rem; color:#64748b; line-height:1.5;">{desc}</div>
             </div>
             """,
                 unsafe_allow_html=True,
@@ -367,13 +395,85 @@ if not has_org:
     st.markdown("")
     st.page_link("pages/1_questionnaire.py", label="Start Questionnaire →", use_container_width=True)
 
+    # --- What You Get ---
     st.divider()
-    st.markdown("""
+    st.markdown("### What You Get")
+
+    wg1, wg2 = st.columns(2)
+    with wg1:
+        st.markdown(
+            """
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:24px; min-height:240px;">
+            <div style="font-weight:700; color:#1a3c6e; font-size:1.05rem; margin-bottom:12px;">Policy Documents (up to 19)</div>
+            <div style="font-size:0.88rem; color:#334155; line-height:1.7;">
+                <strong>Core Governance</strong> — AI Acceptable Use, Privacy Policy, Data Classification, Incident Response, Remediation Action Plan<br>
+                <strong>Risk & Oversight</strong> — AI Ethics Framework, AI Risk Register, Bias Audit Procedure, Board AI Briefing, Employee AI Training Guide<br>
+                <strong>Vendor & Supply Chain</strong> — Vendor Risk Assessment, AI Procurement & Tool Approval, AI Supply Chain Audit<br>
+                <strong>Specialist</strong> — AI Transparency Statement, AI Data Retention, Shadow AI Playbook, Copyright & IP Policy, Statutory Tort Defence Brief, Tranche 2 Readiness Checklist
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+    with wg2:
+        st.markdown(
+            """
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:24px; min-height:240px;">
+            <div style="font-weight:700; color:#1a3c6e; font-size:1.05rem; margin-bottom:12px;">Compliance Scorecard</div>
+            <div style="font-size:0.88rem; color:#334155; line-height:1.7;">
+                <strong>Weighted scoring</strong> across 41 compliance checks mapped to Australia's AI6 Essential Practices<br>
+                <strong>Penalty exposure estimate</strong> — regulatory fines under the Privacy Act and POLA Act, plus estimated breach costs<br>
+                <strong>Gap analysis</strong> — critical, high, and medium gaps with specific remediation recommendations<br>
+                <strong>Smart recommendations</strong> — policies are suggested based on your industry, size, AI usage, and risk profile<br>
+                <strong>CSV export</strong> — download your questionnaire responses for internal records or auditor review
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+    # --- Who It's For ---
+    st.divider()
+    st.markdown("### Who Is This For?")
+
+    wf1, wf2, wf3 = st.columns(3)
+    _audiences = [
+        (
+            "SMEs & Startups",
+            "Small and medium businesses using AI tools like ChatGPT, Copilot, or automated customer support — who need compliant policies without a legal budget.",
+        ),
+        (
+            "Enterprises",
+            "Larger organisations preparing for POLA Act obligations, the removal of the small business exemption (Tranche 2), or board-level AI governance requirements.",
+        ),
+        (
+            "Consultants & Advisors",
+            "Privacy consultants, IT advisors, and legal professionals who want a structured starting point for client AI governance engagements.",
+        ),
+    ]
+    for col, (title, desc) in zip([wf1, wf2, wf3], _audiences):
+        with col:
+            st.markdown(
+                f"""
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px; min-height:150px;">
+                <div style="font-weight:700; color:#1a3c6e; margin-bottom:6px;">{title}</div>
+                <div style="font-size:0.85rem; color:#475569; line-height:1.6;">{desc}</div>
+            </div>
+            """,
+                unsafe_allow_html=True,
+            )
+
+    # --- Regulatory Alignment ---
+    st.divider()
+    st.markdown(
+        """
     #### Regulatory Alignment
     All generated policies are aligned with:
-    - **Privacy Act 1988** and Australian Privacy Principles (APPs)
-    - **POLA Act 2024** — Automated decision disclosure (commences Dec 2026)
-    - **Australia's 8 AI Ethics Principles** and **AI6 Essential Practices**
-    - **OAIC Guidance** on AI and privacy (Oct 2024)
-    - **Australian Consumer Law** — AI-generated content obligations
-    """)
+    - **Privacy Act 1988** and Australian Privacy Principles (APPs 1-13)
+    - **POLA Act 2024** — Statutory tort for serious privacy invasion (commenced Jun 2025) and automated decision transparency (commences Dec 2026)
+    - **Australia's 8 AI Ethics Principles** and **AI6 Essential Practices** guidance
+    - **OAIC Guidance** on AI and privacy expectations (Oct 2024)
+    - **Australian Consumer Law** — obligations for AI-generated content and strict liability
+    - **ACSC Essential Eight** — baseline cyber security controls for AI systems
+    """
+    )
