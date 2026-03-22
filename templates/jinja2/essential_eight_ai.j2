@@ -6,6 +6,21 @@
 
 ---
 
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | Essential Eight Controls for AI |
+| Organisation | {{ business_name }} |
+| Document Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Next Review Date | {{ effective_date }} + review cycle |
+| Approved By | (Signature required) |
+
+---
+
 ## 1. Purpose
 
 This policy maps the **Australian Cyber Security Centre (ACSC) Essential Eight** mitigation strategies to AI-specific risks at {{ business_name }}. As AI tools introduce new attack surfaces — including prompt injection, model poisoning, data exfiltration via AI outputs, and shadow AI usage — the Essential Eight framework must be extended to address these risks. This policy aligns with **AI6 Guidance for AI Adoption** (Practice 5: Secure AI systems) and the **ACSC Essential Eight Maturity Model** (July 2024).

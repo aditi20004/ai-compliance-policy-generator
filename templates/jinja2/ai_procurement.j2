@@ -6,6 +6,21 @@
 
 ---
 
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | AI Procurement & Tool Approval Policy |
+| Organisation | {{ business_name }} |
+| Document Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Next Review Date | {{ effective_date }} + review cycle |
+| Approved By | (Signature required) |
+
+---
+
 ## 1. Purpose
 
 This policy establishes the end-to-end process for requesting, evaluating, approving, onboarding, and decommissioning AI tools and services at {{ business_name }}. It ensures that AI procurement decisions account for privacy obligations under the **Privacy Act 1988**, transparency requirements under the **POLA Act 2024**, and governance expectations from the **AI6 Guidance for AI Adoption** (October 2024).

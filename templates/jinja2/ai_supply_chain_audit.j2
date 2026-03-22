@@ -6,6 +6,21 @@
 
 ---
 
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | AI Supply Chain Audit Template |
+| Organisation | {{ business_name }} |
+| Document Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Next Review Date | {{ effective_date }} + review cycle |
+| Approved By | (Signature required) |
+
+---
+
 ## 1. Purpose
 
 This template provides a structured framework for assessing and managing risks in {{ business_name }}'s AI supply chain. It covers vendor inventories, sub-processor mapping, model provider assessments, data flow documentation, and annual audit procedures. This template aligns with **APP 8** (cross-border disclosure), **AI6 Guidance for AI Adoption** (Practice 6: Provide appropriate transparency), and **OAIC guidance on privacy and AI** (October 2024).

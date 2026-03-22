@@ -6,6 +6,21 @@
 
 ---
 
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | AI Transparency Statement |
+| Organisation | {{ business_name }} |
+| Document Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Next Review Date | {{ effective_date }} + review cycle |
+| Approved By | (Signature required) |
+
+---
+
 ## Our Commitment to AI Transparency
 
 {{ business_name }} is committed to the responsible and transparent use of artificial intelligence (AI) in our operations. This statement explains how we use AI, what safeguards we have in place, and how you can contact us with questions or concerns.

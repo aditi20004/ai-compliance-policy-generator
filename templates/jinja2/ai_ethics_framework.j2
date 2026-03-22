@@ -20,6 +20,7 @@
 | Effective Date | {{ effective_date }} |
 | Version | {{ version }} |
 | Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Next Review Date | {{ effective_date }} + review cycle |
 | Approved By | (Signature required) |
 
 ---
@@ -253,6 +254,22 @@ When staff encounter an ethical dilemma related to AI, they should follow this d
 | AI Tool Owners | Bias testing, monitoring, vendor management | Quarterly |
 | AI Governance Contact | Full regulatory landscape, incident management, audit | Quarterly |
 
+## 7A. Indicative Resource Allocation
+
+The following resource guidance is scaled to organisation size. {{ business_name }} ({{ employee_count }} employees) should use the most appropriate tier:
+
+| Resource Area | Small (1-19 staff) | Medium (20-199 staff) | Large (200+ staff) |
+|---|---|---|---|
+| AI Governance Contact | Part-time role (existing staff) | Dedicated 0.5 FTE | Dedicated 1+ FTE |
+| Bias testing & fairness audits | Annual, external consultant | Biannual, mix of internal and external | Quarterly, dedicated internal team |
+| AI training program | Online self-paced modules | Facilitated workshops + online | Blended program with role-specific tracks |
+| Vendor risk assessments | Annual per vendor | Biannual per vendor | Continuous monitoring + annual deep review |
+| Incident response exercises | Annual tabletop | Biannual tabletop + annual simulation | Quarterly tabletop + biannual simulation |
+| External legal/compliance review | Annual | Biannual | Quarterly or retainer |
+| Estimated annual budget | $5,000 – $15,000 | $25,000 – $75,000 | $100,000 – $300,000+ |
+
+**Note:** These are indicative ranges. Actual requirements depend on AI usage complexity, data sensitivity, and regulatory exposure.
+
 ## 8. Reporting and Escalation
 
 ### 8.1 Ethics Concern Reporting
@@ -271,7 +288,70 @@ Staff can report AI ethics concerns through:
 | High (e.g., discriminatory outcome) | Senior Management | 24 hours |
 | Critical (e.g., harm to individual) | CEO + Legal | Immediate |
 
-## 9. Review and Continuous Improvement
+{% if ai_tools_overseas and ai_tools_overseas | length > 0 and "None — all data stays in Australia" not in ai_tools_overseas %}
+## 8A. International AI Ethics Alignment
+
+{{ business_name }}'s AI ethics commitments align with major international frameworks:
+
+| Framework | Jurisdiction | Alignment |
+|---|---|---|
+| Australia's 8 AI Ethics Principles | Australia | Primary framework (Sections 2-3 above) |
+| EU AI Act (2024/1689) | European Union | Risk-based approach, transparency, human oversight |
+| OECD AI Principles | International | Human-centred values, transparency, accountability |
+| UNESCO Recommendation on AI Ethics | International | Fairness, safety, privacy, human oversight |
+| Singapore Model AI Governance Framework | Asia-Pacific | Accountability, transparency, human-centricity |
+
+Where {{ business_name }} operates across jurisdictions, the most stringent applicable standard should be applied.
+{% endif %}
+
+## 9. Implementation and Change Management
+
+### 9.1 Rollout Communication Plan
+
+| Audience | Channel | Message | Timing |
+|---|---|---|---|
+| Senior Management / Board | Briefing presentation | Strategic value of AI ethics framework; regulatory obligations | Before launch |
+| Department Heads | Workshop session | Responsibilities, reporting requirements, practical examples | Week 1 |
+| All Staff | Email + team meetings | Policy summary, training schedule, key dos and don'ts | Week 1-2 |
+| IT / Security | Technical briefing | Monitoring tools, approved AI list, incident procedures | Week 1 |
+| External stakeholders | Website update | AI transparency statement, customer-facing commitments | Week 2-4 |
+
+### 9.2 Change Management Process
+
+When updating this framework or introducing new AI tools:
+
+1. **Propose** — Document the change, its rationale, and affected stakeholders
+2. **Impact assess** — Evaluate regulatory, ethical, and operational impact
+3. **Consult** — Engage affected departments and, where appropriate, external stakeholders
+4. **Approve** — Obtain senior management sign-off for material changes
+5. **Communicate** — Notify all affected staff with clear explanation of what changed and why
+6. **Train** — Provide updated training where the change affects day-to-day AI use
+7. **Monitor** — Track adoption and address implementation issues within 30 days
+
+## 10. Key Performance Indicators (KPIs)
+
+{{ business_name }} will track the following metrics to measure AI ethics and governance effectiveness:
+
+| KPI | Target | Measurement Frequency | Escalation Threshold |
+|---|---|---|---|
+| Staff AI policy training completion rate | 100% within 30 days of onboarding | Quarterly | Below 90% |
+| AI tools register accuracy (all tools documented) | 100% | Quarterly | Any undocumented tool |
+| Bias audit completion rate (high-risk AI systems) | 100% per schedule | Quarterly | Any overdue audit |
+| AI incident response time (Critical) | Within 1 hour | Per incident | Any breach of SLA |
+| AI incident response time (High) | Within 4 hours | Per incident | Any breach of SLA |
+| Vendor DPA coverage | 100% of AI vendors | Biannually | Any vendor without DPA |
+| AI ethics complaints resolved within SLA | 95%+ | Quarterly | Below 90% |
+| Shadow AI detection rate | Reduce unapproved tools by 50% per year | Annually | No improvement year-on-year |
+| Post-incident review completion | 100% within 14 days of resolution | Per incident | Any overdue review |
+| Policy review completed on schedule | 100% | Per review cycle | Any overdue review |
+
+### 10.1 Reporting
+
+- KPI dashboard to be reviewed by the AI Governance Contact monthly
+- Summary report provided to senior management quarterly
+- Annual AI ethics performance report presented to the board
+
+## 11. Review and Continuous Improvement
 
 - This framework is reviewed {{ training_frequency | replace("_", " ") }}
 - Review incorporates: regulatory updates, incident learnings, staff feedback, industry best practices

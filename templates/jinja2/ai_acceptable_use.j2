@@ -221,6 +221,32 @@ Each of these automated decision types must have:
 {% endif %}
 {% endif %}
 
+{% if ai_tools_overseas and ai_tools_overseas | length > 0 and "None — all data stays in Australia" not in ai_tools_overseas %}
+## 6A. International Regulatory Considerations
+
+{{ business_name }} uses AI tools that process data overseas. In addition to APP 8 obligations (Section 5A), organisations operating internationally or processing data of individuals in other jurisdictions should be aware of the following frameworks:
+
+### EU AI Act (Regulation 2024/1689)
+If {{ business_name }} provides AI-powered services to individuals in the European Union, or deploys AI systems that affect EU residents:
+- **High-risk AI systems** (e.g., employment decisions, credit scoring, biometric identification) are subject to conformity assessments, risk management, and human oversight requirements
+- **Transparency obligations** apply to AI systems that interact with individuals (e.g., chatbots must disclose they are AI)
+- **Prohibited practices** include social scoring, real-time biometric surveillance (with narrow exceptions), and manipulative AI techniques
+- The EU AI Act commenced on 1 August 2024 with obligations phasing in through 2027
+
+### EU General Data Protection Regulation (GDPR)
+If {{ business_name }} processes personal data of EU/EEA residents:
+- **Article 22** — Individuals have the right not to be subject to solely automated decision-making that significantly affects them
+- **Articles 13-14** — Meaningful information about the logic of automated decisions must be provided
+- **Article 35** — Data Protection Impact Assessments (DPIAs) are required for high-risk AI processing
+- **Article 46** — Appropriate safeguards are required for cross-border data transfers (Standard Contractual Clauses or adequacy decisions)
+
+### Practical Steps
+- Conduct a jurisdictional assessment to determine which international AI regulations apply to {{ business_name }}'s operations
+- Map data flows to identify where personal information of international individuals is processed by AI tools
+- Ensure AI vendor contracts include clauses addressing EU AI Act and GDPR compliance where applicable
+- Monitor the evolving international AI regulatory landscape (UK AI Safety Institute, Canada's AIDA, Singapore's Model AI Governance Framework)
+{% endif %}
+
 ## 7. Transparency and Disclosure
 
 - Staff must disclose when AI has been used to generate or substantially assist in creating work products
@@ -253,7 +279,7 @@ Refer to the AI Incident Response Plan for detailed procedures.
 - Regular audits will be conducted to ensure compliance
 - This policy will be reviewed {{ training_frequency | replace("_", " ") }} or when significant changes occur
 
-## 11. Review Schedule
+## 11. Review Schedule and Resource Allocation
 
 | Review Activity | Frequency |
 |---|---|
@@ -261,6 +287,43 @@ Refer to the AI Incident Response Plan for detailed procedures.
 | AI tools register update | Quarterly |
 | Compliance audit | Annually |
 | Staff training | {{ training_frequency | replace("_", " ") | title }} |
+
+### 11.1 Indicative Resource Requirements
+
+| Activity | Small Org (1-19 staff) | Medium Org (20-199 staff) | Large Org (200+ staff) |
+|---|---|---|---|
+| Policy maintenance | 2-4 hrs/quarter | 1-2 days/quarter | Dedicated compliance role |
+| Staff AI training | 1-2 hrs per person/year | 4 hrs per person/year | 8+ hrs per person/year |
+| AI tool register updates | 1 hr/quarter | 4 hrs/quarter | Continuous |
+| Compliance audit | 1 day/year (external) | 2-3 days/year | Ongoing internal + annual external |
+
+## 11B. Implementation and Rollout Plan
+
+To ensure effective adoption, {{ business_name }} should follow this phased rollout:
+
+### Phase 1: Foundation (Weeks 1-2)
+- [ ] Executive sign-off on this AI Acceptable Use Policy
+- [ ] Appoint AI Governance Contact ({{ ai_governance_contact | default("to be confirmed", true) }})
+- [ ] Communicate policy to all {{ employee_count }} staff via email and team meeting
+- [ ] Make policy available on internal shared drive / intranet
+
+### Phase 2: Training (Weeks 3-4)
+- [ ] Conduct mandatory AI awareness training for all staff
+- [ ] Provide role-specific guidance for departments with heavy AI use
+- [ ] Distribute AI Acceptable Use quick-reference card (1-page summary)
+- [ ] Collect signed policy acknowledgement forms from all staff
+
+### Phase 3: Enforcement (Weeks 5-8)
+- [ ] Activate technical controls (approved tool list, access restrictions)
+- [ ] Begin monitoring for shadow AI usage
+- [ ] Publish AI tools register on internal channel
+- [ ] Open feedback channel for staff questions and concerns
+
+### Phase 4: Review (Week 12)
+- [ ] Conduct 90-day effectiveness review
+- [ ] Gather staff feedback on policy practicality
+- [ ] Adjust policy based on real-world implementation experience
+- [ ] Report compliance metrics to management
 
 ## 12. Statutory Tort — Serious Invasion of Privacy
 

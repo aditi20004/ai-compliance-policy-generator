@@ -6,6 +6,21 @@
 
 ---
 
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | AI Bias & Fairness Audit Procedure |
+| Organisation | {{ business_name }} |
+| Document Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Next Review Date | {{ effective_date }} + review cycle |
+| Approved By | (Signature required) |
+
+---
+
 ## 1. Purpose
 
 This procedure establishes the methodology for auditing AI systems used by {{ business_name }} for bias and fairness. It ensures that AI-driven decisions do not unlawfully discriminate against individuals based on protected attributes under Australian law, and that {{ business_name }} meets its obligations under the **Privacy Act 1988**, the **POLA Act 2024**, and the **Australian AI Ethics Principles** (AI Ethics Principle 2: Fairness).

@@ -6,6 +6,21 @@
 
 ---
 
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | Shadow AI Detection & Response Playbook |
+| Organisation | {{ business_name }} |
+| Document Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Next Review Date | {{ effective_date }} + review cycle |
+| Approved By | (Signature required) |
+
+---
+
 ## 1. Purpose
 
 This playbook establishes the detection, classification, and response procedures for Shadow AI within {{ business_name }}. Shadow AI poses significant risks to data protection, regulatory compliance, and organisational security. This playbook ensures that unauthorised AI usage is identified rapidly, assessed proportionately, and resolved in alignment with the **Privacy Act 1988**, the **POLA Act 2024**, and the **AI6 Guidance for AI Adoption** (October 2024).

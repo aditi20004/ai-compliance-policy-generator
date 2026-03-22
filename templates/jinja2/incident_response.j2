@@ -72,6 +72,9 @@ This plan covers incidents involving any AI system used by {{ business_name }}, 
 10. **ACL Breach — Misleading AI Content** — AI generates misleading or deceptive customer-facing content in breach of the Australian Consumer Law
 11. **POLA Act Non-Compliance** — Failure to meet automated decision transparency obligations under the Privacy and Other Legislation Amendment Act 2024
 12. **Statutory Tort — Privacy Invasion via AI** — AI tool used in a manner that constitutes a serious invasion of an individual's privacy, giving rise to civil liability
+13. **Prompt Injection Attack** — Adversarial input manipulates AI tool behaviour, bypasses safety controls, or extracts sensitive information from the AI system
+14. **Data Extraction / Exfiltration via AI** — AI tool reveals training data, PII, or confidential information through crafted queries or model inversion techniques
+15. **Model Poisoning / Supply Chain Compromise** — AI tool produces unreliable outputs due to compromised training data, malicious model updates, or supply chain attack on AI vendor
 
 {% if ai_tools_overseas and ai_tools_overseas | length > 0 %}
 ### 3.3 AI Tool-Specific Incident Procedures
@@ -175,7 +178,23 @@ When a failure to meet automated decision transparency obligations is identified
 7. **Remediate** — implement the required transparency mechanisms before resuming automated decisions
 8. **Report** — assess whether notification to the OAIC is required; seek legal advice on regulatory exposure
 
-### Phase 2d: Statutory Tort — Privacy Invasion via AI
+### Phase 2d: AI Security Attack Response (Prompt Injection, Data Extraction, Model Poisoning)
+
+When an AI security attack (prompt injection, data extraction, or model poisoning) is suspected:
+
+1. **Detect** — identify the attack vector:
+   - **Prompt injection**: Unusual AI outputs, unexpected behaviour, safety control bypasses, or users reporting manipulated responses
+   - **Data extraction**: AI tool revealing training data, PII, or confidential information it should not disclose
+   - **Model poisoning**: Sudden accuracy degradation, biased outputs, or anomalous AI behaviour patterns
+2. **Isolate** — immediately revoke user/API access to the affected AI system; disable integrations
+3. **Preserve evidence** — capture full interaction logs, prompts, outputs, API call records, and timestamps
+4. **Assess data exposure** — determine whether personal information, confidential data, or trade secrets were extracted or exposed
+5. **Contain** — if prompt injection: implement input filtering and output validation before restoring access; if data extraction: contact the AI vendor to assess what data was exposed; if model poisoning: quarantine the AI tool and revert to known-good version
+6. **Notify** — if personal information was exposed, initiate NDB scheme assessment; notify the AI vendor's security team
+7. **Remediate** — implement technical controls (input sanitisation, output filtering, API rate limiting, enhanced monitoring) before restoring the AI tool
+8. **Review** — assess whether additional AI tools share the same vulnerability; update security testing procedures
+
+### Phase 2e: Statutory Tort — Privacy Invasion via AI
 
 When AI tools are used in a manner that may constitute a serious invasion of privacy:
 
@@ -300,7 +319,7 @@ When an AI automated decision system causes harm:
 - Media: Only through authorised spokesperson
 - AI tool vendors: As needed for investigation and remediation
 
-## 7. Testing and Maintenance
+## 7. Testing, Maintenance, and Performance Metrics
 
 | Activity | Frequency |
 |---|---|
@@ -308,6 +327,19 @@ When an AI automated decision system causes harm:
 | Plan review and update | {{ training_frequency | replace("_", " ") | title }} |
 | Staff training on incident procedures | {{ training_frequency | replace("_", " ") | title }} |
 | Contact list verification | Quarterly |
+
+### 7.0 Incident Response KPIs
+
+| Metric | Target | Measurement |
+|---|---|---|
+| Mean time to detect (MTTD) — Critical AI incidents | Under 1 hour | Per incident |
+| Mean time to contain (MTTC) — Critical AI incidents | Under 4 hours | Per incident |
+| Mean time to resolve (MTTR) — all AI incidents | Under 72 hours | Per incident |
+| NDB assessment completed within statutory timeframe | 100% within 30 days | Per eligible breach |
+| Post-incident review completed | 100% within 14 days of resolution | Per incident |
+| Staff awareness of reporting procedure | 95%+ (measured by survey) | Annually |
+| Tabletop exercises conducted on schedule | 100% | Biannually |
+| Corrective actions from exercises implemented | 100% within 60 days | Per exercise |
 
 {% if incident_response_tested is defined %}
 {% if incident_response_tested %}
@@ -322,6 +354,8 @@ When an AI automated decision system causes harm:
   - Cross-border data exposure via overseas AI tool
   - Automated decision failure affecting multiple individuals
   - Statutory tort claim arising from AI-assisted privacy invasion
+  - Prompt injection attack causing AI to leak confidential data
+  - Suspected model poisoning or AI supply chain compromise
 - Document exercise outcomes, identified gaps, and improvement actions
 - Update this plan based on exercise findings
 {% else %}
@@ -338,11 +372,27 @@ When an AI automated decision system causes harm:
    - Cross-border data exposure via overseas AI tool
    - Automated decision failure affecting multiple individuals
    - Statutory tort claim arising from AI-assisted privacy invasion
+  - Prompt injection attack causing AI to leak confidential data
+  - Suspected model poisoning or AI supply chain compromise
 3. **Include** all incident response roles (AI Governance Contact, IT/Security, Legal, Management)
 4. **Document** findings and update this plan accordingly
 5. **Establish** a biannual exercise cadence going forward
 {% endif %}
 {% endif %}
+
+## 7A. Implementation Checklist
+
+Before this plan is considered operational, {{ business_name }} must complete the following:
+
+- [ ] Distribute this plan to all incident response team members
+- [ ] Confirm AI Governance Contact is appointed and aware of responsibilities
+- [ ] Verify all key contact details in Section 8 are populated
+- [ ] Brief IT/Security team on AI-specific containment procedures
+- [ ] Train all staff on incident detection and reporting (Phase 1)
+- [ ] Schedule first tabletop exercise (within 90 days of plan adoption)
+- [ ] Test incident communication channels (phone tree, secure email)
+- [ ] Confirm access to AI tool admin panels for emergency containment (API key revocation, access disabling)
+- [ ] Store this plan in accessible location (not solely on systems that may be affected by an incident)
 
 ## 8. Key Contacts
 
@@ -363,7 +413,7 @@ When an AI automated decision system causes harm:
 
 **AI System Involved:** ____________________________
 
-**Incident Type:** [ ] Data Breach  [ ] AI Output Harm  [ ] Unauthorised AI Use  [ ] System Compromise  [ ] Automated Decision Failure  [ ] Shadow AI  [ ] ACL Breach  [ ] POLA Non-Compliance  [ ] Statutory Tort  [ ] Other
+**Incident Type:** [ ] Data Breach  [ ] AI Output Harm  [ ] Unauthorised AI Use  [ ] System Compromise  [ ] Automated Decision Failure  [ ] Shadow AI  [ ] ACL Breach  [ ] POLA Non-Compliance  [ ] Statutory Tort  [ ] Prompt Injection  [ ] Data Extraction  [ ] Model Poisoning  [ ] Other
 
 **Incident Description:**
 
@@ -401,6 +451,9 @@ ____________________________________________________________________
 | ACSC | Australian Cyber Security Centre |
 | RTO | Recovery Time Objective — the maximum acceptable time to restore operations |
 | RPO | Recovery Point Objective — the maximum acceptable data loss measured in time |
+| Prompt Injection | An attack where adversarial input manipulates an AI system into ignoring instructions, bypassing safety controls, or revealing sensitive information |
+| Data Extraction | An attack technique where crafted queries cause an AI system to reveal training data, personal information, or confidential content it should not disclose |
+| Model Poisoning | Corruption of an AI model through manipulated training data or malicious updates, causing the model to produce biased, incorrect, or harmful outputs |
 
 ---
 

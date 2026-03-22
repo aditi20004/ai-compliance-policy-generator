@@ -7,6 +7,21 @@
 
 ---
 
+## Document Control
+
+| Field | Detail |
+|---|---|
+| Document Title | Board AI Risk Briefing |
+| Organisation | {{ business_name }} |
+| Document Owner | {{ ai_governance_contact | default("To be appointed", true) }} |
+| Effective Date | {{ effective_date }} |
+| Version | {{ version }} |
+| Review Frequency | {{ training_frequency | replace("_", " ") | title }} |
+| Next Review Date | {{ effective_date }} + review cycle |
+| Approved By | (Signature required) |
+
+---
+
 ## Executive Summary
 
 This briefing provides the board and senior leadership with an overview of {{ business_name }}'s AI usage, associated regulatory obligations, risk exposure, and governance posture. Directors have a duty of care under the **Corporations Act 2001 s180** to be informed about material risks — AI governance is now a material risk for organisations of all sizes.

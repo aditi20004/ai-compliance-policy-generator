@@ -20,6 +20,7 @@
 | Effective Date | {{ effective_date }} |
 | Version | {{ version }} |
 | Review Frequency | Quarterly |
+| Next Review Date | {{ effective_date }} + review cycle |
 | Approved By | (Signature required) |
 
 ---
@@ -140,7 +141,17 @@ This register must be reviewed quarterly and updated whenever new AI tools are d
 | VS-02 | AI vendor changes terms of service or data handling practices | 3 | 3 | Medium | Vendor monitoring, contract review schedule | {{ ai_governance_contact | default("TBD", true) }} | Active |
 | VS-03 | AI vendor uses customer data for model training without consent | 3 | 4 | High | DPA clauses prohibiting training data use, vendor audit | {{ ai_governance_contact | default("TBD", true) }} | Active |
 
-### 3.6 Operational Risks
+### 3.6 AI Security Risks
+
+| Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
+|---|---|---|---|---|---|---|---|
+| AS-01 | Prompt injection attack — adversarial input manipulates AI tool behaviour or extracts sensitive data | 3 | 4 | High | Input validation, output filtering, staff training on prompt security | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| AS-02 | Data extraction / exfiltration — AI tool inadvertently reveals training data, PII, or confidential information through crafted queries | 3 | 5 | High | Output monitoring, data classification enforcement, DLP controls | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| AS-03 | Model poisoning / manipulation — compromised or biased training data leads to unreliable AI outputs used in business decisions | 2 | 4 | Medium | Vendor security assessments, output validation, multiple-source verification | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| AS-04 | Adversarial evasion — AI classification or detection systems bypassed through adversarial inputs | 2 | 3 | Medium | Regular model testing, adversarial robustness assessment, human oversight for critical decisions | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| AS-05 | API key / credential compromise — stolen AI service credentials used for unauthorised access or data exfiltration | 3 | 4 | High | Key rotation policy (90-day maximum), secrets management, access logging, least-privilege API scopes | {{ ai_governance_contact | default("TBD", true) }} | Active |
+
+### 3.7 Operational Risks
 
 | Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
 |---|---|---|---|---|---|---|---|
@@ -151,7 +162,17 @@ This register must be reviewed quarterly and updated whenever new AI tools are d
 | OP-04 | No existing IT security policies to build AI governance upon | 5 | 3 | High | Establish foundational IT security policies within 30 days | {{ ai_governance_contact | default("TBD", true) }} | Open |
 {% endif %}
 
-### 3.7 Regulatory Risks
+{% if ai_tools_overseas and "None — all data stays in Australia" not in ai_tools_overseas %}
+### 3.8 International Regulatory Risks
+
+| Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
+|---|---|---|---|---|---|---|---|
+| IR-01 | EU AI Act obligations triggered by serving EU customers through AI tools ({{ ai_tools_overseas | join(', ') }}) | 2 | 4 | Medium | Jurisdictional assessment, EU AI Act gap analysis | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| IR-02 | GDPR compliance requirements for processing EU resident data through AI systems | 2 | 5 | High | Data flow mapping, Standard Contractual Clauses, DPIA | {{ ai_governance_contact | default("TBD", true) }} | Active |
+| IR-03 | Divergent international AI regulations create conflicting compliance obligations | 2 | 3 | Medium | Regulatory monitoring, legal review of international requirements | {{ ai_governance_contact | default("TBD", true) }} | Active |
+{% endif %}
+
+### 3.9 Regulatory Risks
 
 | Risk ID | Risk Description | Likelihood | Impact | Rating | Controls | Owner | Status |
 |---|---|---|---|---|---|---|---|
@@ -193,9 +214,24 @@ This register must be reviewed quarterly and updated whenever new AI tools are d
 {% if not incident_response_tested %}
 | Schedule AI incident response tabletop exercise | OP-02 | {{ ai_governance_contact | default("TBD", true) }} | 60 days | Open |
 {% endif %}
+| Conduct AI-specific penetration testing (prompt injection, data extraction) | AS-01, AS-02 | {{ ai_governance_contact | default("TBD", true) }} | 60 days | Open |
+| Implement API key rotation policy (90-day maximum) | AS-05 | {{ ai_governance_contact | default("TBD", true) }} | 30 days | Open |
 | Review and update this risk register | All | {{ ai_governance_contact | default("TBD", true) }} | Quarterly | Ongoing |
 
-## 6. Review Log
+## 6. Risk Management KPIs
+
+| Metric | Target | Frequency |
+|---|---|---|
+| Extreme-rated risks with active treatment plans | 100% | Monthly |
+| High-rated risks with treatment plans | 100% within 30 days of identification | Monthly |
+| Open action items completed by deadline | 90%+ | Quarterly |
+| Risk register reviewed and updated | 100% on schedule | Quarterly |
+| New AI tools risk-assessed before deployment | 100% | Per deployment |
+| Vendor DPAs executed for all AI vendors | 100% | Biannually |
+| AI security testing completed (prompt injection, data extraction) | At least annually | Annually |
+| Risk owners assigned for all identified risks | 100% | Quarterly |
+
+## 7. Review Log
 
 | Review Date | Reviewer | Changes Made | Next Review |
 |---|---|---|---|
@@ -203,7 +239,19 @@ This register must be reviewed quarterly and updated whenever new AI tools are d
 
 ---
 
-## Appendix A: Risk Appetite Statement
+## Appendix A: Resource Allocation for Risk Treatment
+
+| Risk Treatment Activity | Small Org (1-19 staff) | Medium Org (20-199 staff) | Large Org (200+ staff) |
+|---|---|---|---|
+| Risk register maintenance | 2 hrs/quarter (part-time owner) | 1 day/quarter (dedicated owner) | Continuous (risk management team) |
+| Risk assessments for new AI tools | 2-4 hrs per tool | 1-2 days per tool | Formal assessment process (5-10 days) |
+| Penetration testing (AI-specific) | Annual (external, ~$3K-$8K) | Biannual (external, ~$10K-$25K) | Quarterly (internal + annual external, ~$50K+) |
+| Vendor security reviews | Annual questionnaire | Biannual assessment | Continuous monitoring + annual audit |
+| AI incident response exercises | Annual tabletop (~$2K-$5K) | Biannual tabletop (~$5K-$15K) | Quarterly exercises (~$20K-$50K/year) |
+
+---
+
+## Appendix B: Risk Appetite Statement
 
 {{ business_name }} has a **low risk appetite** for AI-related risks that could result in:
 - Breach of the Privacy Act 1988 or POLA Act 2024
@@ -217,7 +265,7 @@ This register must be reviewed quarterly and updated whenever new AI tools are d
 
 ---
 
-## Appendix B: Policy Acknowledgement
+## Appendix C: Policy Acknowledgement
 
 I have reviewed the AI Risk Register and understand the current risk landscape for {{ business_name }}'s AI usage.
 
