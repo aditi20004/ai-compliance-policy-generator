@@ -218,7 +218,7 @@ if step == 1:
     section_header(1, "Organisation Profile", "Questions 1–5")
 
     business_name = st.text_input(
-        "1. What is your business name? *", value=answers.get("business_name", ""), placeholder="e.g. Your Organisation Pty Ltd"
+        "1. What is your business name? *", value=answers.get("business_name", ""), placeholder="e.g. <Your Organisation Pty Ltd>"
     )
 
     abn_col1, abn_col2 = st.columns([3, 1])
