@@ -9,13 +9,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from components.sidebar import render_sidebar
 from components.theme import status_badge
 
-from app.audit import get_audit_logs
 from app.database import SessionLocal, init_db
 
 render_sidebar()
 init_db()
 
 st.title("Audit Log")
+
+# Only show logs for organisations created in this session
+session_org_ids = st.session_state.get("session_org_ids", set())
+if not session_org_ids:
+    st.info("Complete the questionnaire first to see audit logs.")
+    st.stop()
 
 db = SessionLocal()
 try:
@@ -24,8 +29,6 @@ try:
     with st.container(border=True):
         col1, col2, col3 = st.columns(3)
         with col1:
-            org_filter = st.number_input("Filter by Organisation ID", min_value=0, value=0, step=1)
-        with col2:
             event_filter = st.selectbox(
                 "Filter by Event Type",
                 options=[
@@ -39,15 +42,16 @@ try:
                     "evidence_removed",
                 ],
             )
-        with col3:
+        with col2:
             limit = st.number_input("Max Results", min_value=10, max_value=500, value=100, step=10)
 
-    logs = get_audit_logs(
-        db,
-        org_id=org_filter if org_filter > 0 else None,
-        event_type=event_filter if event_filter != "All" else None,
-        limit=limit,
-    )
+    # Fetch logs only for this session's organisations
+    from app.models import AuditLog
+
+    query = db.query(AuditLog).filter(AuditLog.org_id.in_(session_org_ids))
+    if event_filter != "All":
+        query = query.filter(AuditLog.event_type == event_filter)
+    logs = query.order_by(AuditLog.timestamp.desc()).limit(limit).all()
 
     if not logs:
         st.info("No audit log entries found.")

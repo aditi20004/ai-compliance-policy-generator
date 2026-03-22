@@ -44,8 +44,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- Check if org exists ---
-has_org = "org_id" in st.session_state and st.session_state.get("org_id")
+# --- Check if org exists and belongs to this session ---
+_session_org_ids = st.session_state.get("session_org_ids", set())
+has_org = (
+    "org_id" in st.session_state
+    and st.session_state.get("org_id")
+    and st.session_state.get("org_id") in _session_org_ids
+)
 
 if has_org:
     org_id = st.session_state.org_id

@@ -20,6 +20,11 @@ if "org_id" not in st.session_state or not st.session_state.get("org_id"):
     st.warning("Please complete the questionnaire first.")
     st.stop()
 
+# Verify org belongs to this session
+if st.session_state.org_id not in st.session_state.get("session_org_ids", set()):
+    st.warning("Please complete the questionnaire first.")
+    st.stop()
+
 org_id = st.session_state.org_id
 db = SessionLocal()
 try:

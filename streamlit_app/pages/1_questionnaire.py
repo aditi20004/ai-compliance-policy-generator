@@ -945,6 +945,8 @@ elif step == 7:
                     st.session_state.org_id = org.id
                     st.session_state.business_name = org.business_name
                     st.session_state.q_step = total_steps + 1
+                    # Track org in current session for data isolation
+                    st.session_state.setdefault("session_org_ids", set()).add(org.id)
 
                     st.success(f"Questionnaire updated for {org.business_name}!")
                 else:
@@ -964,6 +966,8 @@ elif step == 7:
                     st.session_state.org_id = org.id
                     st.session_state.business_name = org.business_name
                     st.session_state.q_step = total_steps + 1
+                    # Track org in current session for data isolation
+                    st.session_state.setdefault("session_org_ids", set()).add(org.id)
 
                     st.success(f"Questionnaire submitted! Organisation ID: {org.id}")
                     st.info("Navigate to the **Generate** page to create your policy documents.")

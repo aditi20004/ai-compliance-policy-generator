@@ -106,9 +106,20 @@ def _render_org_switcher():
     from app.database import SessionLocal
     from app.models import Organisation
 
+    # Only show organisations created in this session
+    session_org_ids = st.session_state.get("session_org_ids", set())
+    if not session_org_ids:
+        st.info("Complete the questionnaire to get started.")
+        return
+
     db = SessionLocal()
     try:
-        orgs = db.query(Organisation).order_by(Organisation.created_at.desc()).all()
+        orgs = (
+            db.query(Organisation)
+            .filter(Organisation.id.in_(session_org_ids))
+            .order_by(Organisation.created_at.desc())
+            .all()
+        )
     finally:
         db.close()
 

@@ -19,9 +19,20 @@ init_db()
 
 st.title("Compare Organisations")
 
+# Only show organisations created in this session
+session_org_ids = st.session_state.get("session_org_ids", set())
+if not session_org_ids:
+    st.info("Complete the questionnaire first.")
+    st.stop()
+
 db = SessionLocal()
 try:
-    orgs = db.query(Organisation).order_by(Organisation.created_at.desc()).all()
+    orgs = (
+        db.query(Organisation)
+        .filter(Organisation.id.in_(session_org_ids))
+        .order_by(Organisation.created_at.desc())
+        .all()
+    )
 
     if len(orgs) < 2:
         st.info("You need at least 2 organisations to compare. Complete the questionnaire for another organisation.")
