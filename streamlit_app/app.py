@@ -97,7 +97,7 @@ if has_org:
             penalty_total = result["penalty_exposure"]["total_maximum_exposure"]
 
             # --- Dashboard Metrics ---
-            st.markdown(f"### Dashboard — {org.business_name}")
+            st.markdown(f"### Dashboard: {org.business_name}")
 
             col1, col2, col3, col4 = st.columns(4)
             with col1:
@@ -382,7 +382,7 @@ if not has_org:
         (
             "2",
             "2. Generate Policies",
-            "The app recommends policies based on your profile and generates up to 19 regulation-aligned documents in PDF or Markdown — ready to customise and adopt.",
+            "The app recommends policies based on your profile and generates up to 19 regulation-aligned documents in PDF or Markdown, ready to customise and adopt.",
         ),
         (
             "3",
@@ -453,7 +453,7 @@ if not has_org:
     _audiences = [
         (
             "SMEs & Startups",
-            "Small and medium businesses using AI tools like ChatGPT, Copilot, or automated customer support — who need compliant policies without a legal budget.",
+            "Small and medium businesses using AI tools like ChatGPT, Copilot, or automated customer support, who need compliant policies without a legal budget.",
         ),
         (
             "Enterprises",
